@@ -1,0 +1,476 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Blade of Despair",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 170,
+      "description": "Increases physical damage after getting kills/assists"
+    },
+    {
+      "id": 2,
+      "name": "Endless Battle",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 65,
+      "hp": 250,
+      "description": "Lifesteal and cooldown reduction"
+    },
+    {
+      "id": 3,
+      "name": "Demon Hunter Sword",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 80,
+      "description": "Bonus damage against high-HP enemies"
+    },
+    {
+      "id": 4,
+      "name": "Scarlet Phantom",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 70,
+      "aspd": 35,
+      "description": "Attack speed and critical strike chance"
+    },
+    {
+      "id": 5,
+      "name": "Wind Chaser",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 65,
+      "aspd": 30,
+      "description": "Movement speed and attack speed"
+    },
+    {
+      "id": 6,
+      "name": "Toxic Thorn",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 60,
+      "description": "Return damage to attackers"
+    },
+    {
+      "id": 7,
+      "name": "Holy Crystal",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 110,
+      "description": "Increases magic power significantly"
+    },
+    {
+      "id": 8,
+      "name": "Divine Glaive",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 65,
+      "description": "Magic penetration item"
+    },
+    {
+      "id": 9,
+      "name": "Genius Wand",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 75,
+      "cdr": 10,
+      "description": "Magic power and cooldown reduction"
+    },
+    {
+      "id": 10,
+      "name": "Lightning Truncheon",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 85,
+      "hp": 260,
+      "description": "AoE damage on spells"
+    },
+    {
+      "id": 11,
+      "name": "Oracle",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 740,
+      "mreg": 25,
+      "description": "Magic defense and healing boost"
+    },
+    {
+      "id": 12,
+      "name": "Immortality",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 800,
+      "armor": 40,
+      "description": "Revive when killed"
+    },
+    {
+      "id": 13,
+      "name": "Brute Force Breastplate",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 760,
+      "armor": 62,
+      "description": "High physical defense"
+    },
+    {
+      "id": 14,
+      "name": "Twilight Armor",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 900,
+      "armor": 42,
+      "description": "Reflects damage to attackers"
+    },
+    {
+      "id": 15,
+      "name": "Athena's Shield",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 840,
+      "mres": 74,
+      "description": "Magic defense with scaling"
+    },
+    {
+      "id": 16,
+      "name": "Hollow Radiance",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 610,
+      "mres": 54,
+      "description": "Aura reduces enemy magic damage"
+    },
+    {
+      "id": 17,
+      "name": "Radiant Armor",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 800,
+      "armor": 35,
+      "description": "Reflects 25% damage taken"
+    },
+    {
+      "id": 18,
+      "name": "Antique Cuirass",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 900,
+      "armor": 54,
+      "description": "Slows nearby enemies"
+    },
+    {
+      "id": 19,
+      "name": "Fleeting Time",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 65,
+      "cdr": 25,
+      "description": "Cooldown reduction on assists"
+    },
+    {
+      "id": 20,
+      "name": "Clock of Destiny",
+      "category": "Magic Damage",
+      "tier": "Tier 2",
+      "mpower": 60,
+      "hp": 500,
+      "description": "Stacking magic power"
+    },
+    {
+      "id": 21,
+      "name": "Calamity Reaper",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 80,
+      "description": "Critical damage for mages"
+    },
+    {
+      "id": 22,
+      "name": "Concentrated Energy",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 85,
+      "hp": 300,
+      "description": "Spell lifesteal"
+    },
+    {
+      "id": 23,
+      "name": "Bloodthirsty King",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 70,
+      "hp": 300,
+      "description": "Physical lifesteal"
+    },
+    {
+      "id": 24,
+      "name": "Blade Armor",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 600,
+      "armor": 60,
+      "description": "Counter attacks reflect damage"
+    },
+    {
+      "id": 25,
+      "name": "Rose Gold Meteor",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 750,
+      "armor": 40,
+      "description": "Reduces damage taken from heroes"
+    },
+    {
+      "id": 26,
+      "name": "Sea Halberd",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "attack": 60,
+      "armor": 40,
+      "description": "Reduces healing received by enemies"
+    },
+    {
+      "id": 27,
+      "name": "Tough Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "armor": 25,
+      "description": "Physical defense boots"
+    },
+    {
+      "id": 28,
+      "name": "Plated Armor",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "armor": 22,
+      "description": "Physical defense boots with slow reduction"
+    },
+    {
+      "id": 29,
+      "name": "Wizard Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "mres": 25,
+      "description": "Magic resistance boots"
+    },
+    {
+      "id": 30,
+      "name": "Swift Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "aspd": 15,
+      "description": "Attack speed boots"
+    },
+    {
+      "id": 31,
+      "name": "Arcane Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "mres": 22,
+      "cdr": 10,
+      "description": "Magic resistance and cooldown reduction boots"
+    },
+    {
+      "id": 32,
+      "name": "Warrior Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "armor": 20,
+      "hp": 200,
+      "description": "Armor and HP boots"
+    },
+    {
+      "id": 33,
+      "name": "Rapid Boots",
+      "category": "Boots",
+      "tier": "Tier 2",
+      "aspd": 20,
+      "ms": 40,
+      "description": "Movement and attack speed boots"
+    },
+    {
+      "id": 34,
+      "name": "Berserker's Fury",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 75,
+      "aspd": 20,
+      "description": "Critical damage and attack speed"
+    },
+    {
+      "id": 35,
+      "name": "Corrosion Scythe",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 65,
+      "aspd": 25,
+      "description": "Attack speed with slowing effect"
+    },
+    {
+      "id": 36,
+      "name": "Golden Staff",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 70,
+      "aspd": 30,
+      "description": "Physical damage and attack speed"
+    },
+    {
+      "id": 37,
+      "name": "Malefic Roar",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 60,
+      "description": "Armor penetration"
+    },
+    {
+      "id": 38,
+      "name": "Dominance Ice",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 500,
+      "armor": 40,
+      "cdr": 10,
+      "description": "Slows enemy attack speed"
+    },
+    {
+      "id": 39,
+      "name": "Abyssal Crown",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 75,
+      "cdr": 10,
+      "description": "Magic penetration with crowd control"
+    },
+    {
+      "id": 40,
+      "name": "Lucent Phantom",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 70,
+      "ms": 30,
+      "description": "Magic power with movement speed"
+    },
+    {
+      "id": 41,
+      "name": "Necklace of Durance",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 500,
+      "mres": 40,
+      "description": "Reduces enemy healing effectiveness"
+    },
+    {
+      "id": 42,
+      "name": "Winter Truncheon",
+      "category": "Mana/Utility",
+      "tier": "Tier 3",
+      "hp": 400,
+      "cdr": 10,
+      "description": "Grants invulnerability upon taking damage"
+    },
+    {
+      "id": 43,
+      "name": "Mojo Pendant",
+      "category": "Mana/Utility",
+      "tier": "Tier 2",
+      "mpower": 40,
+      "cdr": 5,
+      "description": "Cooldown reduction for supports"
+    },
+    {
+      "id": 44,
+      "name": "Mask of Madness",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 80,
+      "aspd": 20,
+      "description": "Magic power with attack speed"
+    },
+    {
+      "id": 45,
+      "name": "Glowing Wand",
+      "category": "Magic Damage",
+      "tier": "Tier 3",
+      "mpower": 75,
+      "hp": 300,
+      "description": "Magic power with burn effect"
+    },
+    {
+      "id": 46,
+      "name": "Queen's Wings",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 600,
+      "description": "Reduces damage taken when health is low"
+    },
+    {
+      "id": 47,
+      "name": "Guardian Angel",
+      "category": "Mana/Utility",
+      "tier": "Tier 3",
+      "hp": 600,
+      "description": "Heals nearby allies periodically"
+    },
+    {
+      "id": 48,
+      "name": "Courage Mask",
+      "category": "Mana/Utility",
+      "tier": "Tier 2",
+      "hp": 400,
+      "armor": 15,
+      "description": "Aura that boosts nearby allies' damage"
+    },
+    {
+      "id": 49,
+      "name": "Antique Cuirass",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 900,
+      "armor": 54,
+      "description": "Slows nearby enemies"
+    },
+    {
+      "id": 50,
+      "name": "Cursed Helmet",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 700,
+      "mres": 40,
+      "description": "Reflects magic damage to attackers"
+    },
+    {
+      "id": 51,
+      "name": "Twilight Armor",
+      "category": "Defense",
+      "tier": "Tier 3",
+      "hp": 900,
+      "armor": 42,
+      "description": "Reflects damage back to attackers"
+    },
+    {
+      "id": 52,
+      "name": "Demon's Advent",
+      "category": "Physical Damage",
+      "tier": "Tier 3",
+      "attack": 85,
+      "description": "Physical damage with bonus armor penetration"
+    },
+    {
+      "id": 53,
+      "name": "Tough Gloves",
+      "category": "Physical Damage",
+      "tier": "Tier 1",
+      "attack": 15,
+      "description": "Early game physical damage"
+    },
+    {
+      "id": 54,
+      "name": "War Axe",
+      "category": "Physical Damage",
+      "tier": "Tier 2",
+      "attack": 50,
+      "hp": 300,
+      "description": "Physical damage with health"
+    }
+  ]
+}

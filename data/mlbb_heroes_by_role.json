@@ -1,0 +1,917 @@
+{
+  "roles": {
+    "Tank": {
+      "description": "Durable heroes with high HP and armor",
+      "count": 28,
+      "heroes": [
+        {
+          "id": 1,
+          "name": "Akai",
+          "rarity": "Elite",
+          "specialtyImpact": "CC",
+          "hp": 2747,
+          "armor": 24
+        },
+        {
+          "id": 11,
+          "name": "Barats",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2800,
+          "armor": 23
+        },
+        {
+          "id": 21,
+          "name": "Ceci",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2820,
+          "armor": 25
+        },
+        {
+          "id": 29,
+          "name": "Edith",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2900,
+          "armor": 26
+        },
+        {
+          "id": 35,
+          "name": "Gatotkaca",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2850,
+          "armor": 24
+        },
+        {
+          "id": 36,
+          "name": "Gloo",
+          "rarity": "Elite",
+          "specialtyImpact": "Magic Resistance",
+          "hp": 2750,
+          "armor": 23
+        },
+        {
+          "id": 37,
+          "name": "Grock",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2880,
+          "armor": 25
+        },
+        {
+          "id": 46,
+          "name": "Johnson",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2920,
+          "armor": 25
+        },
+        {
+          "id": 51,
+          "name": "Kawak",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2780,
+          "armor": 24
+        },
+        {
+          "id": 54,
+          "name": "Kufra",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2920,
+          "armor": 26
+        },
+        {
+          "id": 61,
+          "name": "Lolita",
+          "rarity": "Elite",
+          "specialtyImpact": "Magic Resistance",
+          "hp": 2750,
+          "armor": 24
+        },
+        {
+          "id": 67,
+          "name": "Mino",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2950,
+          "armor": 26
+        },
+        {
+          "id": 68,
+          "name": "Minotaur",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2880,
+          "armor": 25
+        },
+        {
+          "id": 70,
+          "name": "Mummy",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2820,
+          "armor": 25
+        },
+        {
+          "id": 76,
+          "name": "Paguero",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2780,
+          "armor": 24
+        },
+        {
+          "id": 77,
+          "name": "Panda",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2850,
+          "armor": 24
+        },
+        {
+          "id": 93,
+          "name": "Sima Yi",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2900,
+          "armor": 25
+        },
+        {
+          "id": 96,
+          "name": "Sun",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2750,
+          "armor": 24
+        },
+        {
+          "id": 99,
+          "name": "Thane",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 2820,
+          "armor": 25
+        },
+        {
+          "id": 100,
+          "name": "Tigreal",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2900,
+          "armor": 25
+        }
+      ]
+    },
+    "Fighter": {
+      "description": "Balanced heroes with good damage and durability",
+      "count": 25,
+      "heroes": [
+        {
+          "id": 4,
+          "name": "Alpha",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2380,
+          "damage": 145
+        },
+        {
+          "id": 5,
+          "name": "Anjanath",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2350,
+          "damage": 140
+        },
+        {
+          "id": 7,
+          "name": "Argus",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2400,
+          "damage": 150
+        },
+        {
+          "id": 8,
+          "name": "Arlott",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2450,
+          "damage": 142
+        },
+        {
+          "id": 12,
+          "name": "Balmond",
+          "rarity": "Elite",
+          "specialtyImpact": "Lifesteal",
+          "hp": 2500,
+          "damage": 145
+        },
+        {
+          "id": 14,
+          "name": "Basilisk",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2420,
+          "damage": 148
+        },
+        {
+          "id": 19,
+          "name": "Cammila",
+          "rarity": "Elite",
+          "specialtyImpact": "Lifesteal",
+          "hp": 2380,
+          "damage": 148
+        },
+        {
+          "id": 23,
+          "name": "Chou",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2450,
+          "damage": 143
+        },
+        {
+          "id": 28,
+          "name": "Dyrroth",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2520,
+          "damage": 141
+        },
+        {
+          "id": 38,
+          "name": "Guinevere",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2400,
+          "damage": 146
+        },
+        {
+          "id": 43,
+          "name": "Hilda",
+          "rarity": "Elite",
+          "specialtyImpact": "Regeneration",
+          "hp": 2550,
+          "damage": 139
+        },
+        {
+          "id": 52,
+          "name": "Khaleed",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2480,
+          "damage": 142
+        },
+        {
+          "id": 56,
+          "name": "Lapu-Lapu",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2380,
+          "damage": 150
+        },
+        {
+          "id": 58,
+          "name": "Leomord",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2450,
+          "damage": 145
+        },
+        {
+          "id": 64,
+          "name": "Martis",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2520,
+          "damage": 140
+        },
+        {
+          "id": 65,
+          "name": "Masha",
+          "rarity": "Elite",
+          "specialtyImpact": "Durability",
+          "hp": 3200,
+          "damage": 130
+        },
+        {
+          "id": 86,
+          "name": "Roger",
+          "rarity": "Elite",
+          "specialtyImpact": "Offense",
+          "hp": 2600,
+          "damage": 137
+        },
+        {
+          "id": 87,
+          "name": "Ruby",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2520,
+          "damage": 138
+        },
+        {
+          "id": 98,
+          "name": "Terizla",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2480,
+          "damage": 143
+        },
+        {
+          "id": 109,
+          "name": "Ximena",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2450,
+          "damage": 144
+        },
+        {
+          "id": 111,
+          "name": "Yu Zhong",
+          "rarity": "Elite",
+          "specialtyImpact": "Regeneration",
+          "hp": 2550,
+          "damage": 139
+        },
+        {
+          "id": 116,
+          "name": "Zilong",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2420,
+          "damage": 146
+        }
+      ]
+    },
+    "Assassin": {
+      "description": "High damage burst heroes with mobility",
+      "count": 15,
+      "heroes": [
+        {
+          "id": 6,
+          "name": "Aamon",
+          "rarity": "Rare",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1950,
+          "damage": 155
+        },
+        {
+          "id": 16,
+          "name": "Benedetta",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1980,
+          "damage": 158
+        },
+        {
+          "id": 24,
+          "name": "Claude",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2000,
+          "damage": 156
+        },
+        {
+          "id": 33,
+          "name": "Fanny",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1920,
+          "damage": 162
+        },
+        {
+          "id": 39,
+          "name": "Gusion",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1960,
+          "damage": 160
+        },
+        {
+          "id": 41,
+          "name": "Hayabusa",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1940,
+          "damage": 164
+        },
+        {
+          "id": 42,
+          "name": "Helcurt",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1980,
+          "damage": 159
+        },
+        {
+          "id": 49,
+          "name": "Karina",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2020,
+          "damage": 157
+        },
+        {
+          "id": 55,
+          "name": "Lancelot",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1950,
+          "damage": 165
+        },
+        {
+          "id": 60,
+          "name": "Ling",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1900,
+          "damage": 168
+        },
+        {
+          "id": 71,
+          "name": "Natalia",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2000,
+          "damage": 161
+        },
+        {
+          "id": 88,
+          "name": "Saber",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1980,
+          "damage": 160
+        },
+        {
+          "id": 89,
+          "name": "Selena",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2000,
+          "damage": 155
+        },
+        {
+          "id": 106,
+          "name": "Vile",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1970,
+          "damage": 162
+        },
+        {
+          "id": 117,
+          "name": "Zorro",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 1990,
+          "damage": 160
+        }
+      ]
+    },
+    "Mage": {
+      "description": "Magic damage dealers with crowd control",
+      "count": 26,
+      "heroes": [
+        {
+          "id": 3,
+          "name": "Alice",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst",
+          "hp": 2460,
+          "mana": 800
+        },
+        {
+          "id": 10,
+          "name": "Aurora",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2200,
+          "mana": 750
+        },
+        {
+          "id": 13,
+          "name": "Bancroft",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2250,
+          "mana": 700
+        },
+        {
+          "id": 26,
+          "name": "Cyclops",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2180,
+          "mana": 720
+        },
+        {
+          "id": 30,
+          "name": "Eudora",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2150,
+          "mana": 680
+        },
+        {
+          "id": 47,
+          "name": "Kagura",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2200,
+          "mana": 780
+        },
+        {
+          "id": 62,
+          "name": "Lunox",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2280,
+          "mana": 850
+        },
+        {
+          "id": 63,
+          "name": "Lylia",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2220,
+          "mana": 800
+        },
+        {
+          "id": 78,
+          "name": "Pharsa",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2280,
+          "mana": 820
+        },
+        {
+          "id": 84,
+          "name": "Raphael",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2300,
+          "mana": 850
+        },
+        {
+          "id": 85,
+          "name": "Roentgen",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2250,
+          "mana": 800
+        },
+        {
+          "id": 91,
+          "name": "Shar",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2200,
+          "mana": 780
+        },
+        {
+          "id": 94,
+          "name": "Sora",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2220,
+          "mana": 800
+        },
+        {
+          "id": 97,
+          "name": "Sunny",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2300,
+          "mana": 850
+        },
+        {
+          "id": 102,
+          "name": "Ulfaak",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2280,
+          "mana": 820
+        },
+        {
+          "id": 103,
+          "name": "Vale",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2150,
+          "mana": 700
+        },
+        {
+          "id": 104,
+          "name": "Valir",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2220,
+          "mana": 800
+        },
+        {
+          "id": 105,
+          "name": "Vexana",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2200,
+          "mana": 800
+        },
+        {
+          "id": 110,
+          "name": "Yve",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2350,
+          "mana": 900
+        },
+        {
+          "id": 113,
+          "name": "Zhask",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2280,
+          "mana": 820
+        },
+        {
+          "id": 114,
+          "name": "Zhouyuan",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2300,
+          "mana": 850
+        },
+        {
+          "id": 115,
+          "name": "Zill",
+          "rarity": "Elite",
+          "specialtyImpact": "Burst Damage",
+          "hp": 2250,
+          "mana": 800
+        },
+        {
+          "id": 118,
+          "name": "Aura",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2200,
+          "mana": 750
+        }
+      ]
+    },
+    "Marksman": {
+      "description": "Physical damage dealers with high attack speed",
+      "count": 16,
+      "heroes": [
+        {
+          "id": 9,
+          "name": "Attrition",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2100,
+          "damage": 160
+        },
+        {
+          "id": 15,
+          "name": "Beatrice",
+          "rarity": "Rare",
+          "specialtyImpact": "Damage",
+          "hp": 2150,
+          "damage": 162
+        },
+        {
+          "id": 18,
+          "name": "Bruno",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2080,
+          "damage": 165
+        },
+        {
+          "id": 25,
+          "name": "Clint",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2050,
+          "damage": 168
+        },
+        {
+          "id": 40,
+          "name": "Hanabi",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2120,
+          "damage": 164
+        },
+        {
+          "id": 44,
+          "name": "Irithel",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2100,
+          "damage": 166
+        },
+        {
+          "id": 45,
+          "name": "Javelin",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2180,
+          "damage": 161
+        },
+        {
+          "id": 50,
+          "name": "Karrie",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2140,
+          "damage": 163
+        },
+        {
+          "id": 53,
+          "name": "Kimmy",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2090,
+          "damage": 167
+        },
+        {
+          "id": 57,
+          "name": "Laya",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2200,
+          "damage": 160
+        },
+        {
+          "id": 59,
+          "name": "Lesley",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2060,
+          "damage": 170
+        },
+        {
+          "id": 69,
+          "name": "Moskov",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2080,
+          "damage": 170
+        },
+        {
+          "id": 72,
+          "name": "Natan",
+          "rarity": "Rare",
+          "specialtyImpact": "Damage",
+          "hp": 2250,
+          "damage": 158
+        },
+        {
+          "id": 73,
+          "name": "Nolan",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2130,
+          "damage": 168
+        },
+        {
+          "id": 81,
+          "name": "Piper",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 1950,
+          "damage": 175
+        },
+        {
+          "id": 108,
+          "name": "Wanwan",
+          "rarity": "Elite",
+          "specialtyImpact": "Damage",
+          "hp": 2100,
+          "damage": 169
+        }
+      ]
+    },
+    "Support": {
+      "description": "Healing and crowd control support heroes",
+      "count": 10,
+      "heroes": [
+        {
+          "id": 20,
+          "name": "Carmilla",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2100,
+          "mana": 650
+        },
+        {
+          "id": 27,
+          "name": "Diggie",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 1950,
+          "mana": 600
+        },
+        {
+          "id": 31,
+          "name": "Estes",
+          "rarity": "Elite",
+          "specialtyImpact": "Healing",
+          "hp": 2080,
+          "mana": 700
+        },
+        {
+          "id": 32,
+          "name": "Faramis",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2120,
+          "mana": 680
+        },
+        {
+          "id": 34,
+          "name": "Floryn",
+          "rarity": "Rare",
+          "specialtyImpact": "Support",
+          "hp": 2100,
+          "mana": 700
+        },
+        {
+          "id": 48,
+          "name": "Kaja",
+          "rarity": "Elite",
+          "specialtyImpact": "Crowd Control",
+          "hp": 2150,
+          "mana": 700
+        },
+        {
+          "id": 66,
+          "name": "Mathilda",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2180,
+          "mana": 700
+        },
+        {
+          "id": 79,
+          "name": "Phoebe",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2140,
+          "mana": 700
+        },
+        {
+          "id": 83,
+          "name": "Rafaela",
+          "rarity": "Elite",
+          "specialtyImpact": "Healing",
+          "hp": 2100,
+          "mana": 720
+        },
+        {
+          "id": 101,
+          "name": "Tini",
+          "rarity": "Elite",
+          "specialtyImpact": "Support",
+          "hp": 2050,
+          "mana": 680
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalHeroes": 120,
+    "roleDistribution": {
+      "Tank": 28,
+      "Fighter": 25,
+      "Assassin": 15,
+      "Mage": 26,
+      "Marksman": 16,
+      "Support": 10
+    },
+    "rarityDistribution": {
+      "Elite": 115,
+      "Rare": 5
+    },
+    "specialtyImpacts": [
+      "CC",
+      "Crowd Control",
+      "Durability",
+      "Offense",
+      "Burst",
+      "Burst Damage",
+      "Damage",
+      "Lifesteal",
+      "Magic Resistance",
+      "Regeneration",
+      "Healing",
+      "Support"
+    ]
+  }
+}

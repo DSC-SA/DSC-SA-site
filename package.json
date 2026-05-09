@@ -1,0 +1,20 @@
+{
+  "name": "dsc-sa-site",
+  "version": "1.0.0",
+  "description": "DSC-SA Community Hub - Full Stack MLBB Platform",
+  "private": true,
+  "scripts": {
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:backend": "cd backend && npm install",
+    "build:full": "npm run build:frontend && npm run build:backend && npm run copy:frontend",
+    "copy:frontend": "node scripts/copy-frontend.js",
+    "start": "cd backend && npm start",
+    "dev": "node start.js"
+  },
+  "keywords": ["mlbb", "community", "dsc-sa"],
+  "author": "DSC-SA Team",
+  "license": "MIT",
+  "engines": {
+    "node": "18.x || 20.x"
+  }
+}
