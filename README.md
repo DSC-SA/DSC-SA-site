@@ -147,4 +147,6 @@ Both frontend and backend are deployed on **Koyeb**
 
 ## License
 
-MIT License - Feel free to fork and modify
+© 2026 DSC-SA Community. All Rights Reserved.
+
+**Proprietary Notice:** This project and all its contents are the exclusive property of DSC-SA Community. Unauthorized use, modification, reproduction, distribution, or any form of copying without explicit written permission from DSC-SA is strictly prohibited and may result in legal action.
