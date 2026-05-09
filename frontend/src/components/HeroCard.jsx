@@ -29,7 +29,8 @@ export default function HeroCard({ hero }) {
         className="group relative rounded-lg transition-all duration-200 hover:scale-105 hover:z-20 cursor-pointer bg-blue-900"
         style={{ 
           width: '100%',
-          paddingBottom: '120%',
+          maxWidth: '100%',
+          aspectRatio: '120/144',
           border: '2px solid #3b82f6',
           overflow: 'hidden',
           position: 'relative'
