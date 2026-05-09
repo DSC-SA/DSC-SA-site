@@ -1,6 +1,24 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Auto-detect API base URL at runtime
+// In production: uses the same domain as the frontend
+// In development: uses the env var or localhost
+const getApiBaseUrl = () => {
+  // If explicitly set via env var, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // If in development, use localhost
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5000';
+  }
+  
+  // In production, use current domain (since backend and frontend are on same domain)
+  return window.location.origin;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 const API = axios.create({
   baseURL: `${API_BASE_URL}/api`

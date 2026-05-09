@@ -82,7 +82,7 @@ export default function HeroesList() {
       ) : (
         <div>
           {filteredHeroes.length > 0 ? (
-            <div className="w-full" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredHeroes.map((hero) => (
                 <HeroCard key={hero.id} hero={hero} />
               ))}
