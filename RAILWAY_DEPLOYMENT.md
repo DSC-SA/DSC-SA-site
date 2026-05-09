@@ -49,12 +49,12 @@ DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 PORT=8000
 NODE_ENV=production
-JWT_SECRET=ccc292ac9c954cabacf6530c4758e9fd2ab62846b4d34e1eac3898bb3a9bf90b
+JWT_SECRET=your_jwt_secret_key_here
 FRONTEND_URL=https://your-app.railway.app
 EMAIL_USER=dawnspherecommunity@gmail.com
-EMAIL_PASSWORD=uwtx xduq uvlt goto
-GOOGLE_CLIENT_ID=664538768986-lvha32n4nfie71tq26girhq8bnhi2ihk.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
+EMAIL_PASSWORD=your_gmail_app_password
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 ### 5. Deploy
