@@ -82,7 +82,7 @@ export default function HeroesList() {
       ) : (
         <div>
           {filteredHeroes.length > 0 ? (
-            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-2">
+            <div className="grid grid-cols-5 gap-2 sm:gap-3">
               {filteredHeroes.map((hero) => (
                 <HeroCard key={hero.id} hero={hero} />
               ))}
