@@ -90,12 +90,8 @@ Frontend runs on: `http://localhost:3000`
 
 Hosted on **Koyeb PostgreSQL**
 
-### Connection Details
-```
-Host: ep-spring-hall-al6pkdt1.c-3.eu-central-1.pg.koyeb.app
-Database: koyebdb
-User: koyeb-adm
-```
+### Database
+PostgreSQL database with the following tables:
 
 ### Main Tables
 - `users` - User accounts with authentication
