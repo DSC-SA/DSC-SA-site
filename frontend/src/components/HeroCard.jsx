@@ -24,10 +24,14 @@ export default function HeroCard({ hero }) {
   };
 
   return (
-    <Link to={`/heroes/${hero.id}`} className="group w-full">
+    <Link to={`/heroes/${hero.id}`} className="group flex justify-center">
       <div 
-        className="group relative rounded-lg transition-all duration-200 hover:scale-105 hover:z-20 cursor-pointer bg-blue-900 w-full aspect-video border-2 md:border-4 border-blue-500 hover:border-blue-300"
+        className="group relative rounded-lg transition-all duration-200 hover:scale-105 hover:z-20 cursor-pointer bg-blue-900"
         style={{ 
+          width: '100%',
+          maxWidth: '140px',
+          aspectRatio: '5/6',
+          border: '2px solid #3b82f6',
           overflow: 'hidden',
           position: 'relative'
         }}
