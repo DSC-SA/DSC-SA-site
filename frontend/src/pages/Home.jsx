@@ -80,7 +80,7 @@ export default function Home() {
             <p className="text-gray-400 mt-4">Loading heroes...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-1 sm:gap-2 md:gap-3">
+            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-1 sm:gap-2 md:gap-3">
             {heroes.map(hero => (
               <Link 
                 key={hero.id} 

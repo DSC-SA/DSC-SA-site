@@ -25,7 +25,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden lg:flex" style={{ gap: '8px', alignItems: 'center' }}>
+          <div className="hidden md:flex" style={{ gap: '8px', alignItems: 'center' }}>
             <Link to="/" style={{ 
               textDecoration: 'none',
               padding: '6px 14px',
