@@ -34,21 +34,20 @@ const register = async (req, res) => {
     const verificationCode = generateVerificationCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Create user (not verified yet)
+    // Create user (auto-verified for email registration)
     const result = await pool.query(
-      `INSERT INTO users (username, email, password_hash, verification_code, verification_code_expires, auth_method)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO users (username, email, password_hash, verification_code, verification_code_expires, auth_method, verified, email_verified)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id, username, email`,
-      [username, email, passwordHash, verificationCode, expiresAt, 'email']
+      [username, email, passwordHash, verificationCode, expiresAt, 'email', true, true]
     );
 
-    // Send verification email in the background (don't wait for it)
-    sendVerificationEmail(email, verificationCode, username).catch(err => {
-      console.error('Failed to send verification email:', err.message);
-    });
+    // Generate JWT immediately
+    const token = jwt.sign({ id: result.rows[0].id, username: result.rows[0].username }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
-      message: 'Registration initiated. Check your email for verification code.',
+      message: 'Registration successful! You are now logged in.',
+      token,
       userId: result.rows[0].id,
       username: result.rows[0].username,
       email: result.rows[0].email

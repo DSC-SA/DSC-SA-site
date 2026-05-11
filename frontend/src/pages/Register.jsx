@@ -71,10 +71,27 @@ export default function Register() {
         password: formData.password
       });
 
-      if (response.data.message) {
-        // Move to verification step
-        setStep(2);
-        setAuthMethod('email');
+      if (response.data.token) {
+        // Store token and user data
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('token', response.data.token);
+        if (response.data) {
+          localStorage.setItem('user', JSON.stringify({
+            id: response.data.userId,
+            username: response.data.username,
+            email: response.data.email
+          }));
+        }
+        
+        // Update auth context
+        login({ 
+          id: response.data.userId,
+          username: response.data.username, 
+          email: response.data.email 
+        }, response.data.token);
+        
+        // Redirect to home
+        navigate('/');
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed. Try again.');
