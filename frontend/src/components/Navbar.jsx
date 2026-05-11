@@ -25,13 +25,13 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden md:flex" style={{ gap: '8px', alignItems: 'center' }}>
+          <div className="hidden md:flex" style={{ gap: '4px', alignItems: 'center' }}>
             <Link to="/" style={{ 
               textDecoration: 'none',
-              padding: '6px 14px',
+              padding: '3px 8px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.75rem',
+              fontSize: '0.6rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               borderRadius: '9999px',
@@ -54,13 +54,13 @@ export default function Navbar() {
             </Link>
             <Link to="/heroes" style={{ 
               textDecoration: 'none',
-              padding: '6px 14px',
+              padding: '3px 8px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.75rem',
+              fontSize: '0.6rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              borderRadius: '9999py',
+              borderRadius: '9999px',
               border: '1px solid rgba(34, 211, 238, 0.4)',
               whiteSpace: 'nowrap',
               transition: 'all 0.3s ease',
@@ -80,10 +80,10 @@ export default function Navbar() {
             </Link>
             <Link to="/events" style={{ 
               textDecoration: 'none',
-              padding: '6px 14px',
+              padding: '3px 8px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.75rem',
+              fontSize: '0.6rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               borderRadius: '9999px',
@@ -106,10 +106,10 @@ export default function Navbar() {
             </Link>
             <Link to="/matches" style={{ 
               textDecoration: 'none',
-              padding: '6px 14px',
+              padding: '3px 8px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.75rem',
+              fontSize: '0.6rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               borderRadius: '9999px',
@@ -132,10 +132,10 @@ export default function Navbar() {
             </Link>
             <Link to="/members" style={{ 
               textDecoration: 'none',
-              padding: '4px 10px',
+              padding: '3px 8px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.65rem',
+              fontSize: '0.6rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               borderRadius: '9999px',

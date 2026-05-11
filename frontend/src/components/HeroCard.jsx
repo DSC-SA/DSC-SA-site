@@ -26,13 +26,15 @@ export default function HeroCard({ hero }) {
   return (
     <Link to={`/heroes/${hero.id}`} className="group">
       <div 
-        className="group relative rounded-lg transition-all duration-200 hover:scale-105 hover:z-20 cursor-pointer bg-blue-900"
+        className="group relative rounded-lg transition-all duration-200 hover:scale-110 hover:z-20 cursor-pointer bg-blue-900"
         style={{ 
           width: '100%',
-          maxWidth: '100%',
-          border: '2px solid #3b82f6',
+          height: '100%',
+          border: '1.5px solid #3b82f6',
           overflow: 'hidden',
-          position: 'relative'
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column'
         }}
       >
         
@@ -59,8 +61,8 @@ export default function HeroCard({ hero }) {
         )}
 
         {/* Hero Name - Bottom Display */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 z-10">
-          <p className="text-white font-bold text-xs text-center leading-tight line-clamp-2">{hero.name}</p>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent px-1 py-1.5 z-10">
+          <p className="text-white font-bold text-xs text-center leading-tight line-clamp-1" style={{ fontSize: '0.65rem' }}>{hero.name}</p>
         </div>
       </div>
     </Link>
