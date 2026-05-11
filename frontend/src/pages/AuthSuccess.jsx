@@ -13,16 +13,12 @@ export default function AuthSuccess() {
     const username = searchParams.get('username');
     const email = searchParams.get('email');
 
-    if (token) {
-      // Store token and user data
-      localStorage.setItem('authToken', token);
-      localStorage.setItem('user', JSON.stringify({
-        username,
-        email
-      }));
-
-      // Update auth context
-      login({ username, email });
+    if (token && username && email) {
+      // Store token and user data via AuthContext
+      login(
+        { username, email },
+        token
+      );
 
       // Redirect to home
       setTimeout(() => navigate('/'), 500);

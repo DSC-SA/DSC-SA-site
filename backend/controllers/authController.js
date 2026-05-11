@@ -217,7 +217,16 @@ const logout = (req, res) => {
 // Google OAuth - Redirect to Google
 const googleAuth = (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback';
+  
+  // Construct redirect URI dynamically based on environment
+  let redirectUri = process.env.GOOGLE_REDIRECT_URI;
+  if (!redirectUri) {
+    // Build from request headers for production support
+    const protocol = req.protocol || 'https';
+    const host = req.get('host');
+    redirectUri = `${protocol}://${host}/api/auth/google/callback`;
+  }
+  
   const scope = 'profile email';
   const googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
   
@@ -229,10 +238,18 @@ const googleAuthCallback = async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
-    return res.redirect(`${process.env.FRONTEND_URL}/login?error=no_code`);
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_code`);
   }
 
   try {
+    // Construct redirect URI dynamically (must match the one sent to Google)
+    let redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    if (!redirectUri) {
+      const protocol = req.protocol || 'https';
+      const host = req.get('host');
+      redirectUri = `${protocol}://${host}/api/auth/google/callback`;
+    }
+
     // Exchange code for access token
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
@@ -240,7 +257,7 @@ const googleAuthCallback = async (req, res) => {
       body: new URLSearchParams({
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback',
+        redirect_uri: redirectUri,
         code,
         grant_type: 'authorization_code'
       })
@@ -248,7 +265,8 @@ const googleAuthCallback = async (req, res) => {
 
     const tokenData = await tokenResponse.json();
     if (tokenData.error) {
-      return res.redirect(`${process.env.FRONTEND_URL}/login?error=${tokenData.error}`);
+      console.error('Google token error:', tokenData.error);
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=${tokenData.error}`);
     }
 
     // Get user info
@@ -294,10 +312,12 @@ const googleAuthCallback = async (req, res) => {
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     // Redirect with token
-    res.redirect(`${process.env.FRONTEND_URL}/auth/success?token=${token}&username=${user.username}&email=${user.email}`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontendUrl}/auth/success?token=${token}&username=${user.username}&email=${user.email}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
-    res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontendUrl}/login?error=auth_failed`);
   }
 };
 
