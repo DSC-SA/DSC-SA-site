@@ -114,7 +114,7 @@ export default function Admin() {
     setSelectedItemId(itemId);
     
     if (itemId) {
-      const item = items.find(i => i.id === parseInt(itemId));
+      const item = items.find(i => String(i.id) === String(itemId));
       setSelectedItem(item);
     } else {
       setSelectedItem(null);
@@ -146,7 +146,8 @@ export default function Admin() {
     try {
       setItemLoading(true);
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-      const res = await fetch(`${API_BASE_URL}/api/items/${selectedItemId}/image`, {
+      const itemIdNum = parseInt(selectedItemId);
+      const res = await fetch(`${API_BASE_URL}/api/items/${itemIdNum}/image`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -764,11 +765,15 @@ export default function Admin() {
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-yellow-400 border-opacity-50 focus:border-yellow-300 focus:outline-none transition"
               >
                 <option value="">-- Choose an Item --</option>
-                {items.map(item => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
+                {items && items.length > 0 ? (
+                  items.map(item => (
+                    <option key={item.id} value={String(item.id)}>
+                      {item.name}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>Loading items...</option>
+                )}
               </select>
 
               {selectedItem && (
