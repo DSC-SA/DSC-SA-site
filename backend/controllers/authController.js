@@ -227,7 +227,8 @@ const googleAuth = (req, res) => {
   let redirectUri = process.env.GOOGLE_REDIRECT_URI;
   if (!redirectUri) {
     // Build from request headers for production support
-    const protocol = req.protocol || 'https';
+    // Always use HTTPS in production
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : (req.protocol || 'http');
     const host = req.get('host');
     redirectUri = `${protocol}://${host}/api/auth/google/callback`;
   }
@@ -250,7 +251,8 @@ const googleAuthCallback = async (req, res) => {
     // Construct redirect URI dynamically (must match the one sent to Google)
     let redirectUri = process.env.GOOGLE_REDIRECT_URI;
     if (!redirectUri) {
-      const protocol = req.protocol || 'https';
+      // Always use HTTPS in production
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : (req.protocol || 'http');
       const host = req.get('host');
       redirectUri = `${protocol}://${host}/api/auth/google/callback`;
     }
