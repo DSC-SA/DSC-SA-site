@@ -9,6 +9,7 @@
 html, body {
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -485,6 +486,19 @@ a:hover {
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+/* Responsive Hero Card Aspect Ratio */
+/* Mobile: Square cards (1:1) */
+.bg-blue-900 {
+  aspect-ratio: 1 / 1;
+}
+
+/* Desktop (md and up): Portrait aspect ratio (120:144) */
+@media (min-width: 768px) {
+  .bg-blue-900 {
+    aspect-ratio: 120 / 144;
   }
 }
 

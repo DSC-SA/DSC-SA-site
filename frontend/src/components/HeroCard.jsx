@@ -30,7 +30,6 @@ export default function HeroCard({ hero }) {
         style={{ 
           width: '100%',
           maxWidth: '100%',
-          aspectRatio: '120/144',
           border: '2px solid #3b82f6',
           overflow: 'hidden',
           position: 'relative'

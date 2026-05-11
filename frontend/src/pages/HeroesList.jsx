@@ -56,12 +56,12 @@ export default function HeroesList() {
       </div>
 
       {/* Role Filter Tabs */}
-      <div className="mb-8 flex flex-wrap gap-2">
+      <div className="mb-8 flex flex-wrap gap-1 sm:gap-2">
         {roles.map(role => (
           <button
             key={role}
             onClick={() => setSelectedRole(role)}
-            className={`px-4 py-2 font-bold text-sm transition-all duration-200 ${
+            className={`px-2 sm:px-4 py-1 sm:py-2 font-bold text-xs sm:text-sm transition-all duration-200 ${
               selectedRole === role
                 ? 'bg-white text-gray-900 border border-white'
                 : 'bg-transparent border border-gray-400 text-gray-300 hover:border-gray-300'
