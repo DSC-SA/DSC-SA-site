@@ -291,22 +291,24 @@ const googleAuthCallback = async (req, res) => {
     );
 
     let user = userResult.rows[0];
+    let isNewUser = false;
 
     if (!user) {
-      // Create new user
-      const username = name.replace(/\s+/g, '').substring(0, 50);
+      // Create new user with temporary username
+      const tempUsername = `user_${Date.now()}`;
 
       const createResult = await pool.query(
         `INSERT INTO users (username, email, google_id, avatar, verified, email_verified, auth_method)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
          RETURNING id, username, email`,
-        [username, email, id, picture, true, true, 'google']
+        [tempUsername, email, id, picture, true, true, 'google']
       );
 
       user = createResult.rows[0];
+      isNewUser = true;
 
       // Send welcome email in the background
-      sendWelcomeEmail(email, username).catch(err => {
+      sendWelcomeEmail(email, name).catch(err => {
         console.error('Failed to send welcome email:', err.message);
       });
     } else if (!user.google_id) {
@@ -320,13 +322,61 @@ const googleAuthCallback = async (req, res) => {
     // Generate JWT
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    // Redirect with token
+    // Redirect with token and newUser flag
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-    res.redirect(`${frontendUrl}/auth/success?token=${token}&username=${user.username}&email=${user.email}`);
+    const newUserParam = isNewUser ? '&newUser=true' : '';
+    res.redirect(`${frontendUrl}/auth/success?token=${token}&username=${user.username}&email=${user.email}${newUserParam}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontendUrl}/login?error=auth_failed`);
+  }
+};
+
+// Update username
+const updateUsername = async (req, res) => {
+  const { username } = req.body;
+  const userId = req.user?.id;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    if (!username || username.trim().length === 0) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    if (username.length < 3 || username.length > 50) {
+      return res.status(400).json({ error: 'Username must be 3-50 characters' });
+    }
+
+    // Check if username already exists
+    const existing = await pool.query(
+      'SELECT id FROM users WHERE username = $1 AND id != $2',
+      [username, userId]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ error: 'Username already taken' });
+    }
+
+    // Update username
+    const result = await pool.query(
+      'UPDATE users SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, username, email',
+      [username, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: 'Username updated successfully',
+      user: result.rows[0]
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -337,5 +387,6 @@ module.exports = {
   logout,
   googleCallback,
   googleAuth,
-  googleAuthCallback
+  googleAuthCallback,
+  updateUsername
 };
