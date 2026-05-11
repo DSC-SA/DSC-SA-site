@@ -80,7 +80,7 @@ export default function Home() {
             <p className="text-gray-400 mt-4">Loading heroes...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-1 sm:gap-2 md:gap-3">
             {heroes.map(hero => (
               <Link 
                 key={hero.id} 
@@ -88,9 +88,9 @@ export default function Home() {
                 className="group"
                 style={{ textDecoration: 'none' }}
               >
-                <div className="flex flex-col items-center gap-1 h-full">
+                <div className="flex flex-col items-center gap-0.5 h-full">
                   <div 
-                    className="w-full aspect-square rounded-lg flex items-center justify-center font-bold text-sm sm:text-base md:text-lg text-white hover:scale-105 transition duration-300 shadow-lg hover:shadow-cyan-500/50 max-w-16 sm:max-w-14 md:max-w-16"
+                    className="w-full aspect-square rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm text-white hover:scale-110 transition duration-300 shadow-lg hover:shadow-cyan-500/50"
                     style={{
                       background: hero.role === 'Tank' ? 'linear-gradient(to bottom, #4f46e5, #3730a3)' :
                                   hero.role === 'Fighter' ? 'linear-gradient(to bottom, #dc2626, #991b1b)' :
@@ -103,7 +103,7 @@ export default function Home() {
                   >
                     {hero.role?.[0]?.toUpperCase() || '?'}
                   </div>
-                  <p className="text-center text-xs font-semibold text-gray-300 group-hover:text-cyan-400 transition line-clamp-2 max-w-12">
+                  <p className="text-center text-xs font-semibold text-gray-300 group-hover:text-cyan-400 transition line-clamp-2 text-xs max-w-10">
                     {hero.name}
                   </p>
                 </div>

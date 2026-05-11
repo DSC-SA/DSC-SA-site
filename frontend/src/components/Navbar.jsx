@@ -25,7 +25,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden sm:flex" style={{ gap: '8px', alignItems: 'center' }}>
+          <div className="hidden lg:flex" style={{ gap: '8px', alignItems: 'center' }}>
             <Link to="/" style={{ 
               textDecoration: 'none',
               padding: '6px 14px',
@@ -132,10 +132,10 @@ export default function Navbar() {
             </Link>
             <Link to="/members" style={{ 
               textDecoration: 'none',
-              padding: '6px 14px',
+              padding: '4px 10px',
               color: '#d1d5db',
               fontWeight: 'bold',
-              fontSize: '0.75rem',
+              fontSize: '0.65rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               borderRadius: '9999px',
