@@ -42,8 +42,10 @@ const register = async (req, res) => {
       [username, email, passwordHash, verificationCode, expiresAt, 'email']
     );
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationCode, username);
+    // Send verification email in the background (don't wait for it)
+    sendVerificationEmail(email, verificationCode, username).catch(err => {
+      console.error('Failed to send verification email:', err.message);
+    });
 
     res.status(201).json({
       message: 'Registration initiated. Check your email for verification code.',
@@ -92,8 +94,10 @@ const verifyEmailCode = async (req, res) => {
       [user.id]
     );
 
-    // Send welcome email
-    await sendWelcomeEmail(email, user.username);
+    // Send welcome email in the background
+    sendWelcomeEmail(email, user.username).catch(err => {
+      console.error('Failed to send welcome email:', err.message);
+    });
 
     // Generate JWT
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -139,8 +143,10 @@ const googleCallback = async (req, res) => {
 
       user = createResult.rows[0];
 
-      // Send welcome email
-      await sendWelcomeEmail(email, username);
+      // Send welcome email in the background
+      sendWelcomeEmail(email, username).catch(err => {
+        console.error('Failed to send welcome email:', err.message);
+      });
     } else if (!user.google_id) {
       // Link Google to existing email account
       await pool.query(
@@ -298,8 +304,10 @@ const googleAuthCallback = async (req, res) => {
 
       user = createResult.rows[0];
 
-      // Send welcome email
-      await sendWelcomeEmail(email, username);
+      // Send welcome email in the background
+      sendWelcomeEmail(email, username).catch(err => {
+        console.error('Failed to send welcome email:', err.message);
+      });
     } else if (!user.google_id) {
       // Link Google to existing email account
       await pool.query(
