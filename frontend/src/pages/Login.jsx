@@ -33,7 +33,8 @@ export default function Login() {
 
   // Handle Google Login
   const handleGoogleLogin = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // Use current domain (auto-detects localhost or production)
+    const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
     window.location.href = `${apiUrl}/api/auth/google`;
   };
 

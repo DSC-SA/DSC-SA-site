@@ -21,8 +21,8 @@ export default function Register() {
 
   // Handle Google OAuth
   const handleGoogleLogin = () => {
-    // Redirect to backend Google OAuth endpoint immediately (no loading state)
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // Use current domain (auto-detects localhost or production)
+    const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
     window.location.href = `${apiUrl}/api/auth/google`;
   };
 
