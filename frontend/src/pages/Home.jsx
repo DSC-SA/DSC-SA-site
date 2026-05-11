@@ -32,18 +32,18 @@ export default function Home() {
   return (
     <Layout>
       {/* Epic Hero Section */}
-      <section className="mb-24 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <section className="mb-12 sm:mb-24 py-12 sm:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
           <div className="slide-down">
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 leading-tight">
               Welcome to <span className="gradient-gaming logo-animated">DSC-SA</span>
               <br />
               <span className="text-white">Community Hub</span>
             </h1>
-            <div className="text-6xl mb-8 wave-emoji" style={{display: 'inline-block'}}>
+            <div className="text-4xl sm:text-6xl mb-6 sm:mb-8 wave-emoji" style={{display: 'inline-block'}}>
               👋
             </div>
-            <div className="flex gap-6 flex-wrap">
+            <div className="flex gap-3 sm:gap-6 flex-wrap">
               <Link to="/heroes" className="btn-primary">
                 Explore Heroes
               </Link>
@@ -66,10 +66,10 @@ export default function Home() {
       </section>
 
       {/* Featured Heroes Section */}
-      <section className="mb-24">
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">Featured Heroes</h2>
-          <p className="text-gray-300 text-lg font-semibold">Explore the heroes that shape the meta</p>
+      <section className="mb-12 sm:mb-24">
+        <div className="mb-8 sm:mb-16">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 text-white">Featured Heroes</h2>
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">Explore the heroes that shape the meta</p>
         </div>
         
         {loading ? (
@@ -80,7 +80,7 @@ export default function Home() {
             <p className="text-gray-400 mt-4">Loading heroes...</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '8px' }}>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
             {heroes.map(hero => (
               <Link 
                 key={hero.id} 
@@ -88,9 +88,9 @@ export default function Home() {
                 className="group"
                 style={{ textDecoration: 'none' }}
               >
-                <div className="flex flex-col items-center gap-2 h-full">
+                <div className="flex flex-col items-center gap-1 h-full">
                   <div 
-                    className="w-14 h-16 rounded-lg flex items-center justify-center font-bold text-lg text-white hover:scale-110 transition duration-300 shadow-lg hover:shadow-cyan-500/50"
+                    className="w-full aspect-square rounded-lg flex items-center justify-center font-bold text-sm sm:text-base md:text-lg text-white hover:scale-105 transition duration-300 shadow-lg hover:shadow-cyan-500/50 max-w-16 sm:max-w-14 md:max-w-16"
                     style={{
                       background: hero.role === 'Tank' ? 'linear-gradient(to bottom, #4f46e5, #3730a3)' :
                                   hero.role === 'Fighter' ? 'linear-gradient(to bottom, #dc2626, #991b1b)' :
@@ -103,7 +103,7 @@ export default function Home() {
                   >
                     {hero.role?.[0]?.toUpperCase() || '?'}
                   </div>
-                  <p className="text-center text-xs font-semibold text-gray-300 group-hover:text-cyan-400 transition line-clamp-2 max-w-14">
+                  <p className="text-center text-xs font-semibold text-gray-300 group-hover:text-cyan-400 transition line-clamp-2 max-w-12">
                     {hero.name}
                   </p>
                 </div>
@@ -112,8 +112,8 @@ export default function Home() {
           </div>
         )}
 
-        <div className="mt-12 text-center">
-          <Link to="/heroes" className="btn-primary text-lg px-8 py-4">
+        <div className="mt-8 sm:mt-12 text-center">
+          <Link to="/heroes" className="btn-primary text-sm sm:text-lg px-4 sm:px-8 py-2 sm:py-4">
             View All Heroes
           </Link>
         </div>
@@ -122,22 +122,22 @@ export default function Home() {
       {/* Stats Section - REMOVED */}
 
       {/* Upcoming Events Section */}
-      <section className="mb-24">
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-black mb-4 text-white">Upcoming Events</h2>
-          <p className="text-gray-300 text-lg font-semibold">Join the community and showcase your skills</p>
+      <section className="mb-12 sm:mb-24">
+        <div className="mb-8 sm:mb-16">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 text-white">Upcoming Events</h2>
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">Join the community and showcase your skills</p>
         </div>
         
         {events.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
             {events.map(event => (
               <div key={event.id} className="card-gaming">
                 <div className="mb-4">
-                  <h3 className="text-2xl font-bold mb-2 text-white">{event.name}</h3>
-                  <p className="text-cyan-400 font-semibold text-sm mb-4">{event.date || 'TBA'}</p>
+                  <h3 className="text-lg sm:text-2xl font-bold mb-2 text-white">{event.name}</h3>
+                  <p className="text-cyan-400 font-semibold text-xs sm:text-sm mb-4">{event.date || 'TBA'}</p>
                 </div>
-                <p className="text-gray-300 mb-6">{event.description}</p>
-                <Link to="/events" className="btn-primary text-sm inline-block">
+                <p className="text-gray-300 mb-6 text-sm sm:text-base">{event.description}</p>
+                <Link to="/events" className="btn-primary text-xs sm:text-sm inline-block py-1.5 sm:py-2 px-3 sm:px-4">
                   Learn More
                 </Link>
               </div>
@@ -151,33 +151,33 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="mb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="mb-12 sm:mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
           <div className="card-gaming text-center group hover:scale-105 transition">
             <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-2xl font-black mb-3 text-white">130+ Heroes</h3>
-            <p className="text-gray-400">Diverse playstyles and roles</p>
+            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">130+ Heroes</h3>
+            <p className="text-gray-400 text-sm sm:text-base">Diverse playstyles and roles</p>
           </div>
           <div className="card-gaming text-center group hover:scale-105 transition">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-2xl font-black mb-3 text-white">Smart Builds</h3>
-            <p className="text-gray-400">Share and discover strategies</p>
+            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">Smart Builds</h3>
+            <p className="text-gray-400 text-sm sm:text-base">Share and discover strategies</p>
           </div>
           <div className="card-gaming text-center group hover:scale-105 transition">
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-2xl font-black mb-3 text-white">Live Events</h3>
-            <p className="text-gray-400">Compete in matches</p>
+            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">Live Events</h3>
+            <p className="text-gray-400 text-sm sm:text-base">Compete in matches</p>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-3xl border border-cyan-500/30 backdrop-blur text-center">
-        <h2 className="text-4xl md:text-5xl font-black mb-6 text-white">Ready to Dominate?</h2>
-        <p className="text-gray-300 text-lg mb-10 font-semibold max-w-2xl mx-auto">
+      <section className="py-12 sm:py-20 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-2xl sm:rounded-3xl border border-cyan-500/30 backdrop-blur text-center">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 text-white">Ready to Dominate?</h2>
+        <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-6 sm:mb-10 font-semibold max-w-2xl mx-auto px-4">
           Join our thriving community of MLBB players and elevate your gameplay to the next level
         </p>
-        <Link to="/register" className="btn-primary text-lg px-10 py-4 inline-block">
+        <Link to="/register" className="btn-primary text-sm sm:text-lg px-6 sm:px-10 py-2 sm:py-4 inline-block">
           Start Your Journey
         </Link>
       </section>
