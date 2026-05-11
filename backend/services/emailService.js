@@ -9,8 +9,18 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Test the transporter on startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Email transporter error:', error.message);
+  } else {
+    console.log('✅ Email transporter ready');
+  }
+});
+
 const sendVerificationEmail = async (email, code, username) => {
   try {
+    console.log(`📧 Sending verification email to ${email} for user ${username}`);
     const mailOptions = {
       from: `"DSC-SA Community" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -62,10 +72,11 @@ const sendVerificationEmail = async (email, code, username) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Verification email sent:', info.response);
+    console.log('✅ Verification email sent to', email, ':', info.response);
     return { success: true, message: 'Verification code sent to email' };
   } catch (err) {
-    console.error('❌ Error sending email:', err.message);
+    console.error('❌ Error sending verification email to', email, ':', err.message);
+    console.error('Full error:', err);
     return { success: false, error: err.message };
   }
 };
