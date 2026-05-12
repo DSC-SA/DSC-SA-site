@@ -886,8 +886,6 @@ export default function Admin() {
                   );
                 })}
               </div>
-                ))}
-              </div>
             </div>
           ) : (
             <p className="text-gray-400 mt-6">No items available.</p>
