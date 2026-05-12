@@ -108,6 +108,8 @@ export const buildsAPI = {
 export const commentsAPI = {
   getForHero: (heroId) => API.get(`/comments/${heroId}`),
   add: (data) => API.post('/comments', data),
+  like: (commentId) => API.post(`/comments/${commentId}/like`),
+  reply: (commentId, data) => API.post(`/comments/${commentId}/reply`, data),
   delete: (commentId) => API.delete(`/comments/${commentId}`)
 };
 

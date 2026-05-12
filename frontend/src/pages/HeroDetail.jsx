@@ -19,6 +19,8 @@ export default function HeroDetail() {
   const [showBuildForm, setShowBuildForm] = useState(false);
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const [newComment, setNewComment] = useState('');
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState('');
   const [newBuild, setNewBuild] = useState({ buildName: '', description: '', selectedItems: [] });
   const [itemsGalleryOpen, setItemsGalleryOpen] = useState(false);
 
@@ -65,6 +67,41 @@ export default function HeroDetail() {
       setComments(res.data);
     } catch (err) {
       console.error('Error adding comment:', err);
+    }
+  };
+
+  const handleLikeComment = async (commentId, currentLikes) => {
+    try {
+      await commentsAPI.like(commentId);
+      // Update the like count locally
+      setComments(comments.map(c => 
+        c.id === commentId ? { ...c, likes: currentLikes + 1 } : c
+      ));
+    } catch (err) {
+      console.error('Error liking comment:', err);
+    }
+  };
+
+  const handleReply = async (commentId) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (!replyText.trim()) return;
+
+    try {
+      const res = await commentsAPI.reply(commentId, {
+        heroId: parseInt(id),
+        content: replyText
+      });
+      setReplyText('');
+      setReplyingTo(null);
+      // Refresh comments
+      const commentsRes = await commentsAPI.getForHero(id);
+      setComments(commentsRes.data);
+    } catch (err) {
+      console.error('Error adding reply:', err);
     }
   };
 
@@ -430,88 +467,217 @@ export default function HeroDetail() {
         {/* Comments List */}
         {comments.length > 0 ? (
           <div className="space-y-4">
-            {comments.map(comment => (
-              <div key={comment.id} className="card-gaming p-5 hover:border-purple-400 transition">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedUserProfile(comment)}
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        borderRadius: '50%',
-                        background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                        padding: '1.5px',
-                        animation: 'spin 4s linear infinite',
-                        flexShrink: 0,
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'transform 0.2s',
-                      }}
-                      className="hover:scale-110"
-                    >
-                      <style>{`
-                        @keyframes spin {
-                          from { filter: hue-rotate(0deg); }
-                          to { filter: hue-rotate(360deg); }
-                        }
-                      `}</style>
-                      <div style={{
-                        width: '100%',
-                        height: '100%',
-                        borderRadius: '50%',
-                        backgroundColor: '#111827',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden'
-                      }}>
-                        {comment.avatar ? (
-                          <img 
-                            src={getImageUrl(comment.avatar)} 
-                            alt={comment.username} 
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              objectPosition: 'center'
-                            }}
-                          />
-                        ) : (
-                          <span style={{
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            color: '#22d3ee'
-                          }}>{comment.username?.charAt(0)?.toUpperCase()}</span>
-                        )}
+            {comments
+              .filter(comment => !comment.parent_id) // Only show top-level comments
+              .map(comment => {
+                const replies = comments.filter(c => c.parent_id === comment.id); // Get replies for this comment
+                
+                return (
+                  <div key={comment.id} className="card-gaming p-5 hover:border-purple-400 transition">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUserProfile(comment)}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                            padding: '1.5px',
+                            animation: 'spin 4s linear infinite',
+                            flexShrink: 0,
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s',
+                          }}
+                          className="hover:scale-110"
+                        >
+                          <style>{`
+                            @keyframes spin {
+                              from { filter: hue-rotate(0deg); }
+                              to { filter: hue-rotate(360deg); }
+                            }
+                          `}</style>
+                          <div style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            backgroundColor: '#111827',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                          }}>
+                            {comment.avatar ? (
+                              <img 
+                                src={getImageUrl(comment.avatar)} 
+                                alt={comment.username} 
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  objectPosition: 'center'
+                                }}
+                              />
+                            ) : (
+                              <span style={{
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                color: '#22d3ee'
+                              }}>{comment.username?.charAt(0)?.toUpperCase()}</span>
+                            )}
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedUserProfile(comment)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            textAlign: 'left'
+                          }}
+                          className="hover:opacity-80 transition"
+                        >
+                          <h4 className="font-bold text-cyan-400 hover:text-cyan-300 transition">{comment.username}</h4>
+                          <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
+                        </button>
                       </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedUserProfile(comment)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: 0,
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                      className="hover:opacity-80 transition"
-                    >
-                      <h4 className="font-bold text-cyan-400 hover:text-cyan-300 transition">{comment.username}</h4>
-                      <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
-                    </button>
+                      <span className="bg-purple-600 bg-opacity-30 px-2 py-1 rounded text-xs text-purple-300">Member</span>
+                    </div>
+                    <p className="text-gray-300 leading-relaxed">{comment.content}</p>
+                    <div className="mt-3 flex gap-4 text-sm text-gray-500">
+                      <button 
+                        type="button"
+                        onClick={() => handleLikeComment(comment.id, comment.likes)}
+                        className="hover:text-pink-400 transition"
+                      >
+                        ❤️ {comment.likes}
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                        className="hover:text-cyan-400 transition"
+                      >
+                        💬 Reply
+                      </button>
+                    </div>
+
+                    {/* Reply Form */}
+                    {replyingTo === comment.id && (
+                      <div className="mt-4 pt-4 border-t border-gray-700">
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Write a reply..."
+                          className="w-full bg-gray-800 bg-opacity-50 p-3 rounded-lg border border-purple-500 border-opacity-30 focus:outline-none focus:border-cyan-400 focus:bg-opacity-100 transition h-20 mb-3"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleReply(comment.id)}
+                            className="btn-primary text-sm py-2 px-4"
+                          >
+                            ✈️ Reply
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReplyingTo(null);
+                              setReplyText('');
+                            }}
+                            className="card-gaming px-4 py-2 rounded text-sm border border-gray-600"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Replies */}
+                    {replies.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-gray-700 space-y-3">
+                        {replies.map(reply => (
+                          <div key={reply.id} className="ml-4 pl-4 border-l-2 border-purple-500 border-opacity-30">
+                            <div className="flex items-center gap-2 mb-2">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedUserProfile(reply)}
+                                style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  borderRadius: '50%',
+                                  background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                                  padding: '1px',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  flexShrink: 0
+                                }}
+                              >
+                                <div style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  borderRadius: '50%',
+                                  backgroundColor: '#111827',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  overflow: 'hidden'
+                                }}>
+                                  {reply.avatar ? (
+                                    <img 
+                                      src={getImageUrl(reply.avatar)} 
+                                      alt={reply.username}
+                                      style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                      }}
+                                    />
+                                  ) : (
+                                    <span style={{
+                                      fontSize: '9px',
+                                      fontWeight: 'bold',
+                                      color: '#22d3ee'
+                                    }}>{reply.username?.charAt(0)?.toUpperCase()}</span>
+                                  )}
+                                </div>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedUserProfile(reply)}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                  textAlign: 'left'
+                                }}
+                                className="hover:opacity-80 transition"
+                              >
+                                <span className="text-cyan-400 text-sm font-bold hover:text-cyan-300">{reply.username}</span>
+                              </button>
+                            </div>
+                            <p className="text-gray-300 text-sm leading-relaxed">{reply.content}</p>
+                            <div className="mt-2 flex gap-3 text-xs text-gray-500">
+                              <button
+                                type="button"
+                                onClick={() => handleLikeComment(reply.id, reply.likes)}
+                                className="hover:text-pink-400 transition"
+                              >
+                                ❤️ {reply.likes}
+                              </button>
+                              <span className="text-gray-600">📅 {new Date(reply.created_at).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <span className="bg-purple-600 bg-opacity-30 px-2 py-1 rounded text-xs text-purple-300">Member</span>
-                </div>
-                <p className="text-gray-300 leading-relaxed">{comment.content}</p>
-                <div className="mt-3 flex gap-4 text-sm text-gray-500">
-                  <button className="hover:text-pink-400 transition">❤️ {comment.likes}</button>
-                  <button className="hover:text-cyan-400 transition">💬 Reply</button>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         ) : (
           <div className="card-gaming p-8 text-center text-gray-400">
