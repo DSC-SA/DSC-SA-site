@@ -38,25 +38,30 @@ export default function Events() {
       ) : events.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {events.map(event => (
-            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-col lg:flex-row">
+            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-col">
               {event.image && (
-                <div className="relative w-full lg:w-1/2 h-48 lg:h-auto overflow-hidden bg-gray-800 flex-shrink-0">
+                <div className="relative flex-shrink-0">
                   {event.image.startsWith('data:video/') ? (
-                    <video
-                      src={event.image}
-                      autoPlay
-                      loop
-                      muted
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <div className="relative w-80 h-44 overflow-hidden bg-gray-800 rounded-lg">
+                      <video
+                        src={event.image}
+                        autoPlay
+                        loop
+                        muted
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
+                    </div>
                   ) : (
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <div className="relative w-80 h-44 overflow-hidden bg-gray-800 rounded-lg">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
+                    </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
                 </div>
               )}
               
