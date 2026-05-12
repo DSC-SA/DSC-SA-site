@@ -38,9 +38,9 @@ export default function Events() {
       ) : events.length > 0 ? (
         <div className="grid grid-cols-1 gap-8">
           {events.map(event => (
-            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group inline-block !w-32 !h-32">
+            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-row !w-96 !h-32 !max-h-32">
               {event.image && (
-                <div className="relative !w-32 !h-32 overflow-hidden bg-gray-800">
+                <div className="relative !w-48 !h-32 flex-shrink-0 overflow-hidden bg-gray-800 !max-h-32">
                   {event.image.startsWith('data:video/') ? (
                     <>
                       <video
@@ -50,6 +50,7 @@ export default function Events() {
                         muted
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
                     </>
                   ) : (
                     <>
@@ -58,15 +59,28 @@ export default function Events() {
                         alt={event.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
                     </>
                   )}
                 </div>
               )}
-              {!event.image && (
-                <div className="!w-32 !h-32 bg-gray-800 flex items-center justify-center">
-                  <span className="text-3xl">🎮</span>
+              
+              <div className="p-3 flex-1 flex flex-col justify-between overflow-hidden">
+                <div className="min-w-0">
+                  <h3 className="text-sm font-bold text-white group-hover:text-cyan-400 transition line-clamp-1">{event.title}</h3>
+                  <p className="text-gray-300 line-clamp-1 text-xs leading-tight">{event.description}</p>
                 </div>
-              )}
+                
+                <div className="flex items-center gap-1 text-purple-400 font-semibold text-xs">
+                  <span>📅</span>
+                  <span className="line-clamp-1">{new Date(event.event_date).toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
