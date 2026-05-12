@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getImageUrl } from '../services/api';
 import '../styles/index.css';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -162,8 +162,16 @@ export default function Navbar() {
           <div className="hidden md:flex gap-2 lg:gap-3 items-center">
             {user ? (
               <div className="flex items-center gap-2 lg:gap-3">
-                <Link to="/profile" title={user.username} className="text-xl lg:text-2xl hover:scale-110 transition cursor-pointer">
-                  👤
+                <Link to="/profile" title={user.username} className="flex items-center justify-center hover:opacity-80 transition">
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
+                    <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
+                      {user.avatar ? (
+                        <img src={getImageUrl(user.avatar)} alt={user.username} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-xs lg:text-sm font-bold text-cyan-400">{user.username?.charAt(0)?.toUpperCase()}</span>
+                      )}
+                    </div>
+                  </div>
                 </Link>
                 <button onClick={handleLogout} className="text-gray-400 hover:text-cyan-400 text-xs lg:text-sm font-semibold transition">
                   Logout
@@ -181,17 +189,11 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-cyan-400 text-xl sm:text-2xl font-bold hover:text-purple-400 transition"
-          >
-            {mobileMenuOpen ? '✕' : '☰'}
-          </button>
+
         </div>
 
         {/* Mobile Navigation */}
-        {mobileMenuOpen && (
+        {false && (
           <div className="md:hidden pb-2 border-t border-cyan-500 border-opacity-30">
             <div className="flex flex-col gap-0 pt-2">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">Home</Link>

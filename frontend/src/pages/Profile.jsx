@@ -69,9 +69,7 @@ export default function Profile() {
         imgFormData.append('file', profileImage);
         imgFormData.append('folder', 'profiles');
 
-        const uploadRes = await api.post('/upload', imgFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const uploadRes = await api.post('/upload', imgFormData);
         avatarUrl = uploadRes.data.filePath;
       }
 
