@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { heroesAPI, matchesAPI, getImageUrl } from '../services/api';
+import { heroesAPI, matchesAPI, buildsAPI, getImageUrl } from '../services/api';
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -46,6 +46,10 @@ export default function Admin() {
   const [itemLoading, setItemLoading] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
 
+  // Builds state
+  const [allBuilds, setAllBuilds] = useState([]);
+  const [buildsLoading, setBuildsLoading] = useState(false);
+
   useEffect(() => {
     // Check if user is logged in via session storage
     const adminSession = sessionStorage.getItem('adminLoggedIn');
@@ -57,6 +61,7 @@ export default function Admin() {
       loadEvents();
       loadMatches();
       loadItems();
+      loadBuilds();
     }
   }, [navigate]);
 
@@ -119,6 +124,52 @@ export default function Admin() {
       setItems([]);
     } finally {
       setItemsLoading(false);
+    }
+  };
+
+  const loadBuilds = async () => {
+    try {
+      setBuildsLoading(true);
+      // Get all heroes first
+      const heroesRes = await heroesAPI.getAll();
+      const heroesData = heroesRes.data;
+      
+      // Collect all builds from all heroes
+      const allBuildsData = [];
+      for (const hero of heroesData) {
+        try {
+          const buildsRes = await buildsAPI.getForHero(hero.id);
+          if (buildsRes.data.userBuilds) {
+            allBuildsData.push(...buildsRes.data.userBuilds.map(build => ({ 
+              ...build, 
+              heroId: hero.id, 
+              heroName: hero.name 
+            })));
+          }
+        } catch (err) {
+          console.error(`Error loading builds for hero ${hero.id}:`, err);
+        }
+      }
+      setAllBuilds(allBuildsData);
+    } catch (err) {
+      console.error('Error loading builds:', err);
+      showMessage('Error loading builds: ' + err.message, 'error');
+      setAllBuilds([]);
+    } finally {
+      setBuildsLoading(false);
+    }
+  };
+
+  const handleDeleteBuild = async (buildId) => {
+    if (window.confirm('Are you sure you want to delete this build? This action cannot be undone.')) {
+      try {
+        await buildsAPI.delete(buildId);
+        showMessage('✅ Build deleted successfully!', 'success');
+        loadBuilds(); // Reload builds list
+      } catch (error) {
+        showMessage('Error deleting build: ' + error.message, 'error');
+        console.error('Delete error:', error);
+      }
     }
   };
 
@@ -876,6 +927,89 @@ export default function Admin() {
             </div>
           ) : (
             <p className="text-gray-400 mt-6">No items available.</p>
+          )}
+        </div>
+
+        {/* Community Builds Management */}
+        <div className="bg-gaming-dark rounded-lg p-8 border border-purple-400 border-opacity-30 mb-8">
+          <h2 className="text-3xl font-black text-white gradient-gaming mb-6">🎯 Community Builds Management</h2>
+          
+          {buildsLoading ? (
+            <p className="text-gray-400">Loading builds...</p>
+          ) : allBuilds.length > 0 ? (
+            <div className="space-y-4">
+              {allBuilds.map(build => (
+                <div key={build.id} className="bg-gray-800 rounded-lg p-4 border border-purple-400 border-opacity-20 hover:border-opacity-50 transition">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-purple-400">{build.build_name}</h3>
+                      <p className="text-sm text-gray-400">Hero: <span className="text-cyan-400">{build.heroName}</span></p>
+                      <p className="text-sm text-gray-400">Author: <span className="text-cyan-400">{build.username}</span></p>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex gap-2 mb-2">
+                        <span className="text-xs bg-pink-600 bg-opacity-30 px-2 py-1 rounded text-pink-300">❤️ {build.likes} likes</span>
+                        <span className="text-xs bg-blue-600 bg-opacity-30 px-2 py-1 rounded text-blue-300">👁️ {build.views} views</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-gray-300 mb-3">{build.description}</p>
+                  
+                  {build.items && build.items.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs text-purple-400 font-semibold mb-2">ITEMS:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {build.items.filter(i => i.id).map(item => (
+                          <div
+                            key={item.id}
+                            className="flex-shrink-0 relative group"
+                            style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              border: '1px solid rgba(139, 92, 246, 0.4)',
+                              overflow: 'hidden'
+                            }}
+                            title={item.name}
+                          >
+                            {item.image ? (
+                              <img
+                                src={getImageUrl(item.image)}
+                                alt={item.name}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: '50%',
+                                  display: 'block'
+                                }}
+                              />
+                            ) : null}
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                              <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400">
+                                {item.name}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-end gap-2 pt-3 border-t border-gray-700">
+                    <button
+                      onClick={() => handleDeleteBuild(build.id)}
+                      className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded hover:bg-red-700 transition"
+                    >
+                      🗑️ Delete Build
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400">No community builds available.</p>
           )}
         </div>
 

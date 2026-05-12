@@ -108,4 +108,27 @@ const addComment = async (req, res) => {
   }
 };
 
-module.exports = { getBuildsForHero, createUserBuild, getBuildComments, addComment };
+const deleteUserBuild = async (req, res) => {
+  const { buildId } = req.params;
+
+  try {
+    // Delete build items first
+    await pool.query('DELETE FROM user_build_items WHERE build_id = $1', [buildId]);
+    
+    // Delete the build
+    const result = await pool.query(
+      'DELETE FROM user_builds WHERE id = $1 RETURNING id',
+      [buildId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Build not found' });
+    }
+
+    res.json({ message: 'Build deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getBuildsForHero, createUserBuild, getBuildComments, addComment, deleteUserBuild };
