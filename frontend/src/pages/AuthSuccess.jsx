@@ -20,6 +20,10 @@ export default function AuthSuccess() {
     const idParam = searchParams.get('id');
     const usernameParam = searchParams.get('username');
     const emailParam = searchParams.get('email');
+    const avatarParam = searchParams.get('avatar');
+    const rankParam = searchParams.get('rank');
+    const bioParam = searchParams.get('bio');
+    const pointsParam = searchParams.get('points');
     const newUserParam = searchParams.get('newUser');
 
     if (tokenParam && usernameParam && emailParam) {
@@ -31,7 +35,15 @@ export default function AuthSuccess() {
         setIsNewUser(true);
       } else {
         // Existing user, log in directly
-        login({ id: idParam, username: usernameParam, email: emailParam }, tokenParam);
+        login({ 
+          id: idParam, 
+          username: usernameParam, 
+          email: emailParam,
+          avatar: avatarParam || null,
+          rank: rankParam || null,
+          bio: bioParam || null,
+          points: parseInt(pointsParam) || 0
+        }, tokenParam);
         setTimeout(() => navigate('/'), 500);
       }
     } else {
@@ -64,7 +76,15 @@ export default function AuthSuccess() {
 
       // Login with updated username (extract id from token)
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      login({ id: decodedToken.id, username: data.user.username, email: data.user.email }, token);
+      login({ 
+        id: decodedToken.id, 
+        username: data.user.username, 
+        email: data.user.email,
+        avatar: data.user.avatar,
+        rank: data.user.rank,
+        bio: data.user.bio,
+        points: data.user.points
+      }, token);
       
       // Redirect to home
       setTimeout(() => navigate('/'), 500);

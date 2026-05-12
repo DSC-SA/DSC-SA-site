@@ -26,7 +26,7 @@ const updateProfile = async (req, res) => {
 
   try {
     const result = await pool.query(
-      'UPDATE users SET avatar = COALESCE($1, avatar), rank = COALESCE($2, rank), bio = COALESCE($3, bio), updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING id, username, avatar, rank, bio',
+      'UPDATE users SET avatar = COALESCE($1, avatar), rank = COALESCE($2, rank), bio = COALESCE($3, bio), updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING id, username, email, avatar, rank, bio, points',
       [avatar, rank, bio, userId]
     );
 

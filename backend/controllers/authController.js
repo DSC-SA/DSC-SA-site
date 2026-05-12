@@ -38,7 +38,7 @@ const register = async (req, res) => {
     const result = await pool.query(
       `INSERT INTO users (username, email, password_hash, verification_code, verification_code_expires, auth_method, verified, email_verified)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING id, username, email`,
+       RETURNING id, username, email, avatar, rank, bio, points`,
       [username, email, passwordHash, verificationCode, expiresAt, 'email', true, true]
     );
 
@@ -48,9 +48,15 @@ const register = async (req, res) => {
     res.status(201).json({
       message: 'Registration successful! You are now logged in.',
       token,
-      userId: result.rows[0].id,
-      username: result.rows[0].username,
-      email: result.rows[0].email
+      user: {
+        id: result.rows[0].id,
+        username: result.rows[0].username,
+        email: result.rows[0].email,
+        avatar: result.rows[0].avatar,
+        rank: result.rows[0].rank,
+        bio: result.rows[0].bio,
+        points: result.rows[0].points
+      }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -107,7 +113,11 @@ const verifyEmailCode = async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        avatar: user.avatar,
+        rank: user.rank,
+        bio: user.bio,
+        points: user.points
       }
     });
   } catch (err) {
@@ -164,7 +174,11 @@ const googleCallback = async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        avatar: user.avatar,
+        rank: user.rank,
+        bio: user.bio,
+        points: user.points
       }
     });
   } catch (err) {
@@ -326,10 +340,11 @@ const googleAuthCallback = async (req, res) => {
     // Generate JWT
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    // Redirect with token and newUser flag
+    // Redirect with token and user data
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const newUserParam = isNewUser ? '&newUser=true' : '';
-    res.redirect(`${frontendUrl}/auth/success?token=${token}&id=${user.id}&username=${user.username}&email=${user.email}${newUserParam}`);
+    const userData = `&id=${user.id}&username=${encodeURIComponent(user.username)}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(user.avatar || '')}&rank=${encodeURIComponent(user.rank || '')}&bio=${encodeURIComponent(user.bio || '')}&points=${user.points || 0}`;
+    res.redirect(`${frontendUrl}/auth/success?token=${token}${userData}${newUserParam}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
@@ -367,7 +382,7 @@ const updateUsername = async (req, res) => {
 
     // Update username
     const result = await pool.query(
-      'UPDATE users SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, username, email',
+      'UPDATE users SET username = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, username, email, avatar, rank, bio, points',
       [username, userId]
     );
 

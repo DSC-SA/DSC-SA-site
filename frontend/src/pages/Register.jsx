@@ -75,20 +75,12 @@ export default function Register() {
         // Store token and user data
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('token', response.data.token);
-        if (response.data) {
-          localStorage.setItem('user', JSON.stringify({
-            id: response.data.userId,
-            username: response.data.username,
-            email: response.data.email
-          }));
+        if (response.data.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
         }
         
         // Update auth context
-        login({ 
-          id: response.data.userId,
-          username: response.data.username, 
-          email: response.data.email 
-        }, response.data.token);
+        login(response.data.user, response.data.token);
         
         // Redirect to home
         navigate('/');
