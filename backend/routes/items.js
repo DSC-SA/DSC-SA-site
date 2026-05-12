@@ -21,7 +21,7 @@ const upload = multer({
 
 router.get('/', getAllItems);
 router.get('/category/:category', getItemsByCategory);
-router.get('/:id/image', getItemImage);
 router.post('/:id/image', verifyToken, upload.single('image'), uploadItemImage);
+router.get('/:id/image', getItemImage);
 
 module.exports = router;

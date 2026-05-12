@@ -24,12 +24,19 @@ const uploadItemImage = async (req, res) => {
   const { id } = req.params;
 
   try {
+    console.log('📤 Upload attempt - Item ID:', id, 'User:', req.user?.id, 'File:', req.file?.originalname);
+
     if (!req.file) {
       console.log('❌ No file uploaded for item', id);
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log('📤 Uploading item image to database:', { itemId: id, fileName: req.file.originalname });
+    if (!req.user) {
+      console.log('❌ No authenticated user for upload');
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    console.log('📤 Uploading item image to database:', { itemId: id, fileName: req.file.originalname, size: req.file.size, bufferLength: req.file.buffer.length });
 
     // Use the buffer directly from memory storage
     const imageBuffer = req.file.buffer;
@@ -56,7 +63,7 @@ const uploadItemImage = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('❌ Item upload error:', err);
+    console.error('❌ Item upload error:', err.message, err.stack);
     res.status(500).json({ error: err.message });
   }
 };
