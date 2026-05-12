@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../services/api';
+import { api, getImageUrl } from '../services/api';
 
 const MLBB_RANKS = [
   'Warrior', 'Elite', 'Master', 'Grand Master',
@@ -18,10 +18,17 @@ export default function Profile() {
     bio: user?.bio || ''
   });
   const [profileImage, setProfileImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(user?.avatar ? `http://localhost:5000${user.avatar}` : null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  // Initialize preview URL from user avatar
+  useEffect(() => {
+    if (user?.avatar) {
+      setPreviewUrl(getImageUrl(user.avatar));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -43,6 +50,7 @@ export default function Profile() {
         setPreviewUrl(reader.result);
       };
       reader.readAsDataURL(file);
+      setError('');
     }
   };
 
@@ -101,139 +109,142 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-10 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-            👤 My Profile
-          </h1>
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
+            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+              My Profile
+            </h1>
+          </div>
+          <p className="text-gray-400 text-lg ml-4">Update your profile and gaming info</p>
         </div>
-        <p className="text-gray-400 text-lg">Edit your profile and show off your gaming stats</p>
-      </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {/* Profile Preview */}
-        <div className="md:col-span-1">
-          <div className="card-gaming p-6 sticky top-24">
-            <h3 className="text-xl font-bold mb-4">Profile Preview</h3>
+        {/* Main Card */}
+        <div className="card-gaming p-6 md:p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
             
-            {/* Avatar */}
-            <div className="mb-6">
-              <div className="w-full aspect-square rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 p-1 mb-4">
-                <div className="w-full h-full rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden">
-                  {previewUrl ? (
-                    <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-5xl">📸</span>
-                  )}
+            {/* Messages */}
+            {error && (
+              <div className="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300 p-4 rounded-lg flex gap-2">
+                <span>⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {message && (
+              <div className="bg-green-500 bg-opacity-20 border border-green-500 border-opacity-50 text-green-300 p-4 rounded-lg flex gap-2">
+                <span>✓</span>
+                <span>{message}</span>
+              </div>
+            )}
+
+            {/* Profile Picture Section */}
+            <div>
+              <label className="block text-sm font-semibold mb-4 text-gray-300">Profile Picture</label>
+              
+              {/* Preview */}
+              <div className="flex justify-center mb-6">
+                <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 p-1">
+                  <div className="w-full h-full rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-6xl">📸</span>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              {/* Upload Input */}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+                id="avatarInput"
+              />
+              <label
+                htmlFor="avatarInput"
+                className="block w-full p-4 border-2 border-dashed border-cyan-400 border-opacity-40 rounded-lg hover:border-opacity-80 hover:bg-cyan-400 hover:bg-opacity-5 transition cursor-pointer text-center"
+              >
+                <p className="text-gray-300 font-semibold">📤 Click to upload</p>
+                <p className="text-gray-500 text-xs mt-1">PNG, JPG or GIF (max 5MB)</p>
+              </label>
             </div>
 
-            {/* Info Display */}
-            <div className="space-y-3">
+            {/* Divider */}
+            <div className="border-t border-cyan-400 border-opacity-20"></div>
+
+            {/* MLBB Rank */}
+            <div>
+              <label className="block text-sm font-semibold mb-3 text-gray-300">MLBB Rank</label>
+              <select
+                name="rank"
+                value={formData.rank}
+                onChange={handleChange}
+                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition"
+              >
+                <option value="">Select your rank...</option>
+                {MLBB_RANKS.map(rank => (
+                  <option key={rank} value={rank}>{rank}</option>
+                ))}
+              </select>
+              <p className="text-gray-500 text-xs mt-2">What's your current MLBB rank?</p>
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label className="block text-sm font-semibold mb-3 text-gray-300">Bio</label>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                placeholder="Tell us about yourself... your favorite heroes, playstyle, etc."
+                maxLength={500}
+                rows={5}
+                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 placeholder-gray-600 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition resize-none"
+              />
+              <p className="text-gray-500 text-xs mt-2">{formData.bio.length}/500 characters</p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-cyan-400 border-opacity-20"></div>
+
+            {/* User Info Display */}
+            <div className="grid grid-cols-2 gap-4 pt-4">
               <div>
-                <p className="text-gray-500 text-xs uppercase">Username</p>
-                <p className="text-xl font-bold text-cyan-400">{user.username}</p>
+                <p className="text-gray-500 text-xs uppercase tracking-wide">Username</p>
+                <p className="text-lg font-bold text-cyan-400">{user.username}</p>
               </div>
-              
               {formData.rank && (
                 <div>
-                  <p className="text-gray-500 text-xs uppercase">MLBB Rank</p>
-                  <p className="text-lg font-semibold text-purple-400">{formData.rank}</p>
-                </div>
-              )}
-
-              {formData.bio && (
-                <div>
-                  <p className="text-gray-500 text-xs uppercase">Bio</p>
-                  <p className="text-sm text-gray-300 line-clamp-3">{formData.bio}</p>
+                  <p className="text-gray-500 text-xs uppercase tracking-wide">Rank</p>
+                  <p className="text-lg font-bold text-purple-400">{formData.rank}</p>
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Edit Form */}
-        <div className="md:col-span-2">
-          <div className="card-gaming p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              
-              {error && (
-                <div className="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300 p-4 rounded-lg">
-                  ⚠️ {error}
-                </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="inline-block animate-spin">⏳</span>
+                  Saving...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <span>✓</span>
+                  Save Profile
+                </span>
               )}
-
-              {message && (
-                <div className="bg-green-500 bg-opacity-20 border border-green-500 border-opacity-50 text-green-300 p-4 rounded-lg">
-                  {message}
-                </div>
-              )}
-
-              {/* Profile Picture Upload */}
-              <div>
-                <label className="block text-sm font-semibold mb-3">Profile Picture</label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    id="avatarInput"
-                  />
-                  <label
-                    htmlFor="avatarInput"
-                    className="block w-full p-4 border-2 border-dashed border-cyan-400 border-opacity-30 rounded-lg hover:border-opacity-60 transition cursor-pointer text-center"
-                  >
-                    <p className="text-gray-300">📤 Click to upload or drag & drop</p>
-                    <p className="text-gray-500 text-xs mt-1">PNG, JPG or GIF (max 5MB)</p>
-                  </label>
-                </div>
-              </div>
-
-              {/* MLBB Rank */}
-              <div>
-                <label className="block text-sm font-semibold mb-3">MLBB Rank</label>
-                <select
-                  name="rank"
-                  value={formData.rank}
-                  onChange={handleChange}
-                  className="w-full bg-gray-900 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 focus:outline-none focus:border-opacity-100 transition"
-                >
-                  <option value="">Select your rank...</option>
-                  {MLBB_RANKS.map(rank => (
-                    <option key={rank} value={rank}>{rank}</option>
-                  ))}
-                </select>
-                <p className="text-gray-500 text-xs mt-2">What's your current MLBB rank?</p>
-              </div>
-
-              {/* Bio */}
-              <div>
-                <label className="block text-sm font-semibold mb-3">Bio</label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  placeholder="Tell us about yourself... your favorite heroes, playstyle, etc."
-                  maxLength={500}
-                  rows={6}
-                  className="w-full bg-gray-900 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 placeholder-gray-600 focus:outline-none focus:border-opacity-100 transition resize-none"
-                />
-                <p className="text-gray-500 text-xs mt-2">{formData.bio.length}/500 characters</p>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition"
-              >
-                {loading ? '⏳ Saving...' : '✓ Save Profile'}
-              </button>
-            </form>
-          </div>
+            </button>
+          </form>
         </div>
       </div>
     </Layout>
