@@ -345,10 +345,6 @@ export default function Navbar() {
                     </div>
                   </>
                 )}
-
-                <button onClick={handleLogout} className="text-gray-400 hover:text-cyan-400 text-xs lg:text-sm font-semibold transition">
-                  Logout
-                </button>
               </div>
             ) : (
               <div className="flex gap-2 lg:gap-3">
