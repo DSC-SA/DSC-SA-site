@@ -13,6 +13,7 @@ export default function Profile() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    username: user?.username || '',
     avatar: user?.avatar || '',
     rank: user?.rank || '',
     bio: user?.bio || ''
@@ -27,6 +28,7 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       setFormData({
+        username: user.username || '',
         avatar: user.avatar || '',
         rank: user.rank || '',
         bio: user.bio || ''
@@ -82,6 +84,7 @@ export default function Profile() {
       if (profileImage) {
         formDataToSend.append('avatar', profileImage);
       }
+      formDataToSend.append('username', formData.username);
       formDataToSend.append('rank', formData.rank);
       formDataToSend.append('bio', formData.bio);
 
@@ -99,6 +102,7 @@ export default function Profile() {
       // Update auth context with new user data
       const updatedUser = { 
         ...user, 
+        username: res.data.user.username,
         rank: res.data.user.rank,
         bio: res.data.user.bio,
         hasAvatar: res.data.user.hasAvatar
@@ -232,19 +236,31 @@ export default function Profile() {
             {/* Divider */}
             <div className="border-t border-cyan-400 border-opacity-20"></div>
 
-            {/* User Info Display */}
-            <div className="grid grid-cols-2 gap-4 pt-4">
-              <div>
-                <p className="text-gray-500 text-xs uppercase tracking-wide">Username</p>
-                <p className="text-lg font-bold text-cyan-400">{user.username}</p>
-              </div>
-              {formData.rank && (
-                <div>
-                  <p className="text-gray-500 text-xs uppercase tracking-wide">Rank</p>
-                  <p className="text-lg font-bold text-purple-400">{formData.rank}</p>
-                </div>
-              )}
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-semibold mb-3 text-gray-300">Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                maxLength={30}
+                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition"
+                placeholder="Enter your username"
+              />
+              <p className="text-gray-500 text-xs mt-2">Username must be 3-30 characters</p>
             </div>
+
+            {/* Divider */}
+            <div className="border-t border-cyan-400 border-opacity-20"></div>
+
+            {/* Rank Display */}
+            {formData.rank && (
+              <div>
+                <p className="text-gray-500 text-xs uppercase tracking-wide">Current Rank</p>
+                <p className="text-lg font-bold text-purple-400">{formData.rank}</p>
+              </div>
+            )}
 
             {/* Submit Button */}
             <button

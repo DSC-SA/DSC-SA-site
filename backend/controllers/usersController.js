@@ -44,7 +44,7 @@ const getProfileAvatar = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   const { userId } = req.params;
-  const { rank, bio } = req.body;
+  const { username, rank, bio } = req.body;
   const loggedInUserId = req.user.id;
 
   if (userId != loggedInUserId) {
@@ -52,8 +52,30 @@ const updateProfile = async (req, res) => {
   }
 
   try {
+    // Validate username if provided
+    if (username) {
+      if (username.length < 3 || username.length > 30) {
+        return res.status(400).json({ error: 'Username must be 3-30 characters' });
+      }
+
+      // Check if username already exists (except current user)
+      const existingUser = await pool.query(
+        'SELECT id FROM users WHERE username = $1 AND id != $2',
+        [username, userId]
+      );
+      if (existingUser.rows.length > 0) {
+        return res.status(400).json({ error: 'Username already taken' });
+      }
+    }
+
     let query = 'UPDATE users SET rank = $1, bio = $2, updated_at = CURRENT_TIMESTAMP';
     const values = [rank, bio];
+    
+    // Add username if provided
+    if (username) {
+      values.push(username);
+      query += `, username = $${values.length}`;
+    }
     
     // If there's a file upload (avatar image)
     if (req.file) {
