@@ -811,10 +811,17 @@ export default function Admin() {
               {selectedItem && (
                 <div className="mt-4 p-4 bg-yellow-500 bg-opacity-10 border-l-4 border-yellow-400 rounded">
                   <p><strong className="text-yellow-400">Item:</strong> {selectedItem.name}</p>
-                  {selectedItem.image && (
+                  {selectedItem && (
                     <div className="mt-3">
                       <p className="text-yellow-400 text-sm font-semibold mb-2">Current Image:</p>
-                      <img src={getImageUrl(selectedItem.image)} alt={selectedItem.name} className="w-20 h-20 rounded" />
+                      <img 
+                        src={`${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin)}/api/items/${selectedItem.id}/image?t=${Date.now()}`}
+                        alt={selectedItem.name} 
+                        className="w-20 h-20 rounded" 
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
                     </div>
                   )}
                 </div>
@@ -860,17 +867,25 @@ export default function Admin() {
             <div className="mt-8">
               <h3 className="text-xl font-bold text-yellow-400 mb-4">All Items</h3>
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                {items.map(item => (
-                  <div key={item.id} className="bg-gray-800 rounded-lg p-3 border border-yellow-400 border-opacity-20 text-center">
-                    {item.image ? (
-                      <img src={getImageUrl(item.image)} alt={item.name} className="w-full h-20 object-cover rounded mb-2" />
-                    ) : (
-                      <div className="w-full h-20 bg-gray-700 rounded mb-2 flex items-center justify-center">
-                        <span className="text-xs text-gray-400">No Image</span>
-                      </div>
-                    )}
-                    <p className="text-xs text-yellow-300 font-semibold truncate">{item.name}</p>
-                  </div>
+                {items.map(item => {
+                  const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+                  return (
+                    <div key={item.id} className="bg-gray-800 rounded-lg p-3 border border-yellow-400 border-opacity-20 text-center">
+                      <img 
+                        src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                        alt={item.name} 
+                        className="w-full h-20 object-cover rounded mb-2" 
+                        onError={(e) => {
+                          e.target.src = '';
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = '<div class="w-full h-20 bg-gray-700 rounded mb-2 flex items-center justify-center"><span class="text-xs text-gray-400">No Image</span></div>';
+                        }}
+                      />
+                      <p className="text-xs text-yellow-300 font-semibold truncate">{item.name}</p>
+                    </div>
+                  );
+                })}
+              </div>
                 ))}
               </div>
             </div>

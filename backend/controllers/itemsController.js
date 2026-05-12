@@ -29,13 +29,15 @@ const uploadItemImage = async (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log('📤 Uploading item image:', { itemId: id, fileName: req.file.filename });
+    console.log('📤 Uploading item image to database:', { itemId: id, fileName: req.file.originalname });
 
-    const imagePath = `/uploads/items/${req.file.filename}`;
-
+    // Use the buffer directly from memory storage
+    const imageBuffer = req.file.buffer;
+    
+    // Store image data in database
     const result = await pool.query(
-      'UPDATE items SET image = $1 WHERE id = $2 RETURNING *',
-      [imagePath, id]
+      'UPDATE items SET image_data = $1 WHERE id = $2 RETURNING id, name, image_data',
+      [imageBuffer, id]
     );
 
     if (result.rows.length === 0) {
@@ -43,12 +45,47 @@ const uploadItemImage = async (req, res) => {
       return res.status(404).json({ error: 'Item not found' });
     }
 
-    console.log('✅ Item image uploaded successfully:', result.rows[0].name);
-    res.json({ message: 'Item image uploaded successfully', image: imagePath, item: result.rows[0] });
+    console.log('✅ Item image uploaded to database successfully:', result.rows[0].name);
+    res.json({ 
+      message: 'Item image uploaded successfully', 
+      itemId: id,
+      item: {
+        id: result.rows[0].id,
+        name: result.rows[0].name,
+        hasImage: !!result.rows[0].image_data
+      }
+    });
   } catch (err) {
     console.error('❌ Item upload error:', err);
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { getAllItems, getItemsByCategory, uploadItemImage };
+const getItemImage = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT image_data FROM items WHERE id = $1',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    const imageData = result.rows[0].image_data;
+    if (!imageData) {
+      return res.status(404).json({ error: 'No image found for this item' });
+    }
+
+    // Set appropriate headers and send binary data
+    res.type('image/png');
+    res.send(imageData);
+  } catch (err) {
+    console.error('❌ Error retrieving item image:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getAllItems, getItemsByCategory, uploadItemImage, getItemImage };

@@ -9,6 +9,9 @@ export default function HeroDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  
+  // API Base URL for fetching item images from database
+  const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
   const [hero, setHero] = useState(null);
   const [allHeroes, setAllHeroes] = useState([]);
   const [selectedGalleryRole, setSelectedGalleryRole] = useState('All');
@@ -228,27 +231,25 @@ export default function HeroDetail() {
                         }}
                         title={item.name}
                       >
-                        {item.image ? (
-                          <img
-                            src={getImageUrl(item.image)}
-                            alt={item.name}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              borderRadius: '50%',
-                              display: 'block'
-                            }}
-                            className="hover:scale-110 transition"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextElementSibling.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
+                        <img
+                          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                          alt={item.name}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%',
+                            display: 'block'
+                          }}
+                          className="hover:scale-110 transition"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
                         <div
                           style={{
-                            display: !item.image ? 'flex' : 'none',
+                            display: 'none',
                             borderRadius: '50%',
                             width: '100%',
                             height: '100%',
@@ -390,9 +391,8 @@ export default function HeroDetail() {
                             className={`relative overflow-hidden transition transform hover:scale-110 group ${isSelected ? 'ring-2 ring-cyan-400 scale-110' : 'hover:ring-1 hover:ring-purple-400'}`}
                             title={item.name}
                           >
-                            {item.image ? (
                               <img
-                                src={getImageUrl(item.image)}
+                                src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
                                 alt={item.name}
                                 style={{ borderRadius: '50%', width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                                 className=""
@@ -401,9 +401,8 @@ export default function HeroDetail() {
                                   e.target.nextSibling.style.display = 'flex';
                                 }}
                               />
-                            ) : null}
                             <div
-                              style={{ display: !item.image ? 'flex' : 'none', borderRadius: '50%' }}
+                              style={{ display: 'none', borderRadius: '50%' }}
                               className="w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center"
                             >
                               <span className="text-xs font-bold text-white text-center px-1 line-clamp-1">{item.name}</span>
@@ -479,27 +478,25 @@ export default function HeroDetail() {
                         }}
                         title={item.name}
                       >
-                        {item.image ? (
-                          <img
-                            src={getImageUrl(item.image)}
-                            alt={item.name}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              borderRadius: '50%',
-                              display: 'block'
-                            }}
-                            className="hover:scale-110 transition"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextElementSibling.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
+                        <img
+                          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                          alt={item.name}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%',
+                            display: 'block'
+                          }}
+                          className="hover:scale-110 transition"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
                         <div
                           style={{
-                            display: !item.image ? 'flex' : 'none',
+                            display: 'none',
                             borderRadius: '50%',
                             width: '100%',
                             height: '100%',

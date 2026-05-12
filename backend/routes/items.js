@@ -1,24 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const { getAllItems, getItemsByCategory, uploadItemImage } = require('../controllers/itemsController');
+const { getAllItems, getItemsByCategory, uploadItemImage, getItemImage } = require('../controllers/itemsController');
 const multer = require('multer');
-const path = require('path');
+const { verifyToken } = require('../middleware/auth');
 
-// Multer config for item images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads/items'));
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+// Use memory storage - don't save to disk, send directly to database
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    // Allow only images
+    const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
   }
 });
 
-const upload = multer({ storage });
-
 router.get('/', getAllItems);
 router.get('/category/:category', getItemsByCategory);
-router.post('/:id/image', upload.single('image'), uploadItemImage);
+router.get('/:id/image', getItemImage);
+router.post('/:id/image', verifyToken, upload.single('image'), uploadItemImage);
 
 module.exports = router;
