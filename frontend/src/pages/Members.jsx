@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { api } from '../services/api';
+import { api, getImageUrl } from '../services/api';
 
 export default function Members() {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -53,6 +53,51 @@ export default function Members() {
             <div key={user.id} className="card-gaming p-4 md:p-6 hover:border-cyan-400 transition flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
                 <div className="text-3xl w-12 text-center">{getRankBadge(user.rank)}</div>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                  padding: '1.5px',
+                  animation: 'spin 4s linear infinite',
+                  flexShrink: 0
+                }}>
+                  <style>{`
+                    @keyframes spin {
+                      from { filter: hue-rotate(0deg); }
+                      to { filter: hue-rotate(360deg); }
+                    }
+                  `}</style>
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    backgroundColor: '#111827',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    {user.avatar ? (
+                      <img 
+                        src={getImageUrl(user.avatar)} 
+                        alt={user.username} 
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center'
+                        }}
+                      />
+                    ) : (
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        color: '#22d3ee'
+                      }}>{user.username?.charAt(0)?.toUpperCase()}</span>
+                    )}
+                  </div>
+                </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-cyan-400">{user.username}</h3>
                   <p className="text-gray-500 text-sm">{user.rank === 1 ? 'Top Contributor' : 'Community Member'}</p>
