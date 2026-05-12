@@ -17,6 +17,7 @@ export default function AuthSuccess() {
 
   useEffect(() => {
     const tokenParam = searchParams.get('token');
+    const idParam = searchParams.get('id');
     const usernameParam = searchParams.get('username');
     const emailParam = searchParams.get('email');
     const newUserParam = searchParams.get('newUser');
@@ -30,7 +31,7 @@ export default function AuthSuccess() {
         setIsNewUser(true);
       } else {
         // Existing user, log in directly
-        login({ username: usernameParam, email: emailParam }, tokenParam);
+        login({ id: idParam, username: usernameParam, email: emailParam }, tokenParam);
         setTimeout(() => navigate('/'), 500);
       }
     } else {
@@ -61,8 +62,9 @@ export default function AuthSuccess() {
         return;
       }
 
-      // Login with updated username
-      login({ username: data.user.username, email: data.user.email }, token);
+      // Login with updated username (extract id from token)
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      login({ id: decodedToken.id, username: data.user.username, email: data.user.email }, token);
       
       // Redirect to home
       setTimeout(() => navigate('/'), 500);

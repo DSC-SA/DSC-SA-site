@@ -25,18 +25,28 @@ const uploadItemImage = async (req, res) => {
 
   try {
     if (!req.file) {
+      console.log('❌ No file uploaded for item', id);
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
+    console.log('📤 Uploading item image:', { itemId: id, fileName: req.file.filename });
+
     const imagePath = `/uploads/items/${req.file.filename}`;
 
-    await pool.query(
-      'UPDATE items SET image = $1 WHERE id = $2',
+    const result = await pool.query(
+      'UPDATE items SET image = $1 WHERE id = $2 RETURNING *',
       [imagePath, id]
     );
 
-    res.json({ message: 'Item image uploaded successfully', image: imagePath });
+    if (result.rows.length === 0) {
+      console.log('❌ Item not found:', id);
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
+    console.log('✅ Item image uploaded successfully:', result.rows[0].name);
+    res.json({ message: 'Item image uploaded successfully', image: imagePath, item: result.rows[0] });
   } catch (err) {
+    console.error('❌ Item upload error:', err);
     res.status(500).json({ error: err.message });
   }
 };

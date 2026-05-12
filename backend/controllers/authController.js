@@ -325,7 +325,7 @@ const googleAuthCallback = async (req, res) => {
     // Redirect with token and newUser flag
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const newUserParam = isNewUser ? '&newUser=true' : '';
-    res.redirect(`${frontendUrl}/auth/success?token=${token}&username=${user.username}&email=${user.email}${newUserParam}`);
+    res.redirect(`${frontendUrl}/auth/success?token=${token}&id=${user.id}&username=${user.username}&email=${user.email}${newUserParam}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

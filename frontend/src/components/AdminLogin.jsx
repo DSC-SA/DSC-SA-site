@@ -13,8 +13,12 @@ export default function AdminLogin() {
     setError('');
 
     if (username === 'fluffy' && password === '258025') {
-      // Set admin session
+      // Create a temporary admin token (valid for this session)
+      const adminToken = btoa(`admin:${Date.now()}`); // Simple base64 encoding
+      // Set admin session and token
       sessionStorage.setItem('adminLoggedIn', 'true');
+      localStorage.setItem('adminToken', adminToken);
+      localStorage.setItem('token', adminToken);
       // Navigate to admin page
       navigate('/admin');
     } else {

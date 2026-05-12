@@ -63,21 +63,28 @@ export default function Admin() {
   const loadHeroes = async () => {
     try {
       const res = await heroesAPI.getAll();
-      setHeroes(res.data);
+      console.log('Heroes loaded:', res.data);
+      setHeroes(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
+      console.error('Error loading heroes:', err);
       showMessage('Error loading heroes: ' + err.message, 'error');
+      setHeroes([]);
     }
   };
 
   const loadEvents = async () => {
     try {
       setEventsLoading(true);
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
       const res = await fetch(`${API_BASE_URL}/api/events`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-      setEvents(data);
+      console.log('Events loaded:', data);
+      setEvents(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error('Error loading events:', err);
       showMessage('Error loading events: ' + err.message, 'error');
+      setEvents([]);
     } finally {
       setEventsLoading(false);
     }
@@ -98,7 +105,7 @@ export default function Admin() {
   const loadItems = async () => {
     try {
       setItemsLoading(true);
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
       const res = await fetch(`${API_BASE_URL}/api/items`);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -117,10 +124,12 @@ export default function Admin() {
 
   const handleItemSelect = (e) => {
     const itemId = e.target.value;
+    console.log('Item selected:', itemId);
     setSelectedItemId(itemId);
     
     if (itemId) {
       const item = items.find(i => String(i.id) === String(itemId));
+      console.log('Found item:', item);
       setSelectedItem(item);
     } else {
       setSelectedItem(null);
@@ -151,15 +160,21 @@ export default function Admin() {
 
     try {
       setItemLoading(true);
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
       const itemIdNum = parseInt(selectedItemId);
+      
+      console.log('Uploading item image:', { itemIdNum, fileName: itemImageFile.name, size: itemImageFile.size });
+      
       const res = await fetch(`${API_BASE_URL}/api/items/${itemIdNum}/image`, {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         }
       });
+
+      const responseData = await res.json();
+      console.log('Upload response:', { status: res.status, data: responseData });
 
       if (res.ok) {
         showMessage('✓ Item image uploaded successfully!', 'success');
@@ -169,10 +184,11 @@ export default function Admin() {
         setSelectedItem(null);
         loadItems();
       } else {
-        showMessage('Error uploading item image', 'error');
+        showMessage('Error uploading item image: ' + (responseData.error || responseData.message || 'Unknown error'), 'error');
       }
     } catch (err) {
       showMessage('Error: ' + err.message, 'error');
+      console.error('Item upload error:', err);
     } finally {
       setItemLoading(false);
     }
@@ -180,10 +196,12 @@ export default function Admin() {
 
   const handleHeroSelect = (e) => {
     const heroId = e.target.value;
+    console.log('Hero selected:', heroId, 'from heroes:', heroes);
     setSelectedHeroId(heroId);
     
     if (heroId) {
       const hero = heroes.find(h => h.id === parseInt(heroId));
+      console.log('Found hero:', hero);
       setSelectedHero(hero);
     } else {
       setSelectedHero(null);
@@ -218,9 +236,14 @@ export default function Admin() {
       formData.append('heroId', selectedHeroId);
       formData.append('image', imageFile);
 
-      const response = await fetch('/api/admin/upload-hero-image', {
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+      
+      const response = await fetch(`${API_BASE_URL}/api/admin/upload-hero-image`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+        }
       });
 
       const result = await response.json();
@@ -231,16 +254,21 @@ export default function Admin() {
         setSelectedHero(null);
         setImageFile(null);
         setPreview(null);
-        e.target.reset();
+        if (e.target && e.target.reset) {
+          e.target.reset();
+        }
+        loadHeroes();
         
         setTimeout(() => {
           setMessage('');
         }, 5000);
       } else {
-        showMessage('Error: ' + result.message, 'error');
+        showMessage('Error: ' + (result.message || 'Upload failed'), 'error');
+        console.error('Upload error:', result);
       }
     } catch (error) {
       showMessage('Upload failed: ' + error.message, 'error');
+      console.error('Upload exception:', error);
     } finally {
       setLoading(false);
     }
@@ -257,6 +285,8 @@ export default function Admin() {
 
   const handleLogout = () => {
     sessionStorage.removeItem('adminLoggedIn');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('token');
     navigate('/');
   };
 
