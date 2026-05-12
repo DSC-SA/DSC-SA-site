@@ -11,6 +11,7 @@ import HeroDetail from './pages/HeroDetail';
 import Events from './pages/Events';
 import Matches from './pages/Matches';
 import Members from './pages/Members';
+import NSFW from './pages/NSFW';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/members" element={<Members />} />
+          <Route path="/nsfw" element={<NSFW />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

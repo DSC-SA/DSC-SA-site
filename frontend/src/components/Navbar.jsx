@@ -180,6 +180,32 @@ export default function Navbar() {
             }}>
               Members
             </Link>
+            <Link to="/nsfw" style={{ 
+              textDecoration: 'none',
+              padding: '3px 8px',
+              color: '#d1d5db',
+              fontWeight: 'bold',
+              fontSize: '0.6rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              borderRadius: '9999px',
+              border: '1px solid rgba(34, 211, 238, 0.4)',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = 'rgba(34, 211, 238, 0.15)';
+              e.target.style.color = '#ffffff';
+              e.target.style.borderColor = 'rgba(34, 211, 238, 1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'transparent';
+              e.target.style.color = '#d1d5db';
+              e.target.style.borderColor = 'rgba(34, 211, 238, 0.4)';
+            }}>
+              NSFW
+            </Link>
           </div>
 
           {/* Auth Section */}
