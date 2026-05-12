@@ -180,23 +180,31 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-2 lg:gap-3">
                 <Link to="/profile" title={user.username} className="flex items-center justify-center hover:opacity-80 transition">
-                  <div className="relative w-8 h-8 lg:w-10 lg:h-10 flex-shrink-0" style={{
-                    background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%)',
-                    backgroundSize: '200% 200%',
-                    animation: 'shimmer 3s ease-in-out infinite',
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
                     borderRadius: '50%',
-                    padding: '2px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                    padding: '1.5px',
+                    animation: 'spin 4s linear infinite',
+                    flexShrink: 0
                   }}>
                     <style>{`
-                      @keyframes shimmer {
-                        0%, 100% { backgroundPosition: 0% 50%; }
-                        50% { backgroundPosition: 100% 50%; }
+                      @keyframes spin {
+                        from { filter: hue-rotate(0deg); }
+                        to { filter: hue-rotate(360deg); }
                       }
                     `}</style>
-                    <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
+                    <div style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      backgroundColor: '#111827',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden'
+                    }}>
                       {user.avatar && !imageError ? (
                         <img 
                           src={getImageUrl(user.avatar)} 
@@ -211,7 +219,11 @@ export default function Navbar() {
                           onError={handleImageError}
                         />
                       ) : (
-                        <span className="text-xs lg:text-sm font-bold text-cyan-400">{user.username?.charAt(0)?.toUpperCase()}</span>
+                        <span style={{
+                          fontSize: '11px',
+                          fontWeight: 'bold',
+                          color: '#22d3ee'
+                        }}>{user.username?.charAt(0)?.toUpperCase()}</span>
                       )}
                     </div>
                   </div>
