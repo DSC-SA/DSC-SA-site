@@ -52,26 +52,19 @@ const updateProfile = async (req, res) => {
   }
 
   try {
-    let avatarData = null;
+    let query = 'UPDATE users SET rank = $1, bio = $2, updated_at = CURRENT_TIMESTAMP';
+    const values = [rank, bio];
     
     // If there's a file upload (avatar image)
     if (req.file) {
-      avatarData = req.file.buffer;
+      values.push(req.file.buffer);
+      query += `, avatar_data = $${values.length}`;
     }
-
-    // Update profile with avatar_data if provided
-    const updateFields = ['rank = COALESCE($1, rank)', 'bio = COALESCE($2, bio)', 'updated_at = CURRENT_TIMESTAMP'];
-    const values = [rank, bio, userId];
     
-    if (avatarData) {
-      updateFields.push(`avatar_data = $${values.length + 1}`);
-      values.push(avatarData);
-    }
+    query += ` WHERE id = $${values.length + 1} RETURNING id, username, email, avatar_data, rank, bio, points`;
+    values.push(userId);
 
-    const result = await pool.query(
-      `UPDATE users SET ${updateFields.join(', ')} WHERE id = $${updateFields.length + (avatarData ? 0 : 1)} RETURNING id, username, email, avatar_data, rank, bio, points`,
-      [...values.slice(0, -1), userId]
-    );
+    const result = await pool.query(query, values);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
