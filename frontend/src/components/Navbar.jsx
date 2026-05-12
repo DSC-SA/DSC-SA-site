@@ -8,6 +8,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
+  const [profilePopupOpen, setProfilePopupOpen] = useState(false);
 
   // Reset image error when user changes (e.g., after profile update)
   useEffect(() => {
@@ -17,6 +18,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     navigate('/');
+    setProfilePopupOpen(false);
   };
 
   const handleImageError = (e) => {
@@ -28,6 +30,11 @@ export default function Navbar() {
       error: e.type
     });
     setImageError(true);
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+    setProfilePopupOpen(false);
   };
 
   return (
@@ -178,8 +185,8 @@ export default function Navbar() {
           {/* Auth Section */}
           <div className="hidden md:flex gap-2 lg:gap-3 items-center">
             {user ? (
-              <div className="flex items-center gap-2 lg:gap-3">
-                <Link to="/profile" title={user.username} className="flex items-center justify-center hover:opacity-80 transition">
+              <div className="flex items-center gap-2 lg:gap-3 relative">
+                <button onClick={() => setProfilePopupOpen(!profilePopupOpen)} title={user.username} className="flex items-center justify-center hover:opacity-80 transition relative">
                   <div style={{
                     width: '28px',
                     height: '28px',
@@ -227,7 +234,92 @@ export default function Navbar() {
                       )}
                     </div>
                   </div>
-                </Link>
+                </button>
+
+                {/* Profile Popup */}
+                {profilePopupOpen && (
+                  <>
+                    {/* Backdrop to close popup */}
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setProfilePopupOpen(false)}
+                    />
+                    
+                    {/* Popup Menu */}
+                    <div 
+                      className="absolute right-0 mt-2 w-64 bg-gray-900 border border-cyan-500 border-opacity-50 rounded-lg shadow-2xl p-4 z-50"
+                      style={{
+                        top: '100%',
+                        backgroundColor: 'rgba(17, 24, 39, 0.98)',
+                        backdropFilter: 'blur(10px)'
+                      }}
+                    >
+                      {/* User Info */}
+                      <div className="flex items-center gap-3 pb-3 border-b border-cyan-500 border-opacity-30">
+                        <div style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                          padding: '2px',
+                          flexShrink: 0
+                        }}>
+                          <div style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            backgroundColor: '#111827',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                          }}>
+                            {user.avatar && !imageError ? (
+                              <img 
+                                src={getImageUrl(user.avatar)} 
+                                alt={user.username}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  objectPosition: 'center',
+                                  display: 'block'
+                                }}
+                              />
+                            ) : (
+                              <span style={{
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                color: '#22d3ee'
+                              }}>{user.username?.charAt(0)?.toUpperCase()}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="font-bold text-cyan-400">{user.username}</p>
+                          <p className="text-xs text-gray-400">{user.email}</p>
+                        </div>
+                      </div>
+
+                      {/* Options */}
+                      <div className="pt-3 space-y-2">
+                        <button 
+                          onClick={handleProfileClick}
+                          className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-cyan-500 hover:bg-opacity-20 hover:text-cyan-400 rounded transition"
+                        >
+                          👤 Edit Profile
+                        </button>
+                        <button 
+                          onClick={handleLogout}
+                          className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-red-500 hover:bg-opacity-20 hover:text-red-400 rounded transition"
+                        >
+                          🚪 Logout
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 <button onClick={handleLogout} className="text-gray-400 hover:text-cyan-400 text-xs lg:text-sm font-semibold transition">
                   Logout
                 </button>
