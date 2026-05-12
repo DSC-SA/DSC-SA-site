@@ -99,7 +99,9 @@ export default function Profile() {
         setMessage('');
       }, 3000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to update profile');
+      const errorMsg = err.response?.data?.error || err.message || 'Failed to update profile';
+      console.error('Profile update error:', { status: err.response?.status, data: err.response?.data, error: err.message });
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

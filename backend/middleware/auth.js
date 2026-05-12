@@ -1,10 +1,18 @@
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  
+  if (!authHeader) {
+    console.log('No auth header provided');
+    return res.status(401).json({ error: 'No authorization header provided' });
+  }
+
+  // Extract token from "Bearer <token>" format
+  const token = authHeader.split(' ')[1] || authHeader;
 
   if (!token) {
+    console.log('No token in auth header');
     return res.status(401).json({ error: 'No token provided' });
   }
 
@@ -13,7 +21,8 @@ const verifyToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(403).json({ error: 'Invalid token' });
+    console.log('Token verification failed:', err.message);
+    res.status(403).json({ error: 'Invalid or expired token' });
   }
 };
 

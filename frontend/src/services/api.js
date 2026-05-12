@@ -21,7 +21,8 @@ const getApiBaseUrl = () => {
 const API_BASE_URL = getApiBaseUrl();
 
 const API = axios.create({
-  baseURL: `${API_BASE_URL}/api`
+  baseURL: `${API_BASE_URL}/api`,
+  withCredentials: true
 });
 
 // Add token to requests
@@ -29,9 +30,22 @@ API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    console.warn('No token found in localStorage for request to:', config.url);
   }
   return config;
 });
+
+// Log responses for debugging
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      console.error('Auth error:', { status: error.response.status, data: error.response.data });
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Helper to construct full image URLs
 export const getImageUrl = (relativePath) => {
