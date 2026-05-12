@@ -31,8 +31,9 @@ export default function Profile() {
         rank: user.rank || '',
         bio: user.bio || ''
       });
-      if (user.avatar) {
-        setPreviewUrl(getImageUrl(user.avatar));
+      if (user.hasAvatar || user.avatar) {
+        const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+        setPreviewUrl(`${API_BASE_URL}/api/users/${user.id}/avatar?t=${Date.now()}`);
       }
     }
   }, [user?.id]); // Only update when user ID changes
@@ -76,47 +77,40 @@ export default function Profile() {
     setMessage('');
 
     try {
-      let avatarUrl = formData.avatar;
-
-      // Upload image if changed
+      // Create FormData to send image directly
+      const formDataToSend = new FormData();
       if (profileImage) {
-        const imgFormData = new FormData();
-        imgFormData.append('file', profileImage);
-        imgFormData.append('folder', 'profiles');
-
-        console.log('Uploading file:', profileImage.name, 'size:', profileImage.size);
-        
-        // Send FormData - axios will handle content-type automatically
-        const uploadRes = await api.post('/upload', imgFormData, {
-          headers: {
-            'Content-Type': undefined  // Let axios/browser set it with boundary
-          }
-        });
-        
-        avatarUrl = uploadRes.data.filePath;
-        console.log('Upload response:', uploadRes.data);
-        console.log('Avatar URL set to:', avatarUrl);
+        formDataToSend.append('avatar', profileImage);
       }
+      formDataToSend.append('rank', formData.rank);
+      formDataToSend.append('bio', formData.bio);
 
-      // Update profile
-      const res = await api.put(`/users/${user.id}`, {
-        avatar: avatarUrl,
-        rank: formData.rank,
-        bio: formData.bio
+      console.log('Updating profile with avatar:', { fileName: profileImage?.name, size: profileImage?.size });
+      
+      // Update profile with direct image upload
+      const res = await api.put(`/users/${user.id}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
       console.log('Profile update response:', res.data);
 
-      // Update auth context
-      const updatedUser = { ...user, ...res.data.user };
+      // Update auth context with new user data
+      const updatedUser = { 
+        ...user, 
+        rank: res.data.user.rank,
+        bio: res.data.user.bio,
+        hasAvatar: res.data.user.hasAvatar
+      };
       console.log('Profile updated, new user data:', updatedUser);
       login(updatedUser, localStorage.getItem('token'));
 
       setMessage('✓ Profile updated successfully!');
       setProfileImage(null);
-      // Update preview URL to show the new image
-      if (avatarUrl) {
-        setPreviewUrl(getImageUrl(avatarUrl));
+      // Update preview URL to fetch new avatar from database
+      if (profileImage) {
+        setPreviewUrl(`${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin)}/api/users/${user.id}/avatar?t=${Date.now()}`);
       }
 
       setTimeout(() => {

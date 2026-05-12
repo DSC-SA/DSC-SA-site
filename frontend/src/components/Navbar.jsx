@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getImageUrl } from '../services/api';
 import '../styles/index.css';
 
 export default function Navbar() {
@@ -13,7 +12,11 @@ export default function Navbar() {
   // Reset image error when user changes (e.g., after profile update)
   useEffect(() => {
     setImageError(false);
-  }, [user?.avatar]);
+  }, [user?.id]);
+
+  const getAvatarUrl = () => {
+    return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
+  };
 
   const handleLogout = () => {
     logout();
@@ -22,10 +25,10 @@ export default function Navbar() {
   };
 
   const handleImageError = (e) => {
-    const imgUrl = getImageUrl(user?.avatar);
+    const imgUrl = getAvatarUrl();
     console.warn('Failed to load avatar image', {
       username: user?.username,
-      avatar: user?.avatar,
+      userId: user?.id,
       fullUrl: imgUrl,
       error: e.type
     });
@@ -238,9 +241,9 @@ export default function Navbar() {
                       justifyContent: 'center',
                       overflow: 'hidden'
                     }}>
-                      {user.avatar && !imageError ? (
+                      {!imageError ? (
                         <img 
-                          src={getImageUrl(user.avatar)} 
+                          src={getAvatarUrl()} 
                           alt={user.username}
                           style={{
                             width: '100%',
@@ -300,9 +303,9 @@ export default function Navbar() {
                             justifyContent: 'center',
                             overflow: 'hidden'
                           }}>
-                            {user.avatar && !imageError ? (
+                            {!imageError ? (
                               <img 
-                                src={getImageUrl(user.avatar)} 
+                                src={getAvatarUrl()} 
                                 alt={user.username}
                                 style={{
                                   width: '100%',
