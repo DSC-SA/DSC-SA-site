@@ -180,7 +180,22 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-2 lg:gap-3">
                 <Link to="/profile" title={user.username} className="flex items-center justify-center hover:opacity-80 transition">
-                  <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
+                  <div className="relative w-8 h-8 lg:w-10 lg:h-10 flex-shrink-0" style={{
+                    background: 'linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #d4af37 100%)',
+                    backgroundSize: '200% 200%',
+                    animation: 'shimmer 3s ease-in-out infinite',
+                    borderRadius: '50%',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <style>{`
+                      @keyframes shimmer {
+                        0%, 100% { backgroundPosition: 0% 50%; }
+                        50% { backgroundPosition: 100% 50%; }
+                      }
+                    `}</style>
                     <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
                       {user.avatar && !imageError ? (
                         <img 
