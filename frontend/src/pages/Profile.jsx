@@ -77,7 +77,15 @@ export default function Profile() {
         imgFormData.append('file', profileImage);
         imgFormData.append('folder', 'profiles');
 
-        const uploadRes = await api.post('/upload', imgFormData);
+        console.log('Uploading file:', profileImage.name, 'size:', profileImage.size);
+        
+        // Send FormData - axios will handle content-type automatically
+        const uploadRes = await api.post('/upload', imgFormData, {
+          headers: {
+            'Content-Type': undefined  // Let axios/browser set it with boundary
+          }
+        });
+        
         avatarUrl = uploadRes.data.filePath;
         console.log('Upload response:', uploadRes.data);
         console.log('Avatar URL set to:', avatarUrl);

@@ -5,15 +5,27 @@ const path = require('path');
 const fs = require('fs');
 const { verifyToken } = require('../middleware/auth');
 
+// Ensure uploads directory exists
+const uploadsBaseDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsBaseDir)) {
+  fs.mkdirSync(uploadsBaseDir, { recursive: true });
+  console.log('✓ Created uploads directory:', uploadsBaseDir);
+}
+
 // Configure storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const folder = req.body.folder || 'uploads';
+    // Try to get folder from body, field, or default to 'uploads'
+    let folder = req.body?.folder || req.fields?.folder || 'uploads';
+    
+    console.log('Multer destination called with folder:', folder, 'req.body:', Object.keys(req.body || {}));
+    
     const uploadDir = path.join(__dirname, '../uploads', folder);
     
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
+      console.log('✓ Created upload subdirectory:', uploadDir);
     }
     
     cb(null, uploadDir);
@@ -42,19 +54,38 @@ const upload = multer({
 router.post('/', verifyToken, upload.single('file'), (req, res) => {
   try {
     if (!req.file) {
+      console.error('Upload failed: No file in request');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     const folder = req.body.folder || 'uploads';
     const filePath = `/uploads/${folder}/${req.file.filename}`;
+    const fullPath = req.file.path;
+
+    console.log('✓ File uploaded successfully', {
+      folder: folder,
+      filename: req.file.filename,
+      path: fullPath,
+      filePath: filePath,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+
+    // Verify file exists
+    if (!fs.existsSync(fullPath)) {
+      console.error('ERROR: File exists in multer but not found on disk:', fullPath);
+      return res.status(500).json({ error: 'File upload failed - file not found after upload' });
+    }
 
     res.json({
       message: 'File uploaded successfully',
       filePath: filePath,
       filename: req.file.filename,
-      size: req.file.size
+      size: req.file.size,
+      fullPath: fullPath
     });
   } catch (err) {
+    console.error('Upload error:', err);
     res.status(500).json({ error: err.message });
   }
 });

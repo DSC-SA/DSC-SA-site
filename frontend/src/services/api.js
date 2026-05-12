@@ -18,7 +18,24 @@ const getApiBaseUrl = () => {
   return window.location.origin;
 };
 
+// Get the base URL for static files (without /api suffix)
+const getStaticBaseUrl = () => {
+  // If explicitly set via env var, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // If in development, use localhost
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5000';
+  }
+  
+  // In production, use current domain
+  return window.location.origin;
+};
+
 const API_BASE_URL = getApiBaseUrl();
+const STATIC_BASE_URL = getStaticBaseUrl();
 
 const API = axios.create({
   baseURL: `${API_BASE_URL}/api`,
@@ -54,7 +71,9 @@ export const getImageUrl = (relativePath) => {
   
   // Add cache-busting query param to ensure fresh image loads
   const cacheBuster = `?t=${Date.now()}`;
-  return `${API_BASE_URL}${relativePath}${cacheBuster}`;
+  const fullUrl = `${STATIC_BASE_URL}${relativePath}${cacheBuster}`;
+  console.log('getImageUrl: relativePath:', relativePath, '-> fullUrl:', fullUrl);
+  return fullUrl;
 };
 
 // Auth API

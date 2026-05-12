@@ -20,7 +20,13 @@ export default function Navbar() {
   };
 
   const handleImageError = () => {
-    console.error('Failed to load avatar image for user:', user?.username, 'path:', user?.avatar);
+    const imgUrl = getImageUrl(user?.avatar);
+    console.error('Failed to load avatar image', {
+      username: user?.username,
+      avatar: user?.avatar,
+      fullUrl: imgUrl,
+      apiBase: localStorage.getItem('apiBase') || 'default'
+    });
     setImageError(true);
   };
 
