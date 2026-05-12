@@ -51,7 +51,10 @@ API.interceptors.response.use(
 export const getImageUrl = (relativePath) => {
   if (!relativePath) return null;
   if (relativePath.startsWith('http')) return relativePath;
-  return `${API_BASE_URL}${relativePath}`;
+  
+  // Add cache-busting query param to ensure fresh image loads
+  const cacheBuster = `?t=${Date.now()}`;
+  return `${API_BASE_URL}${relativePath}${cacheBuster}`;
 };
 
 // Auth API

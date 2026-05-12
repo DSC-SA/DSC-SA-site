@@ -79,6 +79,8 @@ export default function Profile() {
 
         const uploadRes = await api.post('/upload', imgFormData);
         avatarUrl = uploadRes.data.filePath;
+        console.log('Upload response:', uploadRes.data);
+        console.log('Avatar URL set to:', avatarUrl);
       }
 
       // Update profile
@@ -88,12 +90,19 @@ export default function Profile() {
         bio: formData.bio
       });
 
+      console.log('Profile update response:', res.data);
+
       // Update auth context
       const updatedUser = { ...user, ...res.data.user };
+      console.log('Profile updated, new user data:', updatedUser);
       login(updatedUser, localStorage.getItem('token'));
 
       setMessage('✓ Profile updated successfully!');
       setProfileImage(null);
+      // Update preview URL to show the new image
+      if (avatarUrl) {
+        setPreviewUrl(getImageUrl(avatarUrl));
+      }
 
       setTimeout(() => {
         setMessage('');

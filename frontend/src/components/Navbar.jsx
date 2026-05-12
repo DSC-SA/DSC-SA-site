@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getImageUrl } from '../services/api';
@@ -7,6 +7,27 @@ import '../styles/index.css';
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
+
+  // Reset image error when user changes (e.g., after profile update)
+  useEffect(() => {
+    setImageError(false);
+  }, [user?.avatar]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const handleImageError = () => {
+    console.error('Failed to load avatar image for user:', user?.username, 'path:', user?.avatar);
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Avatar image loaded successfully:', user?.avatar);
+    setImageError(false);
+  };
 
   const handleLogout = () => {
     logout();
@@ -165,8 +186,14 @@ export default function Navbar() {
                 <Link to="/profile" title={user.username} className="flex items-center justify-center hover:opacity-80 transition">
                   <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5">
                     <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
-                      {user.avatar ? (
-                        <img src={getImageUrl(user.avatar)} alt={user.username} className="w-full h-full object-cover" />
+                      {user.avatar && !imageError ? (
+                        <img 
+                          src={getImageUrl(user.avatar)} 
+                          alt={user.username} 
+                          className="w-full h-full object-cover"
+                          onError={handleImageError}
+                          onLoad={handleImageLoad}
+                        />
                       ) : (
                         <span className="text-xs lg:text-sm font-bold text-cyan-400">{user.username?.charAt(0)?.toUpperCase()}</span>
                       )}

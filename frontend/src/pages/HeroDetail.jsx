@@ -431,9 +431,24 @@ export default function HeroDetail() {
             {comments.map(comment => (
               <div key={comment.id} className="card-gaming p-5 hover:border-purple-400 transition">
                 <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h4 className="font-bold text-cyan-400">{comment.username}</h4>
-                    <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 p-0.5 flex-shrink-0">
+                      <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
+                        {comment.avatar ? (
+                          <img 
+                            src={getImageUrl(comment.avatar)} 
+                            alt={comment.username} 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xs font-bold text-cyan-400">{comment.username?.charAt(0)?.toUpperCase()}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-cyan-400">{comment.username}</h4>
+                      <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                   <span className="bg-purple-600 bg-opacity-30 px-2 py-1 rounded text-xs text-purple-300">Member</span>
                 </div>
