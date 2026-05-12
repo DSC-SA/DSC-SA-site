@@ -7,7 +7,7 @@ const getBuildsForHero = async (req, res) => {
     // Get recommended builds
     const recommendedResult = await pool.query(
       `SELECT rb.id, rb.build_name, rb.description, rb.synergy_notes, rb.build_order,
-        json_agg(json_build_object('id', i.id, 'name', i.name, 'stage', rbi.stage, 'order', rbi.item_order)) as items
+        json_agg(json_build_object('id', i.id, 'name', i.name, 'stage', rbi.stage, 'order', rbi.item_order, 'image', i.image, 'icon_url', i.icon_url)) as items
       FROM recommended_builds rb
       LEFT JOIN recommended_build_items rbi ON rb.id = rbi.build_id
       LEFT JOIN items i ON rbi.item_id = i.id
@@ -20,7 +20,7 @@ const getBuildsForHero = async (req, res) => {
     // Get user builds
     const userBuildsResult = await pool.query(
       `SELECT ub.id, ub.build_name, ub.description, ub.likes, ub.views, u.username,
-        json_agg(json_build_object('id', i.id, 'name', i.name, 'stage', ubi.stage, 'order', ubi.item_order)) as items
+        json_agg(json_build_object('id', i.id, 'name', i.name, 'stage', ubi.stage, 'order', ubi.item_order, 'image', i.image, 'icon_url', i.icon_url)) as items
       FROM user_builds ub
       JOIN users u ON ub.user_id = u.id
       LEFT JOIN user_build_items ubi ON ub.id = ubi.build_id

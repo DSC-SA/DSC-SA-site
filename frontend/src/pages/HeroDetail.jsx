@@ -210,12 +210,60 @@ export default function HeroDetail() {
                 </div>
                 <p className="text-white font-semibold mb-2">{build.build_name}</p>
                 <p className="text-gray-400 text-sm mb-4">{build.synergy_notes}</p>
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-purple-400 text-sm">📦 ITEMS:</h4>
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="mb-4">
+                  <p className="text-purple-400 text-xs font-semibold mb-3">ITEMS BUILD:</p>
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
                     {build.items && build.items.filter(i => i.id).map(item => (
-                      <div key={item.id} className="text-xs bg-gray-900 p-2 rounded border border-purple-500 border-opacity-20 hover:border-opacity-50 transition">
-                        {item.name}
+                      <div
+                        key={item.id}
+                        className="flex-shrink-0 relative group"
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: '2px solid rgba(139, 92, 246, 0.4)',
+                          padding: 0,
+                          overflow: 'hidden',
+                          transition: 'all 0.2s'
+                        }}
+                        title={item.name}
+                      >
+                        {item.image ? (
+                          <img
+                            src={getImageUrl(item.image)}
+                            alt={item.name}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              borderRadius: '50%',
+                              display: 'block'
+                            }}
+                            className="hover:scale-110 transition"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextElementSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          style={{
+                            display: !item.image ? 'flex' : 'none',
+                            borderRadius: '50%',
+                            width: '100%',
+                            height: '100%',
+                            background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <span className="text-xs font-bold text-white">{item.name.charAt(0)}</span>
+                        </div>
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                          <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400">
+                            {item.name}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -413,13 +461,61 @@ export default function HeroDetail() {
                 </div>
                 <p className="text-gray-400 text-sm mb-3">👤 by <span className="text-cyan-300">{build.username}</span></p>
                 <p className="text-gray-300 mb-4 text-sm">{build.description}</p>
-                <div className="mb-4 space-y-2">
-                  <p className="text-purple-400 text-xs font-semibold">ITEMS:</p>
-                  <div className="flex flex-wrap gap-2">
+                <div className="mb-4">
+                  <p className="text-purple-400 text-xs font-semibold mb-3">ITEMS BUILD:</p>
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
                     {build.items && build.items.filter(i => i.id).map(item => (
-                      <span key={item.id} className="text-xs bg-gray-800 px-3 py-1 rounded border border-purple-500 border-opacity-20">
-                        {item.name}
-                      </span>
+                      <div
+                        key={item.id}
+                        className="flex-shrink-0 relative group"
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: '2px solid rgba(139, 92, 246, 0.4)',
+                          padding: 0,
+                          overflow: 'hidden',
+                          transition: 'all 0.2s'
+                        }}
+                        title={item.name}
+                      >
+                        {item.image ? (
+                          <img
+                            src={getImageUrl(item.image)}
+                            alt={item.name}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              borderRadius: '50%',
+                              display: 'block'
+                            }}
+                            className="hover:scale-110 transition"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextElementSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          style={{
+                            display: !item.image ? 'flex' : 'none',
+                            borderRadius: '50%',
+                            width: '100%',
+                            height: '100%',
+                            background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <span className="text-xs font-bold text-white">{item.name.charAt(0)}</span>
+                        </div>
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block z-10">
+                          <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400">
+                            {item.name}
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
