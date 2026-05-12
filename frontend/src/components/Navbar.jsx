@@ -19,20 +19,15 @@ export default function Navbar() {
     navigate('/');
   };
 
-  const handleImageError = () => {
+  const handleImageError = (e) => {
     const imgUrl = getImageUrl(user?.avatar);
-    console.error('Failed to load avatar image', {
+    console.warn('Failed to load avatar image', {
       username: user?.username,
       avatar: user?.avatar,
       fullUrl: imgUrl,
-      apiBase: localStorage.getItem('apiBase') || 'default'
+      error: e.type
     });
     setImageError(true);
-  };
-
-  const handleImageLoad = () => {
-    console.log('Avatar image loaded successfully:', user?.avatar);
-    setImageError(false);
   };
 
   return (
@@ -190,10 +185,15 @@ export default function Navbar() {
                       {user.avatar && !imageError ? (
                         <img 
                           src={getImageUrl(user.avatar)} 
-                          alt={user.username} 
-                          className="w-full h-full object-cover"
+                          alt={user.username}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            display: 'block'
+                          }}
                           onError={handleImageError}
-                          onLoad={handleImageLoad}
                         />
                       ) : (
                         <span className="text-xs lg:text-sm font-bold text-cyan-400">{user.username?.charAt(0)?.toUpperCase()}</span>

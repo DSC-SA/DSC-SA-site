@@ -438,7 +438,13 @@ export default function HeroDetail() {
                           <img 
                             src={getImageUrl(comment.avatar)} 
                             alt={comment.username} 
-                            className="w-full h-full object-cover"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              objectPosition: 'center',
+                              display: 'block'
+                            }}
                           />
                         ) : (
                           <span className="text-xs font-bold text-cyan-400">{comment.username?.charAt(0)?.toUpperCase()}</span>
