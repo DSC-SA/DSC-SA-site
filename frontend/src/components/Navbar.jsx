@@ -29,11 +29,6 @@ export default function Navbar() {
     setImageError(false);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-gaming-dark via-gaming-dark to-gray-900 border-b border-cyan-500 border-opacity-30 backdrop-blur-md shadow-lg">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
