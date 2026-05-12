@@ -10,9 +10,17 @@ const seedAllItems = async () => {
     console.log('✓ Cleared existing items');
     
     for (const item of itemsList.items) {
-      // Insert new item
+      // Generate image URL - using MLBB game assets
+      // Format: /uploads/items/item_name_slug.png
+      const itemSlug = item.name.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+      const imageUrl = `/uploads/items/${itemSlug}.png`;
+      
+      // Insert new item with image field (placeholder path)
       await pool.query(
-        'INSERT INTO items (name, category, damage_type, description) VALUES ($1, $2, $3, $4)',
+        'INSERT INTO items (name, category, damage_type, description, image) VALUES ($1, $2, $3, $4, $5)',
         [
           item.name, 
           item.category, 
@@ -20,7 +28,8 @@ const seedAllItems = async () => {
           item.category.includes('Magic') ? 'Magic' : 
           item.category.includes('Defense') ? 'Defense' : 
           item.category.includes('Boots') ? 'Boots' : 'Utility',
-          item.description
+          item.description,
+          imageUrl
         ]
       );
       console.log(`✓ Added: ${item.name}`);
