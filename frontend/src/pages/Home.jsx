@@ -17,7 +17,10 @@ export default function Home() {
           heroesAPI.getAll(),
           eventsAPI.getAll()
         ]);
-        setHeroes(heroesRes.data.slice(0, 9));
+        // Get all heroes for filtering SSR heroes
+        const allHeroes = heroesRes.data;
+        // Keep first 9 for preview (used elsewhere if needed)
+        setHeroes(allHeroes);
         setEvents(eventsRes.data.slice(0, 3));
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -36,10 +39,11 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
           <div className="slide-down">
             <h1 className="text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 leading-tight">
-              Welcome to <span className="gradient-gaming logo-animated">DSC-SA</span>
+              Welcome to <span className="led-animated">DSC-SA</span>
               <br />
               <span className="text-white">Community Hub</span>
             </h1>
+            <div className="led-line mb-6"></div>
             <div className="text-4xl sm:text-6xl mb-6 sm:mb-8 wave-emoji" style={{display: 'inline-block'}}>
               👋
             </div>
@@ -65,47 +69,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Heroes Section */}
+      {/* SSR Heroes Section */}
       <section className="mb-12 sm:mb-24">
         <div className="mb-8 sm:mb-16">
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 text-white">Featured Heroes</h2>
-          <p className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">Explore the heroes that shape the meta</p>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 led-animated">🏆 SSR Heroes - Current Meta</h2>
+          <div className="led-line mb-4"></div>
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">Dominate ranked with the strongest picks. Updated to current meta trends.</p>
         </div>
         
         {loading ? (
           <div className="text-center py-16">
             <div className="inline-block">
-              <div className="w-12 h-12 border-4 border-purple-500 border-t-cyan-400 rounded-full animate-spin"></div>
+              <div className="w-12 h-12 border-4 border-amber-500 border-t-amber-300 rounded-full animate-spin"></div>
             </div>
             <p className="text-gray-400 mt-4">Loading heroes...</p>
           </div>
         ) : (
-            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-1 sm:gap-2 md:gap-3">
-            {heroes.map(hero => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
+            {heroes.filter(h => ['Khufra', 'Lancelot', 'Beatrix', 'Kagura', 'Estes', 'Arlott', 'Chou', 'Fanny', 'Gusion', 'Grock'].includes(h.name)).map(hero => (
               <Link 
                 key={hero.id} 
                 to={`/heroes/${hero.id}`}
                 className="group"
                 style={{ textDecoration: 'none' }}
               >
-                <div className="flex flex-col items-center gap-0.5 h-full">
+                <div className="relative overflow-hidden rounded-lg p-3 sm:p-4 bg-gradient-to-b from-gray-800 to-gray-900 border-2 border-amber-600 hover:border-amber-400 transition duration-300 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/50 group">
                   <div 
-                    className="w-full aspect-square rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm text-white hover:scale-110 transition duration-300 shadow-lg hover:shadow-cyan-500/50"
-                    style={{
-                      background: hero.role === 'Tank' ? 'linear-gradient(to bottom, #4f46e5, #3730a3)' :
-                                  hero.role === 'Fighter' ? 'linear-gradient(to bottom, #dc2626, #991b1b)' :
-                                  hero.role === 'Assassin' ? 'linear-gradient(to bottom, #7c3aed, #5b21b6)' :
-                                  hero.role === 'Mage' ? 'linear-gradient(to bottom, #0284c7, #0c4a6e)' :
-                                  hero.role === 'Marksman' ? 'linear-gradient(to bottom, #ea580c, #c2410c)' :
-                                  hero.role === 'Support' ? 'linear-gradient(to bottom, #059669, #065f46)' :
-                                  'linear-gradient(to bottom, #6366f1, #4f46e5)'
-                    }}
+                    className="w-full flex items-center justify-center font-bold text-xs text-white mb-3 rainbow-black-bar"
+                    style={{height: '5px', boxShadow: '0 0 6px rgba(255, 0, 0, 0.3)'}}
                   >
-                    {hero.role?.[0]?.toUpperCase() || '?'}
                   </div>
-                  <p className="text-center text-xs font-semibold text-gray-300 group-hover:text-cyan-400 transition line-clamp-2 text-xs max-w-10">
-                    {hero.name}
+                  <div className="text-center">
+                    <p className="text-center text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition whitespace-nowrap">
+                      {hero.name}
+                    </p>
+                  </div>
+                  <p className="text-center text-xs sm:text-sm text-amber-400 font-semibold mt-2">
+                    {hero.role}
                   </p>
+                  <div className="mt-3 text-center">
+                    <span className="inline-block px-2 py-1 rounded-full text-xs font-bold bg-amber-600/30 text-amber-300 border border-amber-600">
+                      SSR Tier
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -124,7 +130,8 @@ export default function Home() {
       {/* Upcoming Events Section */}
       <section className="mb-12 sm:mb-24">
         <div className="mb-8 sm:mb-16">
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 text-white">Upcoming Events</h2>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-2 sm:mb-4 led-animated">Upcoming Events</h2>
+          <div className="led-line mb-4"></div>
           <p className="text-gray-300 text-sm sm:text-base md:text-lg font-semibold">Join the community and showcase your skills</p>
         </div>
         

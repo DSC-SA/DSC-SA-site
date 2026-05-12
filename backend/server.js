@@ -55,7 +55,7 @@ const startServer = async () => {
     await migrateItemsImage();
 
     // Seed all items from 2026 equipment list
-    const { seedAllItems } = require('./db/seed-all-items-2026');
+    const { seedAllItems } = require('./db/seed-items-official');
     await seedAllItems();
 
     // Seed verified MLBB data (heroes only)

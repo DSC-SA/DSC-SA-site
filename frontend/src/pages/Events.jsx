@@ -26,11 +26,9 @@ export default function Events() {
   return (
     <Layout>
       <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-10 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">🎮 Events</h1>
-        </div>
-        <p className="text-gray-400 text-lg">Join the DSC-SA community for epic matches, competitions, and challenges</p>
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 led-animated">🎮 Events</h1>
+        <div className="led-line mb-6"></div>
+        <p className="text-gray-300 text-lg font-semibold">Join the DSC-SA community for epic matches, competitions, and challenges</p>
       </div>
 
       {loading ? (

@@ -7,9 +7,9 @@ module.exports = {
     extend: {
       colors: {
         gaming: {
-          dark: '#0a0e27',
-          purple: '#7c3aed',
-          cyan: '#06b6d4'
+          dark: '#0f0f0f',
+          silver: '#c0c0c0',
+          diamond: '#e8e8e8'
         }
       }
     }

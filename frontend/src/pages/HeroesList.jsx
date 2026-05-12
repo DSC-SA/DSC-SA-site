@@ -27,14 +27,14 @@ export default function HeroesList() {
 
   const getRoleColor = (role) => {
     const colors = {
-      'Tank': 'from-red-600 to-red-400',
-      'Mage': 'from-blue-600 to-blue-400',
+      'Tank': 'from-amber-700 to-amber-500',
+      'Mage': 'from-blue-700 to-blue-500',
       'Marksman': 'from-yellow-600 to-yellow-400',
-      'Assassin': 'from-purple-600 to-purple-400',
-      'Support': 'from-green-600 to-green-400',
-      'Fighter': 'from-orange-600 to-orange-400'
+      'Assassin': 'from-purple-700 to-purple-500',
+      'Support': 'from-green-700 to-green-500',
+      'Fighter': 'from-orange-700 to-orange-500'
     };
-    return colors[role] || 'from-purple-600 to-cyan-600';
+    return colors[role] || 'from-amber-600 to-amber-400';
   };
 
   const filteredHeroes = selectedRole === 'All' 
@@ -47,35 +47,40 @@ export default function HeroesList() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Heroes</h1>
+              <div className="w-1 h-8 bg-gradient-to-b from-amber-400 to-amber-600 rounded"></div>
+              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Heroes</h1>
             </div>
-            <p className="text-gray-300 text-sm ml-4">Browse all {heroes.length} official heroes</p>
+            <p className="text-gray-400 text-sm ml-4">Browse all {heroes.length} official heroes</p>
           </div>
         </div>
       </div>
 
       {/* Role Filter Tabs */}
-      <div className="mb-8 flex flex-wrap gap-1 sm:gap-2">
-        {roles.map(role => (
-          <button
-            key={role}
-            onClick={() => setSelectedRole(role)}
-            className={`px-2 sm:px-4 py-1 sm:py-2 font-bold text-xs sm:text-sm transition-all duration-200 ${
-              selectedRole === role
-                ? 'bg-white text-gray-900 border border-white'
-                : 'bg-transparent border border-gray-400 text-gray-300 hover:border-gray-300'
-            }`}
-          >
-            {role}
-          </button>
-        ))}
+      <div className="mb-8">
+        <div className="flex flex-wrap gap-3">
+          {roles.map(role => (
+            <button
+              key={role}
+              onClick={() => setSelectedRole(role)}
+              className="font-bold text-sm transition-all duration-200 rounded"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#C0C0C0',
+                color: '#000000',
+                border: '2px solid #808080',
+                cursor: 'pointer'
+              }}
+            >
+              {role}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
         <div className="text-center py-20">
           <div className="inline-block">
-            <div className="w-12 h-12 border-4 border-purple-500 border-t-cyan-400 rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-amber-500 border-t-amber-300 rounded-full animate-spin"></div>
           </div>
           <p className="text-gray-400 mt-4">Loading heroes...</p>
         </div>

@@ -100,10 +100,16 @@ export default function Admin() {
       setItemsLoading(true);
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
       const res = await fetch(`${API_BASE_URL}/api/items`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const data = await res.json();
-      setItems(data);
+      console.log('Items loaded:', data);
+      setItems(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error('Error loading items:', err);
       showMessage('Error loading items: ' + err.message, 'error');
+      setItems([]);
     } finally {
       setItemsLoading(false);
     }
@@ -765,15 +771,11 @@ export default function Admin() {
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-yellow-400 border-opacity-50 focus:border-yellow-300 focus:outline-none transition"
               >
                 <option value="">-- Choose an Item --</option>
-                {items && items.length > 0 ? (
-                  items.map(item => (
-                    <option key={item.id} value={String(item.id)}>
-                      {item.name}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>Loading items...</option>
-                )}
+                {Array.isArray(items) && items.map(item => (
+                  <option key={item.id} value={String(item.id)}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
 
               {selectedItem && (
