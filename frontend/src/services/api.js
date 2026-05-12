@@ -100,7 +100,6 @@ export const itemsAPI = {
 export const buildsAPI = {
   getForHero: (heroId) => API.get(`/builds/${heroId}`),
   create: (data) => API.post('/builds', data),
-  delete: (buildId) => API.delete(`/builds/${buildId}`),
   getComments: (heroId) => API.get(`/builds/${heroId}/comments`),
   addComment: (heroId, data) => API.post(`/builds/comments/${heroId}`, data)
 };
