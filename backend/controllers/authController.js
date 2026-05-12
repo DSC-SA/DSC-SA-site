@@ -43,7 +43,7 @@ const register = async (req, res) => {
     );
 
     // Generate JWT immediately
-    const token = jwt.sign({ id: result.rows[0].id, username: result.rows[0].username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: result.rows[0].id, username: result.rows[0].username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.status(201).json({
       message: 'Registration successful! You are now logged in.',
@@ -105,7 +105,7 @@ const verifyEmailCode = async (req, res) => {
     });
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const newToken = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.json({
       message: 'Email verified successfully',
@@ -165,7 +165,7 @@ const googleCallback = async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Store token in response
     res.json({
@@ -213,7 +213,7 @@ const login = async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.json({
       message: 'Login successful',
@@ -338,7 +338,7 @@ const googleAuthCallback = async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Redirect with token and user data
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
