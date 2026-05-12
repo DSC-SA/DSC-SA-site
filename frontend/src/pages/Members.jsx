@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { api, getImageUrl } from '../services/api';
+import UserProfileCard from '../components/UserProfileCard';
 
 export default function Members() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -53,15 +55,23 @@ export default function Members() {
             <div key={user.id} className="card-gaming p-4 md:p-6 hover:border-cyan-400 transition flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1">
                 <div className="text-3xl w-12 text-center">{getRankBadge(user.rank)}</div>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                  padding: '1.5px',
-                  animation: 'spin 4s linear infinite',
-                  flexShrink: 0
-                }}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUserProfile(user)}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                    padding: '1.5px',
+                    animation: 'spin 4s linear infinite',
+                    flexShrink: 0,
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                  }}
+                  className="hover:scale-110"
+                >
                   <style>{`
                     @keyframes spin {
                       from { filter: hue-rotate(0deg); }
@@ -97,11 +107,23 @@ export default function Members() {
                       }}>{user.username?.charAt(0)?.toUpperCase()}</span>
                     )}
                   </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-cyan-400">{user.username}</h3>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUserProfile(user)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    flex: 1
+                  }}
+                  className="hover:opacity-80 transition"
+                >
+                  <h3 className="text-xl font-bold text-cyan-400 hover:text-cyan-300">{user.username}</h3>
                   <p className="text-gray-500 text-sm">{user.rank === 1 ? 'Top Contributor' : 'Community Member'}</p>
-                </div>
+                </button>
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">{user.points}</p>
@@ -131,6 +153,12 @@ export default function Members() {
           </a>
         </div>
       </div>
+
+      {/* Profile Card Popup */}
+      <UserProfileCard 
+        user={selectedUserProfile} 
+        onClose={() => setSelectedUserProfile(null)}
+      />
     </Layout>
   );
 }

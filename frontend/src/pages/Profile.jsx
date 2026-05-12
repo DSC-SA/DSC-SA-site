@@ -23,12 +23,19 @@ export default function Profile() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  // Initialize preview URL from user avatar
+  // Initialize form data when user loads
   useEffect(() => {
-    if (user?.avatar) {
-      setPreviewUrl(getImageUrl(user.avatar));
+    if (user) {
+      setFormData({
+        avatar: user.avatar || '',
+        rank: user.rank || '',
+        bio: user.bio || ''
+      });
+      if (user.avatar) {
+        setPreviewUrl(getImageUrl(user.avatar));
+      }
     }
-  }, [user]);
+  }, [user?.id]); // Only update when user ID changes
 
   useEffect(() => {
     if (!user) {

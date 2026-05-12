@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { heroesAPI, buildsAPI, commentsAPI, itemsAPI, getImageUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import UserProfileCard from '../components/UserProfileCard';
 
 export default function HeroDetail() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function HeroDetail() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showBuildForm, setShowBuildForm] = useState(false);
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [newBuild, setNewBuild] = useState({ buildName: '', description: '', selectedItems: [] });
   const [itemsGalleryOpen, setItemsGalleryOpen] = useState(false);
@@ -432,15 +434,23 @@ export default function HeroDetail() {
               <div key={comment.id} className="card-gaming p-5 hover:border-purple-400 transition">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-3">
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                      padding: '1.5px',
-                      animation: 'spin 4s linear infinite',
-                      flexShrink: 0
-                    }}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedUserProfile(comment)}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                        padding: '1.5px',
+                        animation: 'spin 4s linear infinite',
+                        flexShrink: 0,
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s',
+                      }}
+                      className="hover:scale-110"
+                    >
                       <style>{`
                         @keyframes spin {
                           from { filter: hue-rotate(0deg); }
@@ -476,11 +486,22 @@ export default function HeroDetail() {
                           }}>{comment.username?.charAt(0)?.toUpperCase()}</span>
                         )}
                       </div>
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-cyan-400">{comment.username}</h4>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedUserProfile(comment)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      className="hover:opacity-80 transition"
+                    >
+                      <h4 className="font-bold text-cyan-400 hover:text-cyan-300 transition">{comment.username}</h4>
                       <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
-                    </div>
+                    </button>
                   </div>
                   <span className="bg-purple-600 bg-opacity-30 px-2 py-1 rounded text-xs text-purple-300">Member</span>
                 </div>
@@ -498,6 +519,12 @@ export default function HeroDetail() {
           </div>
         )}
       </section>
+
+      {/* Profile Card Popup */}
+      <UserProfileCard 
+        user={selectedUserProfile} 
+        onClose={() => setSelectedUserProfile(null)}
+      />
     </Layout>
   );
 }
