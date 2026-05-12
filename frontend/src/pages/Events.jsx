@@ -38,9 +38,9 @@ export default function Events() {
       ) : events.length > 0 ? (
         <div className="grid grid-cols-1 gap-8">
           {events.map(event => (
-            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-row w-96 h-32">
+            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-row !w-96 !h-32 !max-h-32">
               {event.image && (
-                <div className="relative w-48 h-32 flex-shrink-0 overflow-hidden bg-gray-800">
+                <div className="relative !w-48 !h-32 flex-shrink-0 overflow-hidden bg-gray-800 !max-h-32">
                   {event.image.startsWith('data:video/') ? (
                     <>
                       <video
