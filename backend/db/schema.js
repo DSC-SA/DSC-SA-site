@@ -43,6 +43,7 @@ const createTables = async () => {
       icon_url VARCHAR(255),
       image VARCHAR(255),
       image_data BYTEA,
+      image_mimetype VARCHAR(50),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
 

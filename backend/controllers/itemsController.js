@@ -31,15 +31,16 @@ const uploadItemImage = async (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    console.log('📤 Uploading item image to database:', { itemId: id, fileName: req.file.originalname, size: req.file.size, bufferLength: req.file.buffer.length });
+    console.log('📤 Uploading item image to database:', { itemId: id, fileName: req.file.originalname, size: req.file.size, mimetype: req.file.mimetype });
 
     // Use the buffer directly from memory storage
     const imageBuffer = req.file.buffer;
+    const mimetype = req.file.mimetype;
     
     // Store image data in database
     const result = await pool.query(
-      'UPDATE items SET image_data = $1 WHERE id = $2 RETURNING id, name, image_data',
-      [imageBuffer, id]
+      'UPDATE items SET image_data = $1, image_mimetype = $2 WHERE id = $3 RETURNING id, name, image_data, image_mimetype',
+      [imageBuffer, mimetype, id]
     );
 
     if (result.rows.length === 0) {
@@ -77,12 +78,14 @@ const getItemImage = async (req, res) => {
     }
 
     const imageData = result.rows[0].image_data;
+    const imageMimetype = result.rows[0].image_mimetype || 'image/png';
+    
     if (!imageData) {
       return res.status(404).json({ error: 'No image found for this item' });
     }
 
-    // Set appropriate headers and send binary data
-    res.type('image/png');
+    // Set appropriate headers based on stored MIME type
+    res.type(imageMimetype);
     res.send(imageData);
   } catch (err) {
     console.error('❌ Error retrieving item image:', err);
