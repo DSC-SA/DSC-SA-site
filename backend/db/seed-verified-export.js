@@ -9,53 +9,8 @@ const seedVerifiedData = async () => {
       return;
     }
 
-    // Clear existing data
-    await pool.query('TRUNCATE TABLE items CASCADE');
+    // Clear existing hero data only (items are seeded separately by seedAllItems)
     await pool.query('TRUNCATE TABLE heroes CASCADE');
-
-    // Seed MLBB Items
-    const items = [
-      // Offensive Items
-      { name: 'Blade of the Heptarch', category: 'Offensive', damage_type: 'Physical', description: 'Physical damage + Penetration' },
-      { name: 'Calamity Reaper', category: 'Offensive', damage_type: 'Magic', description: 'Magic power + Cooldown Reduction' },
-      { name: 'Blood Wings', category: 'Offensive', damage_type: 'Magic', description: 'Magic power + Shield' },
-      { name: 'Fleeting Time', category: 'Offensive', damage_type: 'Magic', description: 'Magic power + CDR + Cooldown reset on kill' },
-      { name: 'Demon Hunter\'s Sword', category: 'Offensive', damage_type: 'Physical', description: 'Physical damage + True damage effect' },
-      { name: 'Bloodlust Axe', category: 'Offensive', damage_type: 'Physical', description: 'Physical damage + Spell Vamp' },
-      { name: 'Windtalker', category: 'Offensive', damage_type: 'Physical', description: 'Attack speed + Movement speed' },
-      { name: 'Endless Battle', category: 'Offensive', damage_type: 'Physical', description: 'Physical damage + Lifesteal + True damage' },
-      { name: 'Malefic Roar', category: 'Offensive', damage_type: 'Physical', description: 'Physical damage + Armor penetration' },
-      { name: 'Divine Glaive', category: 'Offensive', damage_type: 'Magic', description: 'Magic power + Magic penetration' },
-      
-      // Defensive Items
-      { name: 'Athena\'s Shield', category: 'Defensive', damage_type: 'Utility', description: 'Magic resistance + Damage reduction' },
-      { name: 'Brute Force Breastplate', category: 'Defensive', damage_type: 'Utility', description: 'Armor + HP' },
-      { name: 'Antique Cuirass', category: 'Defensive', damage_type: 'Utility', description: 'Armor + Reflect damage' },
-      { name: 'Twilight Armor', category: 'Defensive', damage_type: 'Utility', description: 'Armor + Reduces attack damage' },
-      { name: 'Immortality', category: 'Defensive', damage_type: 'Utility', description: 'HP + Revival on death' },
-      { name: 'Oracle', category: 'Defensive', damage_type: 'Utility', description: 'Magical resistance + Healing increase' },
-      { name: 'Radiant Armor', category: 'Defensive', damage_type: 'Utility', description: 'Armor + Magic resistance' },
-      { name: 'Hollow Radiance', category: 'Defensive', damage_type: 'Utility', description: 'HP + Aura effect' },
-      
-      // Boots
-      { name: 'Demon Shoes', category: 'Utility', damage_type: 'Utility', description: 'Movement speed + Mana regen' },
-      { name: 'Warrior Boots', category: 'Utility', damage_type: 'Utility', description: 'Movement speed + Armor' },
-      { name: 'Tough Boots', category: 'Utility', damage_type: 'Utility', description: 'Movement speed + Crowd control reduction' },
-      { name: 'Arcane Boots', category: 'Utility', damage_type: 'Utility', description: 'Movement speed + Magic resistance' },
-      
-      // Utility Items
-      { name: 'Lucent Pact', category: 'Utility', damage_type: 'Magic', description: 'Magic power + Shield on cooldown' },
-      { name: 'Courage Bulwark', category: 'Utility', damage_type: 'Utility', description: 'HP + Team shield effect' },
-      { name: 'Dominance Ice', category: 'Utility', damage_type: 'Utility', description: 'Attack speed + Slow effect' },
-      { name: 'Corrosion Scythe', category: 'Utility', damage_type: 'Physical', description: 'Attack speed + Slow on hit' }
-    ];
-
-    for (const item of items) {
-      await pool.query(
-        'INSERT INTO items (name, category, damage_type, description) VALUES ($1, $2, $3, $4)',
-        [item.name, item.category, item.damage_type, item.description]
-      );
-    }
 
     // Seed MLBB Heroes - All 134 Verified Heroes
     const heroes = [

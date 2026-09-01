@@ -29,6 +29,9 @@ const createTables = async () => {
       role VARCHAR(50) NOT NULL,
       description TEXT,
       difficulty INT,
+      attack INT,
+      defense INT,
+      hp INT,
       icon_url VARCHAR(255),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,

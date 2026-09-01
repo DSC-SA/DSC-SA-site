@@ -77,6 +77,9 @@ const startServer = async () => {
     const { migrateItemsImageData } = require('./db/migrate-items-image-data');
     await migrateItemsImageData();
 
+    const { migrateHeroesStats } = require('./db/migrate-heroes-stats');
+    await migrateHeroesStats();
+
     // Seed all items from 2026 equipment list
     const { seedAllItems } = require('./db/seed-items-official');
     await seedAllItems();
