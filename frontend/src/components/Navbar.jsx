@@ -8,6 +8,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Reset image error when user changes (e.g., after profile update)
   useEffect(() => {
@@ -215,7 +216,7 @@ export default function Navbar() {
           </div>
 
           {/* Auth Section */}
-          <div className="hidden md:flex gap-2 lg:gap-3 items-center">
+          <div className="flex gap-2 lg:gap-3 items-center">
             {user ? (
               <div className="flex items-center gap-2 lg:gap-3 relative">
                 <button onClick={() => setProfilePopupOpen(!profilePopupOpen)} title={user.username} className="flex items-center justify-center hover:opacity-80 transition relative">
@@ -364,11 +365,23 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg border border-cyan-500 border-opacity-40 hover:bg-cyan-500 hover:bg-opacity-10 transition"
+            aria-label="Toggle navigation menu"
+          >
+            <div className="flex flex-col gap-1.5">
+              <span className="block w-5 h-0.5 bg-cyan-400 rounded"></span>
+              <span className="block w-5 h-0.5 bg-cyan-400 rounded"></span>
+              <span className="block w-5 h-0.5 bg-cyan-400 rounded"></span>
+            </div>
+          </button>
 
         </div>
 
         {/* Mobile Navigation */}
-        {false && (
+        {mobileMenuOpen && (
           <div className="md:hidden pb-2 border-t border-cyan-500 border-opacity-30">
             <div className="flex flex-col gap-0 pt-2">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">Home</Link>
@@ -376,18 +389,38 @@ export default function Navbar() {
               <Link to="/events" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">Events</Link>
               <Link to="/matches" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">Matches</Link>
               <Link to="/members" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">Members</Link>
+              <Link to="/nsfw" onClick={() => setMobileMenuOpen(false)} className="text-gray-300 hover:text-cyan-400 hover:bg-cyan-500 hover:bg-opacity-10 py-2 px-3 font-bold text-xs sm:text-sm transition">NSFW</Link>
               
               <div className="border-t border-cyan-500 border-opacity-30 pt-2 mt-2 px-3">
                 {user ? (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center font-bold text-white text-xs">
-                        {user.username?.charAt(0)?.toUpperCase()}
+                    <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 group">
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
+                        padding: '2px',
+                        flexShrink: 0
+                      }}>
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '50%',
+                          backgroundColor: '#111827',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden'
+                        }}>
+                          {!imageError ? (
+                            <img src={getAvatarUrl()} alt={user.username} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} onError={handleImageError} />
+                          ) : (
+                            <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#22d3ee' }}>{user.username?.charAt(0)?.toUpperCase()}</span>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-cyan-400 font-bold text-sm">{user.username}</p>
-                    </div>
-                    <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="btn-primary w-full block text-center text-sm py-2">
-                      👤 Edit Profile
+                      <p className="text-cyan-400 font-bold text-sm group-hover:text-cyan-300">👤 Edit Profile</p>
                     </Link>
                     <button onClick={handleLogout} className="btn-primary w-full text-sm py-2">Logout</button>
                   </div>

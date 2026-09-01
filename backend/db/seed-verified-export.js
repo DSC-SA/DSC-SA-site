@@ -122,10 +122,30 @@ const seedVerifiedData = async () => {
       { name: 'Marcel', role: 'Support', description: 'Utility control support', attack: 5, defense: 7, hp: 8 }
     ];
 
+    // Official Moonton difficulty (1-10) mapped to 1-5 stars
+    const difficulty = {
+      Akai: 2, Alice: 4, Alpha: 1, Alucard: 2, Aamon: 3, Angela: 3, Argus: 3, Arlott: 3,
+      Aurora: 1, Badang: 1, Balmond: 1, Bane: 2, Barats: 2, Baxia: 1, Beatrix: 4, Belerick: 1,
+      Benedetta: 4, Bruno: 3, Carmilla: 2, Cecilion: 2, Chou: 4, Clint: 4, Claude: 3, Cyclops: 3,
+      Darius: 2, Diggie: 3, Dyrroth: 2, Edith: 2, Eudora: 1, Esmeralda: 3, Estes: 2, Fanny: 5,
+      Faramis: 2, Floryn: 1, Freya: 3, Gatotkaca: 1, Gloo: 4, Gord: 1, Granger: 2, Grock: 3,
+      Gusion: 4, Guinevere: 2, Hanabi: 1, Hanzo: 4, Hayabusa: 3, Helcurt: 3, Hilda: 2, Hylos: 2,
+      Ixia: 2, Johnson: 3, Kagura: 4, Kaja: 4, Karina: 2, Karrie: 2, Khaleed: 3, Khufra: 3,
+      Kimmy: 5, Lancelot: 3, 'Lapu-Lapu': 3, Layla: 1, Leomord: 3, Lesley: 2, Ling: 4, Lolita: 2,
+      'Luo Yi': 3, Lylia: 3, Masha: 2, Mathilda: 2, Martis: 2, Melissa: 2, Minsitthar: 2, Miya: 1,
+      Minotaur: 2, Moskov: 3, Nana: 1, Natalia: 5, Nolan: 3, Novaria: 3, Odette: 1, Paquito: 4,
+      Pharsa: 2, Phoveus: 2, 'Popol and Kupa': 3, Rafaela: 1, Roger: 2, Ruby: 2, Saber: 1,
+      Selena: 4, Silvanna: 1, Sun: 2, Terizla: 1, Tigreal: 1, Uranus: 2, Valentina: 4, Vexana: 1,
+      Wanwan: 3, 'X. Borg': 2, Yve: 4, Yin: 2, 'Yi Sun-shin': 4, 'Yu Zhong': 4, Zilong: 1,
+      Zhask: 2, Zetian: 1, Hirara: 4, Marcel: 1
+    };
+
+    await pool.query('ALTER TABLE heroes ADD COLUMN IF NOT EXISTS difficulty INT DEFAULT 1');
+
     for (const hero of heroes) {
       await pool.query(
-        'INSERT INTO heroes (name, role, description, attack, defense, hp) VALUES ($1, $2, $3, $4, $5, $6)',
-        [hero.name, hero.role, hero.description, hero.attack, hero.defense, hero.hp]
+        'INSERT INTO heroes (name, role, description, attack, defense, hp, difficulty) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [hero.name, hero.role, hero.description, hero.attack, hero.defense, hero.hp, difficulty[hero.name] || 1]
       );
     }
 

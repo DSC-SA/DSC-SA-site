@@ -184,7 +184,7 @@ export default function HeroDetail() {
           <div className="bg-gray-800 bg-opacity-50 p-4 rounded-lg col-span-2 md:col-span-4">
             <span className="text-purple-400 text-sm">DIFFICULTY</span>
             <p className="text-3xl font-bold text-cyan-400 mt-2">
-              {'★'.repeat(hero.difficulty)}{'☆'.repeat(5 - hero.difficulty)}
+              {'★'.repeat(hero.difficulty || 0)}{'☆'.repeat(5 - (hero.difficulty || 0))}
             </p>
             <p className="text-xs text-gray-400 mt-1">
               {hero.difficulty === 1 && 'Very Easy - Great for beginners'}
