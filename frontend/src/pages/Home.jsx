@@ -35,10 +35,10 @@ export default function Home() {
   return (
     <Layout>
       {/* Epic Hero Section */}
-      <section className="mb-12 sm:mb-24 py-12 sm:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <section className="mb-12 sm:mb-24 py-10 sm:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-center">
           <div className="slide-down text-center lg:text-left">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black mb-4 leading-tight">
               Welcome to <span className="led-animated">DSC-SA</span>
               <br />
               <span className="text-white">Community Hub</span>
@@ -47,20 +47,20 @@ export default function Home() {
             <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md mx-auto lg:mx-0">
               Your hub for heroes, builds, events and the MLBB meta.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <Link to="/heroes" className="btn-primary">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center justify-center lg:justify-start">
+              <Link to="/heroes" className="btn-primary w-full sm:w-auto text-center">
                 Explore Heroes
               </Link>
-              <Link to="/events" className="btn-secondary">
+              <Link to="/events" className="btn-secondary w-full sm:w-auto text-center">
                 View Events
               </Link>
             </div>
           </div>
-          <div className="hidden lg:block scale-in">
-            <div className="relative overflow-hidden rounded-3xl border border-amber-600/40 bg-gradient-to-b from-gray-900 to-gaming-dark p-8 lg:p-10 text-center">
+          <div className="scale-in">
+            <div className="relative overflow-hidden rounded-3xl border border-amber-600/40 bg-gradient-to-b from-gray-900 to-gaming-dark px-6 py-6 sm:px-10 sm:py-8 lg:p-10 text-center">
               <div className="rainbow-bar-thin absolute top-0 inset-x-0"></div>
-              <p className="text-amber-400 font-black tracking-[0.25em] uppercase text-xs mb-4">The Meta</p>
-              <h3 className="text-2xl lg:text-3xl font-black text-white mb-2">Master the Meta</h3>
+              <p className="text-amber-400 font-black tracking-[0.25em] uppercase text-xs mb-3 sm:mb-4">The Meta</p>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-2">Master the Meta</h3>
               <p className="text-gray-400 text-sm">Strategic gameplay starts here</p>
             </div>
           </div>
