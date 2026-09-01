@@ -215,8 +215,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Auth Section */}
-          <div className="flex gap-2 lg:gap-3 items-center">
+          {/* Right Controls (Auth + Mobile Toggle) */}
+          <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0">
+            <div className="flex gap-2 lg:gap-3 items-center">
             {user ? (
               <div className="flex items-center gap-2 lg:gap-3 relative">
                 <button onClick={() => setProfilePopupOpen(!profilePopupOpen)} title={user.username} className="flex items-center justify-center hover:opacity-80 transition relative">
@@ -280,7 +281,7 @@ export default function Navbar() {
                     
                     {/* Popup Menu */}
                     <div 
-                      className="absolute right-0 mt-2 w-64 bg-gray-900 border border-cyan-500 border-opacity-50 rounded-lg shadow-2xl p-4 z-50"
+                      className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-gray-900 border border-cyan-500 border-opacity-50 rounded-lg shadow-2xl p-4 z-50"
                       style={{
                         top: '100%',
                         backgroundColor: 'rgba(17, 24, 39, 0.98)',
@@ -377,6 +378,8 @@ export default function Navbar() {
               <span className="block w-5 h-0.5 bg-cyan-400 rounded"></span>
             </div>
           </button>
+
+          </div>
 
         </div>
 
