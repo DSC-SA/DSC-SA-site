@@ -64,47 +64,51 @@ p, span, div {
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-  border: none;
-  padding: 14px 32px;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #d4af37 0%, #f0d060 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 13px 30px;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 0.95rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #000;
-  box-shadow: 0 4px 20px rgba(192, 192, 192, 0.5);
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  color: #111111;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
   display: inline-block;
   text-decoration: none;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .btn-primary:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(192, 192, 192, 0.7);
+  background: linear-gradient(135deg, #e0bc4a 0%, #f7dd76 100%);
+  box-shadow: 0 6px 26px rgba(212, 175, 55, 0.55);
+  transform: translateY(-2px);
 }
 
 .btn-primary:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }
 
 .btn-secondary {
-  background: rgba(192, 192, 192, 0.15);
-  border: 2px solid rgba(232, 232, 232, 0.5);
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.55);
   padding: 12px 28px;
   border-radius: 10px;
   cursor: pointer;
-  font-weight: 600;
-  color: #d0d0d0;
-  transition: all 0.3s;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #f0d060;
+  transition: all 0.2s;
   text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .btn-secondary:hover {
-  background: rgba(192, 192, 192, 0.25);
-  border-color: rgba(232, 232, 232, 0.8);
-  transform: translateY(-2px);
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(240, 208, 96, 0.9);
+  color: #f7dd76;
 }
 
 /* Navigation */

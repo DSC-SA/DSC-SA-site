@@ -36,18 +36,18 @@ export default function Home() {
     <Layout>
       {/* Epic Hero Section */}
       <section className="mb-12 sm:mb-24 py-12 sm:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-16 items-center">
-          <div className="slide-down">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 leading-tight">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="slide-down text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 leading-tight">
               Welcome to <span className="led-animated">DSC-SA</span>
               <br />
               <span className="text-white">Community Hub</span>
             </h1>
-            <div className="led-line mb-6"></div>
-            <div className="text-4xl sm:text-6xl mb-6 sm:mb-8 wave-emoji" style={{display: 'inline-block'}}>
-              👋
-            </div>
-            <div className="flex gap-3 sm:gap-6 flex-wrap">
+            <div className="led-line mb-6 max-w-[10rem] mx-auto lg:mx-0"></div>
+            <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md mx-auto lg:mx-0">
+              Your hub for heroes, builds, events and the MLBB meta.
+            </p>
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
               <Link to="/heroes" className="btn-primary">
                 Explore Heroes
               </Link>
@@ -56,14 +56,12 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <div className="hidden md:block scale-in">
-            <div className="gradient-bg rounded-3xl p-1 opacity-100 group hover:opacity-100 transition">
-              <div className="bg-gaming-dark rounded-3xl p-12 text-center relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-cyan-500/10"></div>
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-2xl mx-auto mb-6 relative z-1 group-hover:scale-110 transition duration-300"></div>
-                <p className="text-gray-300 text-lg font-semibold relative z-1">Master the Meta</p>
-                <p className="text-gray-400 text-sm mt-2 relative z-1">Strategic gameplay starts here</p>
-              </div>
+          <div className="hidden lg:block scale-in">
+            <div className="relative overflow-hidden rounded-3xl border border-amber-600/40 bg-gradient-to-b from-gray-900 to-gaming-dark p-8 lg:p-10 text-center">
+              <div className="rainbow-bar-thin absolute top-0 inset-x-0"></div>
+              <p className="text-amber-400 font-black tracking-[0.25em] uppercase text-xs mb-4">The Meta</p>
+              <h3 className="text-2xl lg:text-3xl font-black text-white mb-2">Master the Meta</h3>
+              <p className="text-gray-400 text-sm">Strategic gameplay starts here</p>
             </div>
           </div>
         </div>
