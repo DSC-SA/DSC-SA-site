@@ -35,7 +35,8 @@ export default function Profile() {
       });
       if (user.hasAvatar || user.avatar) {
         const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
-        setPreviewUrl(`${API_BASE_URL}/api/users/${user.id}/avatar?t=${Date.now()}`);
+        const externalAvatar = !user.hasAvatar && user.avatar && /^https?:\/\//.test(user.avatar) ? user.avatar : null;
+        setPreviewUrl(externalAvatar || `${API_BASE_URL}/api/users/${user.id}/avatar?t=${Date.now()}`);
       }
     }
   }, [user?.id]); // Only update when user ID changes

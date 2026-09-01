@@ -8,7 +8,6 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h3 className="text-2xl font-bold gradient-gaming mb-4">DSC-SA</h3>
-            <p className="text-gray-400">Your ultimate MLBB community hub for strategies and competitive play.</p>
           </div>
           
           <div>

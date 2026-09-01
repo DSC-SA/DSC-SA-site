@@ -43,15 +43,12 @@ export default function Home() {
               <br />
               <span className="text-white">Community Hub</span>
             </h1>
-            <div className="led-line mb-6 max-w-[10rem] mx-auto lg:mx-0"></div>
-            <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-md mx-auto lg:mx-0">
-              Your hub for heroes, builds, events and the MLBB meta.
-            </p>
-            <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-stretch sm:items-center justify-center lg:justify-start">
-              <Link to="/heroes" className="btn-primary w-full sm:w-auto text-center">
+            <div className="led-line mb-8 max-w-[10rem] mx-auto lg:mx-0"></div>
+            <div className="flex flex-wrap gap-3 items-center justify-center lg:justify-start">
+              <Link to="/heroes" className="btn-primary text-xs sm:text-sm px-4 sm:px-6 py-2.5">
                 Explore Heroes
               </Link>
-              <Link to="/events" className="btn-secondary w-full sm:w-auto text-center">
+              <Link to="/events" className="btn-secondary text-xs sm:text-sm px-4 sm:px-6 py-2.5">
                 View Events
               </Link>
             </div>
@@ -178,10 +175,6 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-12 sm:py-20 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-2xl sm:rounded-3xl border border-cyan-500/30 backdrop-blur text-center">
-        <h2 className="text-2xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 text-white">Ready to Dominate?</h2>
-        <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-6 sm:mb-10 font-semibold max-w-2xl mx-auto px-4">
-          Join our thriving community of MLBB players and elevate your gameplay to the next level
-        </p>
         <Link to="/register" className="btn-primary text-sm sm:text-lg px-6 sm:px-10 py-2 sm:py-4 inline-block">
           Start Your Journey
         </Link>

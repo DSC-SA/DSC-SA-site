@@ -80,6 +80,9 @@ const startServer = async () => {
     const { migrateHeroesStats } = require('./db/migrate-heroes-stats');
     await migrateHeroesStats();
 
+    const { addAvatarDataToUsers } = require('./db/migrate-add-avatar-data');
+    await addAvatarDataToUsers();
+
     // Seed all items from 2026 equipment list
     const { seedAllItems } = require('./db/seed-items-official');
     await seedAllItems();

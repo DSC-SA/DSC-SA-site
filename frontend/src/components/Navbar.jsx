@@ -15,6 +15,9 @@ export default function Navbar() {
   }, [user?.id]);
 
   const getAvatarUrl = () => {
+    if (!user.hasAvatar && user.avatar && /^https?:\/\//.test(user.avatar)) {
+      return user.avatar;
+    }
     return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
   };
 
