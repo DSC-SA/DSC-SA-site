@@ -21,6 +21,7 @@ export default function AuthSuccess() {
     const usernameParam = searchParams.get('username');
     const emailParam = searchParams.get('email');
     const avatarParam = searchParams.get('avatar');
+    const hasAvatarParam = searchParams.get('hasAvatar') === 'true';
     const rankParam = searchParams.get('rank');
     const bioParam = searchParams.get('bio');
     const pointsParam = searchParams.get('points');
@@ -40,6 +41,7 @@ export default function AuthSuccess() {
           username: usernameParam, 
           email: emailParam,
           avatar: avatarParam || null,
+          hasAvatar: hasAvatarParam,
           rank: rankParam || null,
           bio: bioParam || null,
           points: parseInt(pointsParam) || 0
@@ -81,6 +83,7 @@ export default function AuthSuccess() {
         username: data.user.username, 
         email: data.user.email,
         avatar: data.user.avatar,
+        hasAvatar: data.user.hasAvatar || false,
         rank: data.user.rank,
         bio: data.user.bio,
         points: data.user.points

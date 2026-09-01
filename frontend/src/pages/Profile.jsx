@@ -6,7 +6,8 @@ import { api, getImageUrl } from '../services/api';
 
 const MLBB_RANKS = [
   'Warrior', 'Elite', 'Master', 'Grand Master',
-  'Epic', 'Legend', 'Mythic', 'Mythic Honor'
+  'Epic', 'Legend', 'Mythic', 'Mythic Honor',
+  'Mythical Glory', 'Mythical Immortal'
 ];
 
 export default function Profile() {

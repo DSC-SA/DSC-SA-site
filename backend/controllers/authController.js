@@ -337,13 +337,19 @@ const googleAuthCallback = async (req, res) => {
       );
     }
 
+    // Determine if user has a custom uploaded avatar (avatar_data) - this takes priority
+    const avatarCheck = await pool.query('SELECT avatar_data FROM users WHERE id = $1', [user.id]);
+    const hasAvatar = !!(avatarCheck.rows[0] && avatarCheck.rows[0].avatar_data);
+    // Only keep Google's avatar URL if the user has NO custom uploaded avatar
+    const avatarToShow = hasAvatar ? '' : (user.avatar || '');
+
     // Generate JWT
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Redirect with token and user data
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const newUserParam = isNewUser ? '&newUser=true' : '';
-    const userData = `&id=${user.id}&username=${encodeURIComponent(user.username)}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(user.avatar || '')}&rank=${encodeURIComponent(user.rank || '')}&bio=${encodeURIComponent(user.bio || '')}&points=${user.points || 0}`;
+    const userData = `&id=${user.id}&username=${encodeURIComponent(user.username)}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(avatarToShow)}&hasAvatar=${hasAvatar}&rank=${encodeURIComponent(user.rank || '')}&bio=${encodeURIComponent(user.bio || '')}&points=${user.points || 0}`;
     res.redirect(`${frontendUrl}/auth/success?token=${token}${userData}${newUserParam}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
