@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Space+Grotesk:wght@600;700&family=Orbitron:wght@700;900&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
@@ -109,6 +113,15 @@ p, span, div {
   background: rgba(212, 175, 55, 0.12);
   border-color: rgba(240, 208, 96, 0.9);
   color: #f7dd76;
+}
+
+@media (max-width: 480px) {
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px 16px;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+  }
 }
 
 /* Navigation */

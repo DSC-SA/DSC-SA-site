@@ -12,7 +12,7 @@ const seedVerifiedData = async () => {
     // Clear existing hero data only (items are seeded separately by seedAllItems)
     await pool.query('TRUNCATE TABLE heroes CASCADE');
 
-    // Seed MLBB Heroes - All 103 Verified Heroes
+    // Seed MLBB Heroes - All 106 Verified Heroes
     const heroes = [
       { name: 'Akai', role: 'Tank', description: 'Heavy tank with crowd control', attack: 6, defense: 9, hp: 10 },
       { name: 'Alice', role: 'Mage', description: 'Magic damage with sustain', attack: 7, defense: 5, hp: 8 },
@@ -116,7 +116,10 @@ const seedVerifiedData = async () => {
       { name: 'Yi Sun-shin', role: 'Marksman', description: 'Range burst', attack: 10, defense: 4, hp: 5 },
       { name: 'Yu Zhong', role: 'Fighter', description: 'Durable sustain', attack: 9, defense: 8, hp: 9 },
       { name: 'Zilong', role: 'Fighter', description: 'Burst mobile', attack: 9, defense: 7, hp: 8 },
-      { name: 'Zhask', role: 'Mage', description: 'Shadow mage', attack: 8, defense: 5, hp: 7 }
+      { name: 'Zhask', role: 'Mage', description: 'Shadow mage', attack: 8, defense: 5, hp: 7 },
+      { name: 'Zetian', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 7 },
+      { name: 'Hirara', role: 'Assassin', description: 'Mobile assassin', attack: 10, defense: 5, hp: 6 },
+      { name: 'Marcel', role: 'Support', description: 'Utility control support', attack: 5, defense: 7, hp: 8 }
     ];
 
     for (const hero of heroes) {
@@ -126,7 +129,7 @@ const seedVerifiedData = async () => {
       );
     }
 
-    console.log('✓ Database seeded with 103 verified MLBB heroes and items');
+    console.log('✓ Database seeded with 106 verified MLBB heroes and items');
   } catch (err) {
     console.error('Error seeding database:', err);
   }
