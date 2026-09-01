@@ -1,6 +1,6 @@
 {
   "name": "dsc-sa-site",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DSC-SA Community Hub - Full Stack MLBB Platform",
   "private": true,
   "scripts": {
