@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -7,24 +8,25 @@ export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    if (username === 'fluffy' && password === '258025') {
-      // Create a temporary admin token (valid for this session)
-      const adminToken = btoa(`admin:${Date.now()}`); // Simple base64 encoding
-      // Set admin session and token
+    try {
+      const res = await api.post('/admin/login', { username, password });
+      const adminToken = res.data.token;
       sessionStorage.setItem('adminLoggedIn', 'true');
       localStorage.setItem('adminToken', adminToken);
-      localStorage.setItem('token', adminToken);
-      // Navigate to admin page
       navigate('/admin');
-    } else {
-      setError('Invalid credentials');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Invalid credentials');
       setUsername('');
       setPassword('');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,9 +75,10 @@ export default function AdminLogin() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex-1 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded hover:opacity-90 transition"
+                disabled={loading}
+                className="flex-1 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded hover:opacity-90 transition disabled:opacity-50"
               >
-                Login
+                {loading ? 'Logging in...' : 'Login'}
               </button>
               <button
                 type="button"

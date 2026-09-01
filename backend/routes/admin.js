@@ -2,9 +2,48 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const sharp = require('sharp');
+const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 
 const router = express.Router();
+
+// Admin login (credentials come from ADMIN_USERNAME/ADMIN_PASSWORD env vars)
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const expectedUser = process.env.ADMIN_USERNAME || '';
+  const expectedPass = process.env.ADMIN_PASSWORD || '';
+
+  if (!expectedUser || !expectedPass) {
+    return res.status(500).json({ error: 'Admin credentials are not configured on the server' });
+  }
+
+  if (username === expectedUser && password === expectedPass) {
+    const token = jwt.sign({ role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    return res.json({ token });
+  }
+
+  return res.status(401).json({ error: 'Invalid admin credentials' });
+});
+
+// Protect admin-only endpoints
+const verifyAdmin = (req, res, next) => {
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ error: 'No authorization header provided' });
+  }
+
+  const token = authHeader.split(' ')[1] || authHeader;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ error: 'Not authorized' });
+    }
+    return next();
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid or expired admin token' });
+  }
+};
 
 // Configure multer for in-memory file uploads (we'll process with sharp)
 const storage = multer.memoryStorage();
@@ -33,7 +72,7 @@ const upload = multer({
 });
 
 // Upload hero image with automatic resizing
-router.post('/upload-hero-image', upload.single('image'), async (req, res) => {
+router.post('/upload-hero-image', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
     console.log('=== UPLOAD REQUEST ===');
     console.log('Body:', req.body);

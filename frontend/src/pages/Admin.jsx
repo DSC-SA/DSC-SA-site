@@ -242,7 +242,7 @@ export default function Admin() {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}`
         }
       });
 
@@ -286,7 +286,6 @@ export default function Admin() {
   const handleLogout = () => {
     sessionStorage.removeItem('adminLoggedIn');
     localStorage.removeItem('adminToken');
-    localStorage.removeItem('token');
     navigate('/');
   };
 
