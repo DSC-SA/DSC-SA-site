@@ -38,7 +38,6 @@ const seedVerifiedData = async () => {
       { name: 'Clint', role: 'Marksman', description: 'Range burst', attack: 10, defense: 4, hp: 5 },
       { name: 'Claude', role: 'Marksman', description: 'Mobile sustain', attack: 10, defense: 5, hp: 6 },
       { name: 'Cyclops', role: 'Mage', description: 'Burst control', attack: 8, defense: 4, hp: 6 },
-      { name: 'Darius', role: 'Tank', description: 'Durable control', attack: 7, defense: 10, hp: 10 },
       { name: 'Diggie', role: 'Support', description: 'Utility CC', attack: 5, defense: 6, hp: 7 },
       { name: 'Dyrroth', role: 'Fighter', description: 'Burst sustain', attack: 9, defense: 7, hp: 9 },
       { name: 'Edith', role: 'Tank', description: 'Durable control', attack: 7, defense: 10, hp: 10 },
@@ -155,7 +154,7 @@ const seedVerifiedData = async () => {
       Akai: 2, Alice: 4, Alpha: 1, Alucard: 2, Aamon: 3, Angela: 3, Argus: 3, Arlott: 3,
       Aurora: 1, Badang: 1, Balmond: 1, Bane: 2, Barats: 2, Baxia: 1, Beatrix: 4, Belerick: 1,
       Benedetta: 4, Bruno: 3, Carmilla: 2, Cecilion: 2, Chou: 4, Clint: 4, Claude: 3, Cyclops: 3,
-      Darius: 2, Diggie: 3, Dyrroth: 2, Edith: 2, Eudora: 1, Esmeralda: 3, Estes: 2, Fanny: 5,
+      Darius: 2, Darius: 2, Diggie: 3, Dyrroth: 2, Edith: 2, Eudora: 1, Esmeralda: 3, Estes: 2, Fanny: 5,
       Faramis: 2, Floryn: 1, Freya: 3, Gatotkaca: 1, Gloo: 4, Gord: 1, Granger: 2, Grock: 3,
       Gusion: 4, Guinevere: 2, Hanabi: 1, Hanzo: 4, Hayabusa: 3, Helcurt: 3, Hilda: 2, Hylos: 2,
       Ixia: 2, Johnson: 3, Kagura: 4, Kaja: 4, Karina: 2, Karrie: 2, Khaleed: 3, Khufra: 3,
@@ -181,7 +180,7 @@ const seedVerifiedData = async () => {
       );
     }
 
-    console.log('✓ Database seeded with 134 verified MLBB heroes and items');
+    console.log('✓ Database seeded with 133 verified MLBB heroes and items');
   } catch (err) {
     console.error('Error seeding database:', err);
   }

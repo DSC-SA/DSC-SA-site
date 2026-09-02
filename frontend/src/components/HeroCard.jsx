@@ -62,8 +62,8 @@ export default function HeroCard({ hero }) {
           </div>
         )}
 
-        {/* Hero Name - Bottom Display */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-black/50 px-1 py-2 z-10 border-t border-amber-600/30">
+        {/* Hero Name - Bottom Display (hidden on mobile so it doesn't cover art) */}
+        <div className="hidden md:block absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-black/50 px-1 py-2 z-10 border-t border-amber-600/30">
           <p className="text-white font-bold text-xs text-center leading-tight line-clamp-1" style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>{hero.name}</p>
           {hero.role && <p className="bg-amber-500 text-black font-bold text-xs text-center leading-tight line-clamp-1 rounded px-2 py-1" style={{ fontSize: '0.65rem' }}>{hero.role}</p>}
         </div>

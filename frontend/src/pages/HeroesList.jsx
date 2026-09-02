@@ -87,7 +87,7 @@ export default function HeroesList() {
       ) : (
         <div>
           {filteredHeroes.length > 0 ? (
-            <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+            <div className="grid gap-2 grid-cols-3 sm:grid-cols-4 lg:grid-cols-5">
               {filteredHeroes.map((hero) => (
                 <div key={hero.id} style={{ aspectRatio: '1/1' }}>
                   <HeroCard hero={hero} />
