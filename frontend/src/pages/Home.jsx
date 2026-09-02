@@ -152,27 +152,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* Features Section */}
-      <section className="mb-12 sm:mb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
-          <div className="card-gaming text-center group hover:scale-105 transition">
-            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">130+ Heroes</h3>
-            <p className="text-gray-400 text-sm sm:text-base">Diverse playstyles and roles</p>
-          </div>
-          <div className="card-gaming text-center group hover:scale-105 transition">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">Smart Builds</h3>
-            <p className="text-gray-400 text-sm sm:text-base">Share and discover strategies</p>
-          </div>
-          <div className="card-gaming text-center group hover:scale-105 transition">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl mx-auto mb-4"></div>
-            <h3 className="text-lg sm:text-2xl font-black mb-2 sm:mb-3 text-white">Live Events</h3>
-            <p className="text-gray-400 text-sm sm:text-base">Compete in matches</p>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-12 sm:py-20 bg-gradient-to-r from-purple-600/20 to-cyan-600/20 rounded-2xl sm:rounded-3xl border border-cyan-500/30 backdrop-blur text-center">
         <Link to="/register" className="btn-primary text-sm sm:text-lg px-6 sm:px-10 py-2 sm:py-4 inline-block">
