@@ -4,7 +4,7 @@
   "description": "DSC-SA Community Hub - Full Stack MLBB Platform",
   "private": true,
   "scripts": {
-    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:frontend": "cd frontend && npm install --include=dev && npm run build",
     "build:backend": "cd backend && npm install",
     "build:full": "npm run build:frontend && npm run build:backend && npm run copy:frontend",
     "copy:frontend": "node scripts/copy-frontend.js",
