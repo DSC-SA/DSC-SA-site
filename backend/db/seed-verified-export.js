@@ -119,7 +119,35 @@ const seedVerifiedData = async () => {
       { name: 'Zhask', role: 'Mage', description: 'Shadow mage', attack: 8, defense: 5, hp: 7 },
       { name: 'Zetian', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 7 },
       { name: 'Hirara', role: 'Assassin', description: 'Mobile assassin', attack: 10, defense: 5, hp: 6 },
-      { name: 'Marcel', role: 'Support', description: 'Utility control support', attack: 5, defense: 7, hp: 8 }
+      { name: 'Marcel', role: 'Support', description: 'Utility control support', attack: 5, defense: 7, hp: 8 },
+      { name: 'Aldous', role: 'Fighter', description: 'Late-game scaling fighter', attack: 9, defense: 7, hp: 9 },
+      { name: 'Atlas', role: 'Tank', description: 'Engage tank with CC', attack: 6, defense: 9, hp: 10 },
+      { name: 'Aulus', role: 'Fighter', description: 'Burst mobile fighter', attack: 9, defense: 7, hp: 8 },
+      { name: 'Brody', role: 'Marksman', description: 'Range burst marksman', attack: 10, defense: 4, hp: 5 },
+      { name: "Chang'e", role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Chip', role: 'Tank', description: 'Mobile engage tank', attack: 6, defense: 9, hp: 10 },
+      { name: 'Cici', role: 'Fighter', description: 'Mobile sustain fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Franco', role: 'Tank', description: 'Hook engage tank', attack: 6, defense: 9, hp: 10 },
+      { name: 'Fredrinn', role: 'Fighter', description: 'Durable sustain fighter', attack: 9, defense: 8, hp: 9 },
+      { name: 'Harith', role: 'Mage', description: 'Mobile burst mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Harley', role: 'Assassin', description: 'Mobile burst assassin', attack: 10, defense: 5, hp: 6 },
+      { name: 'Irithel', role: 'Marksman', description: 'Mobile sustain marksman', attack: 10, defense: 5, hp: 6 },
+      { name: 'Jawhead', role: 'Fighter', description: 'CC burst fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Joy', role: 'Assassin', description: 'Mobile burst assassin', attack: 10, defense: 5, hp: 6 },
+      { name: 'Julian', role: 'Fighter', description: 'Mobile sustain fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Kadita', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Kalea', role: 'Fighter', description: 'Sustain CC fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Lukas', role: 'Fighter', description: 'Mobile sustain fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Lunox', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Natan', role: 'Marksman', description: 'Range sustain marksman', attack: 10, defense: 5, hp: 6 },
+      { name: 'Obsidia', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 7 },
+      { name: 'Sora', role: 'Mage', description: 'Burst control mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Suyou', role: 'Fighter', description: 'Mobile sustain fighter', attack: 9, defense: 8, hp: 8 },
+      { name: 'Thamuz', role: 'Fighter', description: 'Burst sustain fighter', attack: 9, defense: 7, hp: 9 },
+      { name: 'Vale', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Valir', role: 'Mage', description: 'Burst control mage', attack: 8, defense: 5, hp: 6 },
+      { name: 'Xavier', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 7 },
+      { name: 'Zhuxin', role: 'Mage', description: 'Control burst mage', attack: 8, defense: 5, hp: 7 }
     ];
 
     // Official Moonton difficulty (1-10) mapped to 1-5 stars
@@ -137,7 +165,11 @@ const seedVerifiedData = async () => {
       Pharsa: 2, Phoveus: 2, 'Popol and Kupa': 3, Rafaela: 1, Roger: 2, Ruby: 2, Saber: 1,
       Selena: 4, Silvanna: 1, Sun: 2, Terizla: 1, Tigreal: 1, Uranus: 2, Valentina: 4, Vexana: 1,
       Wanwan: 3, 'X. Borg': 2, Yve: 4, Yin: 2, 'Yi Sun-shin': 4, 'Yu Zhong': 4, Zilong: 1,
-      Zhask: 2, Zetian: 1, Hirara: 4, Marcel: 1
+      Zhask: 2, Zetian: 1, Hirara: 4, Marcel: 1,
+      Aldous: 3, Atlas: 3, Aulus: 2, Brody: 3, "Chang'e": 2, Chip: 3, Cici: 1, Franco: 1,
+      Fredrinn: 2, Harith: 3, Harley: 3, Irithel: 3, Jawhead: 3, Joy: 5, Julian: 1, Kadita: 3,
+      Kalea: 2, Lukas: 2, Lunox: 5, Natan: 2, Obsidia: 2, Sora: 2, Suyou: 4, Thamuz: 2,
+      Vale: 2, Valir: 2, Xavier: 2, Zhuxin: 2
     };
 
     await pool.query('ALTER TABLE heroes ADD COLUMN IF NOT EXISTS difficulty INT DEFAULT 1');
@@ -149,7 +181,7 @@ const seedVerifiedData = async () => {
       );
     }
 
-    console.log('✓ Database seeded with 106 verified MLBB heroes and items');
+    console.log('✓ Database seeded with 134 verified MLBB heroes and items');
   } catch (err) {
     console.error('Error seeding database:', err);
   }
