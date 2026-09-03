@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../services/api';
 
-const SPACING = 132; // px between cards along the pole
-const TURNS = 2.5; // helix twist across the full vertical
-const SPIN_TURNS = 2.5; // full revolutions driven by scrolling the whole section
-const TILT = -14; // helix lean (deg)
-const PARTICLE_COUNT = 14;
+const SPACING = 168; // const vertical step between cards
+const RADIUS = 220; // spiral radius around the pole (desktop)
+const TURNS = 3.5; // how many revolutions the spiral makes across the roster
+const CARD_W = 140;
+const CARD_H = 200;
+const MULT = 1.4; // how fast a full 360° of the spiral is driven by scrolling
 
 export default function HelixSpiral({ items }) {
   const stageRef = useRef(null);
@@ -16,24 +18,12 @@ export default function HelixSpiral({ items }) {
   const activeRef = useRef(active);
   activeRef.current = active;
 
-  const list = items.slice(0, 220);
+  const list = items.slice(0, 160);
   const n = list.length;
-
-  const radius = small ? 118 : 236;
-  const cardH = small ? 78 : 120;
   const totalTravel = Math.max(n * SPACING, 1);
-  const sectionH = totalTravel + (typeof window !== 'undefined' ? window.innerHeight : 800);
 
-  const particles = useRef(
-    Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
-      id: i,
-      left: `${8 + ((i * 31) % 84)}%`,
-      bottom: `${2 + ((i * 53) % 70)}%`,
-      size: `${5 + ((i * 13) % 9)}px`,
-      delay: `${(i * 0.47) % 7}s`,
-      duration: `${5 + ((i * 0.6) % 4.5)}s`
-    }))
-  ).current;
+  const cw = small ? 116 : CARD_W;
+  const ch = small ? 164 : CARD_H;
 
   useEffect(() => {
     if (typeof matchMedia === 'undefined') return;
@@ -51,9 +41,6 @@ export default function HelixSpiral({ items }) {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  // Scroll-driven helix: each card stays at a fixed world-Y and angle, and the
-  // whole spiral rotates as you scroll down the tall section. DOM is written
-  // directly per-frame so 100+ cards stay smooth.
   useEffect(() => {
     if (n === 0) return;
     const stage = stageRef.current;
@@ -65,44 +52,68 @@ export default function HelixSpiral({ items }) {
       raf = requestAnimationFrame(update);
     };
 
+    // Base angle of a card at index i. The spiral winds clockwise down the pole,
+    // so index maps to both a rotation (θ) and a descent (Y).
     const update = () => {
       raf = 0;
       const vh = window.innerHeight || 1;
+      const vw = window.innerWidth || 1;
       const rect = stage.getBoundingClientRect();
-      const travel = Math.max(n * SPACING - vh * 0.2, 1);
+      const travel = Math.max(totalTravel - vh, 1);
       const p = reduced ? 0 : Math.min(Math.max(-rect.top / travel, 0), 1);
-      const rot = p * 360 * SPIN_TURNS;
-      const scrollPx = p * travel;
+      const scrollPx = p * totalTravel;
       const centerY = vh / 2;
 
+      const radius = small ? 120 : RADIUS;
+      const cw = small ? 116 : CARD_W;
+      const ch = small ? 164 : CARD_H;
+      const rotOffset = p * 360 * MULT; // scroll drives a 360°·MULT turn
+
       let best = -1;
-      let bestDist = Infinity;
+      let bestD = Infinity;
+      // focus = the front card (tz in the near hemisphere) nearest the vertical
+      // center of the viewport — it reads as the hero singled out by the spiral
+      const nearThreshold = radius * 0.1;
 
       els.current.forEach((el, i) => {
         if (!el) return;
-        const y = i * SPACING - scrollPx + cardH / 2;
-        const ang = (i / (n || 1)) * 360 * TURNS + rot;
-        el.style.transform = `translate(-50%, -50%) rotateX(${TILT}deg) rotateY(${ang}deg) translateZ(${radius}px)`;
-        el.style.top = `${y}px`;
+        const angle = (i / (n || 1)) * 360 * TURNS + rotOffset; // degrees
+        const rad = (angle * Math.PI) / 180;
+        const tx = Math.sin(rad) * radius;
+        const tz = Math.cos(rad) * radius; // +z = toward camera = in front of pole
+        const ty = i * SPACING - scrollPx; // +y = down the pole; minus scroll moves up
 
-        if (y < -cardH * 2 || y > vh + cardH * 2) {
+        // off the vertical track → hide for perf
+        if (ty < -ch * 1.4 || ty > vh + ch * 1.4) {
           el.style.visibility = 'hidden';
-          el.classList.remove('is-front');
+          el.classList.remove('is-focus');
           return;
         }
         el.style.visibility = 'visible';
-        const dist = Math.abs(y - centerY);
-        const dimPx = 0.45 + 0.55 * (1 - Math.min(dist / (vh * 0.5), 1));
-        el.style.opacity = reduced ? 1 : dimPx;
-        el.style.zIndex = `${Math.round(100 - dist)}`;
-        if (dist < bestDist) {
-          bestDist = dist;
-          best = i;
+
+        // real depth: translateZ recedes/fronts the pole under the shared
+        // perspective; perspective sizes it, blur+opacity sell the depth.
+        const depthScale = 0.55 + 0.55 * (tz / radius + 1) / 2;
+        const activeBoost = tz > radius * 0.92 ? 1.08 : 1;
+
+        el.style.transform = `translate3d(${tx}px, ${ty}px, ${tz}px) rotateY(${angle}deg) scale(${depthScale * activeBoost})`;
+        el.style.filter = `blur(${(1 - depthScale) * 3.2}px)`;
+        el.style.opacity = reduced ? 1 : String(0.35 + 0.65 * depthScale);
+        // z-index: higher when tz is larger (in front); lower behind the pole
+        el.style.zIndex = String(Math.round(tz));
+
+        // pick the front-facing card closest to the vertical center
+        if (tz > nearThreshold) {
+          const d = Math.abs(ty - centerY);
+          if (d < bestD) {
+            bestD = d;
+            best = i;
+          }
         }
       });
 
       if (best !== -1) {
-        els.current.forEach((el, i) => el.classList.toggle('is-front', i === best));
+        els.current.forEach((el, i) => el.classList.toggle('is-focus', i === best));
         if (best !== activeRef.current) setActive(best);
       }
     };
@@ -115,65 +126,61 @@ export default function HelixSpiral({ items }) {
       window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(raf);
     };
-  }, [n, small, reduced, radius, cardH]);
+  }, [n, small, reduced, totalTravel]);
 
   if (n === 0) return null;
   const focus = list[active >= 0 ? active : Math.floor(n / 2)];
 
   return (
-    <section ref={stageRef} className="relative mx-auto w-full" style={{ height: sectionH }}>
-      {/* static central pole — the axis cards wrap around */}
-      <div className="hero-pole" aria-hidden />
-
-      {/* stray particles tracking the spiral */}
-      {!reduced &&
-        particles.map((p) => (
-          <span
-            key={p.id}
-            className="particle"
-            style={{
-              left: p.left,
-              bottom: p.bottom,
-              width: p.size,
-              height: p.size,
-              animationDelay: p.delay,
-              animationDuration: p.duration
-            }}
-          />
-        ))}
-
-      {/* the helix */}
-      <div className="helix-stage" style={{ perspective: '1400px' }}>
+    <section ref={stageRef} className="relative mx-auto w-full" style={{ height: totalTravel + 140 }}>
+      {/* the 3D spiral — pole is a 3D child at z=0 so cards pass in/behind it */}
+      <div className="spiral-stage">
+        <div className="spiral-pole" aria-hidden />
         {list.map((hero, i) => (
           <div
             key={hero.id}
             ref={(node) => (node ? els.current.set(i, node) : els.current.delete(i))}
-            className="helix-card"
+            className="spiral-card"
           >
-            <button
+            <Link
+              to={`/heroes/${hero.id}`}
               onClick={() => setActive(i)}
               aria-label={hero.name}
-              className="helix-card__inner"
-              style={{
-                width: small ? 92 : 168,
-                height: cardH
-              }}
+              className="spiral-card__inner"
+              style={{ width: cw, height: ch, marginLeft: -cw / 2 }}
             >
-              <span className="helix-card__num">{String(i + 1).padStart(2, '0')}</span>
-              <div className="helix-card__body">
-                <h3 className="helix-card__name">{hero.name}</h3>
-                {!small && <p className="helix-card__role">{hero.role}</p>}
+              {/* hero art */}
+              <div className="spiral-card__art">
+                {hero.icon_url ? (
+                  <img
+                    src={`${getImageUrl(hero.icon_url)}${
+                      getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
+                    }t=${Date.now()}`}
+                    alt={hero.name}
+                    className="spiral-card__img"
+                  />
+                ) : (
+                  <div className="spiral-card__placeholder">
+                    {hero.name.charAt(0)}
+                  </div>
+                )}
+                <span className="spiral-card__num">{String(i + 1).padStart(2, '0')}</span>
               </div>
-            </button>
+
+              {/* name / role bar */}
+              <div className="spiral-card__body">
+                <h3 className="spiral-card__name">{hero.name}</h3>
+                {hero.role && <p className="spiral-card__role">{hero.role}</p>}
+              </div>
+            </Link>
           </div>
         ))}
       </div>
 
-      {/* pinned readout at the bottom of the viewport */}
       {focus && (
-        <div className="pointer-events-none fixed inset-x-0 z-30 flex flex-col items-center gap-2" style={{ bottom: 28 }}>
-          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-brand-faint">
-            {reduced ? 'Scroll through the roster' : 'The list spirals around the pole — keep scrolling'}
+        <div className="pointer-events-none fixed inset-x-0 z-[999] flex flex-col items-center gap-2" style={{ bottom: 24 }}>
+          <p className="rounded-full bg-brand-snow/70 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-brand-faint">
+            Scroll — the roster spirals around the line
           </p>
           <Link
             to={`/heroes/${focus.id}`}
