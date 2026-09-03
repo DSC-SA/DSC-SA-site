@@ -311,20 +311,33 @@ a { color: rgb(var(--text)); text-decoration: none; }
 /* ==========================================================================
    Vertical 3D spiral carousel — cards wrap the central pole with real depth.
    translateX = sin(θ)·r, translateZ = cos(θ)·r (front/behind the pole),
-   translateY = const spacing + scroll offset. perspective 1000 on the stage,
-   preserve-3d so cards and pole share the same 3D space.
+   translateY = const spacing + scroll offset.
+   CONTAINMENT: the sticky .spiral-viewport clips EVERYTHING to the viewport
+   (overflow hidden), perspective is a fixed 1200px, radius ≤ 200px, and cards
+   have rigid pixel dimensions + backface-visibility hidden so nothing can
+   stretch, flip, or bleed across the page.
    ========================================================================== */
+.spiral-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .spiral-stage {
   position: absolute;
   inset: 0;
-  perspective: 1000px;
+  perspective: 1200px;
   transform-style: preserve-3d;
+  overflow: hidden;
 }
 
+/* rigid 0×0 anchor at the exact center of the viewport/pole; the inner card
+   is centered on it via negative margins. Real 3D transform only on this host. */
 .spiral-card {
   position: absolute;
   left: 50%;
-  top: 0;
+  top: 50%;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
@@ -332,14 +345,18 @@ a { color: rgb(var(--text)); text-decoration: none; }
   will-change: transform, opacity, filter;
   z-index: auto;
 }
+@-moz-document url-prefix() {
+  .spiral-card { backface-visibility: hidden; }
+}
 
+/* rigid card container — fixed px size, image never gets a 3D transform here */
 .spiral-card__inner {
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 140px;
-  height: 200px;
+  width: 150px;
+  height: 220px;
   border-radius: 14px;
   border: 1px solid rgb(var(--border) / 0.7);
   background: rgb(var(--surface));
@@ -356,7 +373,7 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.9);
 }
 
-/* hero art region — top ~60% of the container */
+/* hero art region — top of the container */
 .spiral-card__art {
   position: relative;
   flex: 1 1 0;
@@ -366,12 +383,15 @@ a { color: rgb(var(--text)); text-decoration: none; }
     radial-gradient(150px 100px at 20% 0%, rgb(var(--blue-lt) / 0.45), transparent 60%),
     rgb(var(--surface-soft));
 }
+/* STRICT image rules — no skew, no 3D transform on the image itself */
 .spiral-card__img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: none;
+  backface-visibility: hidden;
 }
 .spiral-card__placeholder {
   position: absolute;
