@@ -37,6 +37,8 @@ export default function Navbar() {
     return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
   };
 
+  const handleImageError = () => setImageError(true);
+
   const handleLogout = () => {
     logout();
     navigate('/');
