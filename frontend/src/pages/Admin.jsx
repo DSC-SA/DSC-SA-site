@@ -482,7 +482,7 @@ export default function Admin() {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
           {/* Hero Select */}
           <div>
             <label className="mb-3 block font-bold text-brand-bluedd">Select Hero:</label>
@@ -545,7 +545,7 @@ export default function Admin() {
         <div className="mt-12 border-t border-brand-line pt-12">
           <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📅 Event Scheduler</h2>
 
-          <form onSubmit={handleCreateEvent} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
+          <form onSubmit={handleCreateEvent} className="space-y-6 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
             <div>
               <label className="mb-3 block font-bold text-brand-bluedd">Event Title:</label>
               <input
@@ -640,7 +640,7 @@ export default function Admin() {
           ) : events.length > 0 ? (
             <div className="space-y-3">
               {events.map(event => (
-                <div key={event.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-white p-4 shadow-soft">
+                <div key={event.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-snow p-4 shadow-soft">
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-brand-ink">{event.title}</h3>
                     <p className="text-sm text-brand-mut">{event.description?.substring(0, 60)}...</p>
@@ -672,7 +672,7 @@ export default function Admin() {
         <div className="mt-12 border-t border-brand-line pt-12">
           <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">⚔️ Match History</h2>
 
-          <form onSubmit={handleCreateMatch} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
+          <form onSubmit={handleCreateMatch} className="space-y-6 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
             <div>
               <label className="mb-3 block font-bold text-brand-bluedd">Match Title:</label>
               <input
@@ -755,7 +755,7 @@ export default function Admin() {
           ) : matches.length > 0 ? (
             <div className="space-y-3">
               {matches.map(match => (
-                <div key={match.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-white p-4 shadow-soft">
+                <div key={match.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-snow p-4 shadow-soft">
                   <div className="flex-1">
                     <h3 className="text-lg font-bold text-brand-ink">{match.title}</h3>
                     <p className="text-sm text-brand-mut">{match.description?.substring(0, 60)}...</p>
@@ -784,7 +784,7 @@ export default function Admin() {
         </div>
 
         {/* Item Image Upload Section */}
-        <div className="mt-12 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
+        <div className="mt-12 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
           <h2 className="mb-6 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-3xl font-black text-transparent">📦 Item Image Upload</h2>
 
           <form onSubmit={handleItemImageSubmit} className="space-y-6">

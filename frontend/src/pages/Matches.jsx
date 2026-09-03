@@ -40,7 +40,7 @@ export default function Matches() {
           {matches.map(match => (
             <div
               key={match.id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line bg-white shadow-soft transition-all duration-300 hover:border-brand-blue/40 lg:flex-row"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line bg-brand-snow shadow-soft transition-all duration-300 hover:border-brand-blue/40 lg:flex-row"
             >
               {match.image && (
                 <div className="relative h-48 w-full flex-shrink-0 overflow-hidden bg-brand-mist lg:h-auto lg:w-1/2">
@@ -88,7 +88,7 @@ export default function Matches() {
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-brand-line bg-white p-12 text-center shadow-lift">
+        <div className="rounded-3xl border border-brand-line bg-brand-snow p-12 text-center shadow-lift">
           <p className="mb-4 text-6xl">🎬</p>
           <p className="mb-2 font-display text-2xl font-bold text-brand-ink">No Matches Yet</p>
           <p className="mb-6 text-brand-mut">Matches will appear here when they're scheduled!</p>

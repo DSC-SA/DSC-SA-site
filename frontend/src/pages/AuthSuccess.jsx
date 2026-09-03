@@ -102,7 +102,7 @@ export default function AuthSuccess() {
       <Layout>
         <div className="flex min-h-[70vh] items-center justify-center p-4">
           <div className="w-full max-w-md">
-            <div className="rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
+            <div className="rounded-3xl border border-brand-line bg-brand-snow p-8 shadow-lift">
               <h1 className="mb-2 text-center font-display text-3xl font-bold text-brand-ink">Welcome!</h1>
               <p className="mb-6 text-center text-brand-mut">Create your username to get started</p>
 

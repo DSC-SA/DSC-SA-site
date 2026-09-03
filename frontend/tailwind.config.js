@@ -3,46 +3,48 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,jsx}"
   ],
+  darkMode: ['class', '[data-theme="dark"]'],
   theme: {
     extend: {
       colors: {
-        // ---- Brand: light, airy, premium (silver + baby-blue) ----
+        // ---- Brand: premium (silver + baby-blue), mapped to CSS vars so
+        //      `[data-theme="dark"]` automatically re-tints every utility. ----
         brand: {
-          snow: '#ffffff',
-          mist: '#f7f9fc',
-          cloud: '#eef2f7',
-          fog: '#e4e9f0',
-          line: '#e3e8ef',
-          ink: '#0f172a', // primary text (deep navy-slate)
-          mut: '#5b6472', // muted text (silver)
-          faint: '#98a2b3', // faint text
-          blue: '#5bb5e8', // baby-blue accent (brand)
-          bluelt: '#7ec8ef',
-          bluedd: '#2b86c9',
-          bluesoft: 'rgba(91, 181, 232, 0.12)'
+          snow: 'rgb(var(--surface))',      // #ffffff surface
+          mist: 'rgb(var(--bg))',           // app bg
+          cloud: 'rgb(var(--surface-soft))',// soft surface
+          fog: 'rgb(var(--surface-tint))',
+          line: 'rgb(var(--border))',
+          ink: 'rgb(var(--text))',          // primary text
+          mut: 'rgb(var(--text-muted))',    // muted text
+          faint: 'rgb(var(--text-faint))',  // faint text
+          blue: 'rgb(var(--blue))',         // baby-blue accent
+          bluelt: 'rgb(var(--blue-lt))',
+          bluedd: 'rgb(var(--blue-strong))',
+          bluesoft: 'rgb(var(--blue) / <alpha-value>)'
         },
-        // ---- Legacy tokens mapped to the light system so the whole app
-        //      shifts to light/blue without touching every component ----
+        // ---- Legacy tokens mapped to the light/dark system so the whole app
+        //      shifts without touching every component ----
         gaming: {
-          dark: '#ffffff', // old dark surfaces became white
-          silver: '#e4e9f0',
-          diamond: '#ffffff'
+          dark: 'rgb(var(--surface))', // old dark surfaces became themed surface
+          silver: 'rgb(var(--surface-tint))',
+          diamond: 'rgb(var(--surface))'
         },
         cyan: {
-          300: '#aaddf5',
-          400: '#7ec8ef',
-          500: '#5bb5e8',
-          600: '#3aa0e0',
-          700: '#2b86c9'
+          300: 'rgb(var(--blue-lt))',
+          400: 'rgb(var(--blue-lt))',
+          500: 'rgb(var(--blue))',
+          600: 'rgb(var(--blue-strong))',
+          700: 'rgb(var(--blue-strong))'
         },
         purple: {
-          300: '#c9ddf5',
-          400: '#a9c9ee',
-          500: '#7ea8e0',
-          600: '#5b8bd0',
-          700: '#4673b5',
-          800: '#35577f',
-          900: '#243c57'
+          300: 'rgb(var(--blue-lt))',
+          400: 'rgb(var(--blue))',
+          500: 'rgb(var(--blue))',
+          600: 'rgb(var(--blue-strong))',
+          700: 'rgb(var(--blue-strong))',
+          800: 'rgb(var(--blue-strong))',
+          900: 'rgb(var(--blue-strong))'
         }
       },
       fontFamily: {

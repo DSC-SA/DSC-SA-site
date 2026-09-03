@@ -31,7 +31,7 @@ function FooterCol({ title, children }) {
 
 export default function Footer() {
   return (
-    <footer className="mt-16 border-t border-brand-line bg-white md:mt-24">
+    <footer className="mt-16 border-t border-brand-line bg-brand-snow md:mt-24">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">

@@ -192,7 +192,7 @@ export default function HeroDetail() {
   const BuildItemCircle = ({ item, index }) => (
     <div className="flex flex-col items-center gap-1">
       <div
-        className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-brand-line bg-white shadow-soft"
+        className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-brand-line bg-brand-snow shadow-soft"
         title={item.name}
       >
         <img
@@ -218,7 +218,7 @@ export default function HeroDetail() {
   return (
     <Layout>
       {/* HERO HEADER */}
-      <section className="mb-8 overflow-hidden rounded-3xl border border-brand-line bg-white"
+      <section className="mb-8 overflow-hidden rounded-3xl border border-brand-line bg-brand-snow"
         style={{
           backgroundImage:
             'radial-gradient(700px 320px at 90% -10%, rgba(91,181,232,0.25), transparent 60%), radial-gradient(600px 300px at -10% 120%, rgba(196,224,247,0.5), transparent 60%)'
@@ -230,12 +230,12 @@ export default function HeroDetail() {
               <h1 className="mb-2 font-display text-5xl font-bold text-brand-ink md:text-6xl">{hero.name}</h1>
               <p className="text-lg text-brand-mut">Master this incredible hero</p>
             </div>
-            <div className="inline-flex flex-col rounded-2xl border border-brand-blue/30 bg-white/70 px-7 py-4 text-center shadow-soft w-fit">
+            <div className="inline-flex flex-col rounded-2xl border border-brand-blue/30 bg-brand-snow/70 px-7 py-4 text-center shadow-soft w-fit">
               <p className="mb-1 text-[0.6rem] font-bold uppercase tracking-widest text-brand-faint">Class</p>
               <p className="font-display text-2xl font-bold text-brand-bluedd">{hero.role}</p>
             </div>
           </div>
-          <div className="mt-7 rounded-2xl border border-brand-line bg-white/70 p-5">
+          <div className="mt-7 rounded-2xl border border-brand-line bg-brand-snow/70 p-5">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-faint">Difficulty</span>
             <p className="mt-1 text-3xl font-bold text-brand-bluedd">
               {'★'.repeat(hero.difficulty || 0)}
@@ -346,7 +346,7 @@ export default function HeroDetail() {
                       type="button"
                       onClick={() => setNewBuild((prev) => ({ ...prev, selectedItems: prev.selectedItems.filter((_, j) => j !== i) }))}
                       title={`Remove ${item.name}`}
-                      className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-brand-blue bg-white shadow-soft transition hover:border-red-400"
+                      className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-brand-blue bg-brand-snow shadow-soft transition hover:border-red-400"
                     >
                       <img
                         src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
@@ -391,7 +391,7 @@ export default function HeroDetail() {
               </button>
 
               {pickerOpen && (
-                <div className="mt-3 rounded-2xl border border-brand-line bg-white p-4">
+                <div className="mt-3 rounded-2xl border border-brand-line bg-brand-snow p-4">
                   <input
                     type="text"
                     placeholder="Search items..."

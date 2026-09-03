@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import HeroCard from '../components/HeroCard';
+import ScrollRing from '../components/ScrollRing';
 import Reveal from '../components/Reveal';
 import { heroesAPI } from '../services/api';
 
 const ROLES = ['All', 'Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
+const FEATURED = ['Khufra', 'Lancelot', 'Beatrix', 'Kagura', 'Estes', 'Arlott', 'Chou', 'Fanny', 'Gusion'];
 
 export default function HeroesList() {
   const [heroes, setHeroes] = useState([]);
@@ -39,6 +41,22 @@ export default function HeroesList() {
         </Reveal>
       </div>
 
+      {/* Featured meta — scroll-driven 3D ring */}
+      {!loading && (
+        <Reveal className="mb-10">
+          <div className="mb-2 flex items-center gap-3">
+            <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
+            <h2 className="font-display text-xl font-bold text-brand-ink md:text-2xl">Featured Meta</h2>
+          </div>
+          <p className="ml-4 mb-6 text-sm text-brand-mut">Keep scrolling — the ring spins with you</p>
+
+          {(() => {
+            const featured = FEATURED.map((name) => heroes.find((h) => h.name === name)).filter(Boolean);
+            return featured.length >= 2 ? <ScrollRing items={featured} /> : null;
+          })()}
+        </Reveal>
+      )}
+
       {/* Role filter — horizontal scroll on mobile */}
       <div className="mb-7">
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 sm:pb-0">
@@ -51,7 +69,7 @@ export default function HeroesList() {
                 className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
                   active
                     ? 'bg-brand-blue text-white shadow-[0_8px_20px_-8px_rgba(91,181,232,0.7)]'
-                    : 'border border-brand-line bg-white text-brand-mut hover:border-brand-blue hover:text-brand-bluedd'
+                    : 'border border-brand-line bg-brand-snow text-brand-mut hover:border-brand-blue hover:text-brand-bluedd'
                 }`}
               >
                 {role}

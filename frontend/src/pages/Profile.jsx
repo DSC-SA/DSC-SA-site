@@ -148,7 +148,7 @@ export default function Profile() {
         </div>
 
         {/* Main Card */}
-        <div className="rounded-3xl border border-brand-line bg-white p-6 shadow-lift md:p-8">
+        <div className="rounded-3xl border border-brand-line bg-brand-snow p-6 shadow-lift md:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Messages */}
             {error && (

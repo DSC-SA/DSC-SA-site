@@ -42,7 +42,7 @@ export default function Login() {
     <Layout>
       <div className="flex min-h-[70vh] items-center justify-center py-12">
         <div className="w-full max-w-md">
-          <div className="rounded-3xl border border-brand-line bg-white p-8 shadow-lift md:p-10">
+          <div className="rounded-3xl border border-brand-line bg-brand-snow p-8 shadow-lift md:p-10">
             <h1 className="mb-2 text-center font-display text-3xl font-bold text-brand-ink">Welcome Back</h1>
             <p className="mb-8 text-center text-brand-mut">Sign in to your DSC-SA account</p>
 
@@ -55,7 +55,7 @@ export default function Login() {
             {/* Google Login Button */}
             <button
               onClick={handleGoogleLogin}
-              className="mb-6 flex w-full items-center justify-center gap-2 rounded-xl border border-brand-line bg-white px-6 py-3 font-semibold text-brand-ink shadow-soft transition hover:bg-brand-mist"
+              className="mb-6 flex w-full items-center justify-center gap-2 rounded-xl border border-brand-line bg-brand-snow px-6 py-3 font-semibold text-brand-ink shadow-soft transition hover:bg-brand-mist"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -72,7 +72,7 @@ export default function Login() {
                 <div className="w-full border-t border-brand-line"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-2 text-brand-faint">or sign in with email</span>
+                <span className="bg-brand-snow px-2 text-brand-faint">or sign in with email</span>
               </div>
             </div>
 

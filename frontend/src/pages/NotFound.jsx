@@ -17,7 +17,7 @@ export default function NotFound() {
             Looks like this hero got banned from the game! The page you're looking for doesn't exist.
           </p>
 
-          <div className="mb-6 rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
+          <div className="mb-6 rounded-3xl border border-brand-line bg-brand-snow p-8 shadow-lift">
             <p className="mb-6 text-brand-mut">Let&apos;s get you back on track!</p>
             <div className="space-y-3">
               <Link to="/" className="btn-primary block py-3 font-semibold">

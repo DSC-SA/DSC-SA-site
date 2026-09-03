@@ -10,7 +10,7 @@ export default function NSFW() {
             <h1 className="mb-4 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-4xl font-bold text-transparent">Age Verification Required</h1>
             <p className="mb-8 text-brand-mut">This section contains restricted content for community members. Please verify your age to access the restricted NSFW content.</p>
 
-            <div className="rounded-2xl border border-brand-line bg-white p-6 shadow-lift">
+            <div className="rounded-2xl border border-brand-line bg-brand-snow p-6 shadow-lift">
               <p className="mb-6 text-brand-mut">You must be 18 years or older to access this content. By confirming, you acknowledge that you meet the age requirement and understand the community guidelines.</p>
 
               <div className="flex flex-col gap-4 sm:flex-row">

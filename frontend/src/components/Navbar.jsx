@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import useTheme from '../hooks/useTheme';
 
 function NavItem({ to, label, onClick }) {
   return (
@@ -16,6 +17,7 @@ function NavItem({ to, label, onClick }) {
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -52,7 +54,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-brand-line/70 bg-white/75 backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-brand-line/70 bg-brand-snow/80 backdrop-blur-xl dark:bg-[#0e1524]/80">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -129,10 +131,29 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-line bg-brand-snow text-brand-ink transition hover:bg-brand-cloud dark:text-brand-ink"
+            >
+              {theme === 'dark' ? (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
+
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-line bg-white text-brand-ink transition hover:bg-brand-cloud md:hidden"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-brand-line bg-brand-snow text-brand-ink transition hover:bg-brand-cloud md:hidden"
               aria-label="Toggle navigation menu"
             >
               <div className="flex flex-col gap-1.5">

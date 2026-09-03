@@ -36,12 +36,12 @@ export default function AdminLogin() {
         {!showLoginForm ? (
           <button
             onClick={() => setShowLoginForm(true)}
-            className="w-full rounded-full border border-brand-line bg-white px-4 py-3 text-sm font-semibold text-brand-mut transition hover:border-brand-blue hover:text-brand-bluedd"
+            className="w-full rounded-full border border-brand-line bg-brand-snow px-4 py-3 text-sm font-semibold text-brand-mut transition hover:border-brand-blue hover:text-brand-bluedd"
           >
             Admin Access
           </button>
         ) : (
-          <form onSubmit={handleSubmit} className="rounded-2xl border border-brand-line bg-white p-6 shadow-soft">
+          <form onSubmit={handleSubmit} className="rounded-2xl border border-brand-line bg-brand-snow p-6 shadow-soft">
             <h3 className="mb-4 font-display text-xl font-bold text-brand-ink">Admin Login</h3>
 
             {error && (

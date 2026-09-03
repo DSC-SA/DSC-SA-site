@@ -43,7 +43,7 @@ export default function Members() {
       {loading ? (
         <div className="text-center text-brand-mut">Loading leaderboard...</div>
       ) : leaderboard.length === 0 ? (
-        <div className="rounded-3xl border border-brand-line bg-white p-8 text-center shadow-soft">
+        <div className="rounded-3xl border border-brand-line bg-brand-snow p-8 text-center shadow-soft">
           <p className="mb-4 text-brand-mut">No players have earned points yet</p>
           <a href="/heroes" className="btn-primary inline-block">
             Get Started 🚀
@@ -52,7 +52,7 @@ export default function Members() {
       ) : (
         <div className="space-y-3">
           {leaderboard.map((user, index) => (
-            <div key={user.id} className="flex items-center justify-between rounded-2xl border border-brand-line bg-white p-4 shadow-soft transition hover:border-brand-blue/40 md:p-6">
+            <div key={user.id} className="flex items-center justify-between rounded-2xl border border-brand-line bg-brand-snow p-4 shadow-soft transition hover:border-brand-blue/40 md:p-6">
               <div className="flex flex-1 items-center gap-4">
                 <div className="w-12 text-center text-3xl">{getRankBadge(user.rank)}</div>
                 <button
@@ -89,7 +89,7 @@ export default function Members() {
         </div>
       )}
 
-      <div className="mt-12 rounded-3xl border border-brand-line bg-white p-8 shadow-lift md:p-12">
+      <div className="mt-12 rounded-3xl border border-brand-line bg-brand-snow p-8 shadow-lift md:p-12">
         <h2 className="mb-4 font-display text-2xl font-bold text-brand-ink">How to Earn Points</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-brand-blue/20 bg-brand-mist p-4">
