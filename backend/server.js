@@ -35,7 +35,23 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files and uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Content-hashed build assets (JS/CSS under /assets/*) are immutable: cache long,
+// so returning users never re-download old bundles. index.html is served by the
+// SPA fallback below with no-cache so the browser always fetches the newest shell
+// (whose hashed asset references always exist on the server).
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    maxAge: '365d',
+    immutable: true,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('index.html')) {
+        // Index must be revalidated every visit to avoid stale-hash blank pages.
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      }
+    }
+  })
+);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -54,9 +70,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' });
 });
 
-// SPA fallback: serve index.html for all non-API routes (React Router)
+// SPA fallback: serve index.html for all non-API routes (React Router).
+// Memoized to avoid re-reading from disk on each request.
+const indexFile = path.join(__dirname, 'public', 'index.html');
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.sendFile(indexFile);
 });
 
 // Initialize database and start server
