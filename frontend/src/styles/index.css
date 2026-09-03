@@ -308,6 +308,84 @@ a { color: rgb(var(--text)); text-decoration: none; }
   .hero-ring { transition: transform 0.7s ease; }
 }
 
+/* ==========================================================================
+   Vertical spiral helix carousel — the hero list wraps around a static pole
+   ========================================================================== */
+.helix-stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.helix-card {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.helix-card__inner {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgb(var(--border) / 0.7);
+  background:
+    radial-gradient(140px 90px at 20% 0%, rgb(var(--blue-lt) / 0.5), transparent 60%),
+    rgb(var(--surface));
+  padding: 12px 14px;
+  color: rgb(var(--text));
+  text-align: left;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.helix-card__inner.is-front {
+  border-color: rgb(var(--blue));
+  box-shadow: 0 16px 44px -20px rgba(91, 181, 232, 0.75);
+}
+.helix-card__inner.is-front .helix-card__num {
+  color: rgb(var(--blue-strong));
+}
+
+.helix-card__num {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgb(var(--text-faint));
+}
+
+.helix-card__body {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 10px;
+}
+.helix-card__name {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: rgb(var(--text));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.helix-card__role {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgb(var(--text-muted));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .helix-card { transition: transform 0.6s ease; }
+}
+
 /* 3D tilt card (JS applies --rx/--ry/--coefficient) */
 .tilt-3d {
   transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale3d(1, 1, 1);
