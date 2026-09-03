@@ -100,21 +100,21 @@ export default function AuthSuccess() {
   if (isNewUser) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center p-4">
+        <div className="flex min-h-[70vh] items-center justify-center p-4">
           <div className="w-full max-w-md">
-            <div className="bg-gray-800 rounded-lg p-8 border border-cyan-500/30">
-              <h1 className="text-3xl font-bold text-cyan-400 mb-2 text-center">Welcome!</h1>
-              <p className="text-gray-300 text-center mb-6">Create your username to get started</p>
+            <div className="rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
+              <h1 className="mb-2 text-center font-display text-3xl font-bold text-brand-ink">Welcome!</h1>
+              <p className="mb-6 text-center text-brand-mut">Create your username to get started</p>
 
               {error && (
-                <div className="bg-red-900/20 border border-red-500/50 text-red-300 p-3 rounded mb-4 text-sm">
+                <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-600">
                   {error}
                 </div>
               )}
 
               <form onSubmit={handleUsernameSubmit}>
                 <div className="mb-4">
-                  <label className="block text-cyan-300 text-sm font-semibold mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-brand-bluedd">
                     Username
                   </label>
                   <input
@@ -123,24 +123,24 @@ export default function AuthSuccess() {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter your username"
                     disabled={loading}
-                    className="w-full px-4 py-2 bg-gray-700 border border-cyan-500/30 rounded text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                    className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-2 text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                     minLength={3}
                     maxLength={50}
                     required
                   />
-                  <p className="text-gray-400 text-xs mt-1">3-50 characters</p>
+                  <p className="mt-1 text-xs text-brand-faint">3-50 characters</p>
                 </div>
 
                 <div className="mb-6">
-                  <p className="text-gray-400 text-sm">
-                    Email: <span className="text-cyan-400">{email}</span>
+                  <p className="text-sm text-brand-mut">
+                    Email: <span className="font-semibold text-brand-bluedd">{email}</span>
                   </p>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading || !username.trim()}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-2 rounded hover:from-cyan-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="w-full btn-primary rounded-xl py-2 font-bold disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? 'Setting up...' : 'Complete Setup'}
                 </button>
@@ -154,10 +154,10 @@ export default function AuthSuccess() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center">
+      <div className="flex min-h-[70vh] items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-cyan-400 mb-4">Signing you in...</h1>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-400 mx-auto"></div>
+          <h1 className="mb-4 font-display text-3xl font-bold text-brand-ink">Signing you in...</h1>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-brand-blue"></div>
         </div>
       </div>
     </Layout>

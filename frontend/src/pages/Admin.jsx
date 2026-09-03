@@ -471,26 +471,26 @@ export default function Admin() {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto py-12 px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-5xl font-black text-white gradient-gaming">🎮 Hero Image Upload</h1>
+      <div className="mx-auto max-w-3xl px-4 py-12">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-4xl font-black text-transparent md:text-5xl">🎮 Hero Image Upload</h1>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition"
+            className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
           >
             Logout
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gaming-dark rounded-lg p-8 border border-cyan-400 border-opacity-30 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
           {/* Hero Select */}
           <div>
-            <label className="block text-cyan-400 font-bold mb-3">Select Hero:</label>
+            <label className="mb-3 block font-bold text-brand-bluedd">Select Hero:</label>
             <select
               value={selectedHeroId}
               onChange={handleHeroSelect}
               required
-              className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-cyan-400 border-opacity-50 focus:border-cyan-300 focus:outline-none transition"
+              className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
             >
               <option value="">-- Choose a Hero --</option>
               {heroes.map(hero => (
@@ -501,31 +501,31 @@ export default function Admin() {
             </select>
 
             {selectedHero && (
-              <div className="mt-4 p-4 bg-cyan-500 bg-opacity-10 border-l-4 border-cyan-400 rounded">
-                <p><strong className="text-cyan-400">Role:</strong> {selectedHero.role}</p>
-                <p><strong className="text-cyan-400">Difficulty:</strong> {'⭐'.repeat(selectedHero.difficulty || 0)}</p>
+              <div className="mt-4 rounded-xl border-l-4 border-brand-blue bg-brand-bluesoft p-4">
+                <p><strong className="text-brand-bluedd">Role:</strong> {selectedHero.role}</p>
+                <p><strong className="text-brand-bluedd">Difficulty:</strong> {'⭐'.repeat(selectedHero.difficulty || 0)}</p>
               </div>
             )}
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="block text-cyan-400 font-bold mb-3">Upload Hero Image:</label>
-            <p className="text-cyan-300 text-sm mb-2">Supported: JPG, PNG, WebP, GIF, SVG, BMP, ICO</p>
+            <label className="mb-3 block font-bold text-brand-bluedd">Upload Hero Image:</label>
+            <p className="mb-2 text-sm text-brand-mut">Supported: JPG, PNG, WebP, GIF, SVG, BMP, ICO</p>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-cyan-400 border-opacity-50 focus:border-cyan-300 focus:outline-none transition"
+              className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
             />
 
             {preview && (
               <div className="mt-4">
-                <img 
-                  src={preview} 
-                  alt="Preview" 
-                  className="max-w-full max-h-80 rounded-lg border-2 border-cyan-400"
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="max-h-80 max-w-full rounded-xl border-2 border-brand-blue/40"
                 />
               </div>
             )}
@@ -535,55 +535,55 @@ export default function Admin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 uppercase tracking-wider"
+            className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {loading ? '⏳ Uploading...' : '📤 Upload Image'}
           </button>
         </form>
 
         {/* Event Scheduler */}
-        <div className="mt-12 pt-12 border-t border-purple-500 border-opacity-20">
-          <h2 className="text-3xl font-black text-white mb-6">📅 Event Scheduler</h2>
-          
-          <form onSubmit={handleCreateEvent} className="bg-gaming-dark rounded-lg p-8 border border-purple-500 border-opacity-30 space-y-6">
+        <div className="mt-12 border-t border-brand-line pt-12">
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📅 Event Scheduler</h2>
+
+          <form onSubmit={handleCreateEvent} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
             <div>
-              <label className="block text-purple-400 font-bold mb-3">Event Title:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Event Title:</label>
               <input
                 type="text"
                 value={eventTitle}
                 onChange={(e) => setEventTitle(e.target.value)}
                 placeholder="Enter event name"
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-purple-400 border-opacity-50 focus:border-purple-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div>
-              <label className="block text-purple-400 font-bold mb-3">Event Date & Time:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Event Date & Time:</label>
               <input
                 type="datetime-local"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-purple-400 border-opacity-50 focus:border-purple-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div>
-              <label className="block text-purple-400 font-bold mb-3">Description:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Description:</label>
               <textarea
                 value={eventDescription}
                 onChange={(e) => setEventDescription(e.target.value)}
                 placeholder="Enter event description"
                 rows="4"
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-purple-400 border-opacity-50 focus:border-purple-300 focus:outline-none transition resize-none"
+                className="w-full resize-none rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div>
-              <label className="block text-purple-400 font-bold mb-3">Status:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Status:</label>
               <select
                 value={eventStatus}
                 onChange={(e) => setEventStatus(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-purple-400 border-opacity-50 focus:border-purple-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               >
                 <option value="upcoming">🔜 Upcoming</option>
                 <option value="live">🟢 Live</option>
@@ -591,30 +591,30 @@ export default function Admin() {
             </div>
 
             <div>
-              <label className="block text-purple-400 font-bold mb-3">Event Cover Media:</label>
-              <p className="text-purple-300 text-sm mb-2">Upload image, GIF, or video (MP4, WebM, OGG, JPG, PNG, GIF, WebP)</p>
+              <label className="mb-3 block font-bold text-brand-bluedd">Event Cover Media:</label>
+              <p className="mb-2 text-sm text-brand-mut">Upload image, GIF, or video (MP4, WebM, OGG, JPG, PNG, GIF, WebP)</p>
               <input
                 type="file"
                 accept="image/*,video/mp4,video/webm,video/ogg"
                 onChange={handleEventImageChange}
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-purple-400 border-opacity-50 focus:border-purple-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
 
               {eventImagePreview && eventImage && (
                 <div className="mt-4">
                   {eventImage.type.startsWith('video/') ? (
-                    <video 
-                      src={eventImagePreview} 
+                    <video
+                      src={eventImagePreview}
                       autoPlay
                       loop
                       muted
-                      className="max-w-full max-h-60 rounded-lg border-2 border-purple-400"
+                      className="max-h-60 max-w-full rounded-xl border-2 border-brand-blue/40"
                     />
                   ) : (
-                    <img 
-                      src={eventImagePreview} 
-                      alt="Event Cover Preview" 
-                      className="max-w-full max-h-60 rounded-lg border-2 border-purple-400"
+                    <img
+                      src={eventImagePreview}
+                      alt="Event Cover Preview"
+                      className="max-h-60 max-w-full rounded-xl border-2 border-brand-blue/40"
                     />
                   )}
                 </div>
@@ -624,7 +624,7 @@ export default function Admin() {
             <button
               type="submit"
               disabled={eventLoading}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 uppercase tracking-wider"
+              className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {eventLoading ? '⏳ Creating...' : '📌 Create Event'}
             </button>
@@ -632,22 +632,22 @@ export default function Admin() {
         </div>
 
         {/* Active Events List */}
-        <div className="mt-12 pt-12 border-t border-purple-500 border-opacity-20">
-          <h2 className="text-3xl font-black text-white mb-6">📋 Active Events</h2>
-          
+        <div className="mt-12 border-t border-brand-line pt-12">
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📋 Active Events</h2>
+
           {eventsLoading ? (
-            <p className="text-gray-400">Loading events...</p>
+            <p className="text-brand-mut">Loading events...</p>
           ) : events.length > 0 ? (
             <div className="space-y-3">
               {events.map(event => (
-                <div key={event.id} className="flex items-center justify-between bg-gaming-dark rounded-lg p-4 border border-purple-500 border-opacity-20">
+                <div key={event.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-white p-4 shadow-soft">
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{event.title}</h3>
-                    <p className="text-gray-400 text-sm">{event.description?.substring(0, 60)}...</p>
-                    <p className="text-purple-400 text-xs mt-1">
-                      📅 {new Date(event.event_date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
+                    <h3 className="text-lg font-bold text-brand-ink">{event.title}</h3>
+                    <p className="text-sm text-brand-mut">{event.description?.substring(0, 60)}...</p>
+                    <p className="mt-1 text-xs text-brand-bluedd">
+                      📅 {new Date(event.event_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
@@ -656,7 +656,7 @@ export default function Admin() {
                   </div>
                   <button
                     onClick={() => handleDeleteEvent(event.id)}
-                    className="ml-4 px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition whitespace-nowrap"
+                    className="ml-4 whitespace-nowrap rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
                   >
                     🗑️ Delete
                   </button>
@@ -664,74 +664,72 @@ export default function Admin() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400">No events yet. Create one above!</p>
+            <p className="text-brand-mut">No events yet. Create one above!</p>
           )}
         </div>
 
         {/* Match History */}
-        <div className="mt-12 pt-12 border-t border-pink-500 border-opacity-20">
-          <h2 className="text-3xl font-black text-white mb-6">⚔️ Match History</h2>
-          
-          <form onSubmit={handleCreateMatch} className="bg-gaming-dark rounded-lg p-8 border border-pink-500 border-opacity-30 space-y-6">
+        <div className="mt-12 border-t border-brand-line pt-12">
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">⚔️ Match History</h2>
+
+          <form onSubmit={handleCreateMatch} className="space-y-6 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
             <div>
-              <label className="block text-pink-400 font-bold mb-3">Match Title:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Match Title:</label>
               <input
                 type="text"
                 value={matchTitle}
                 onChange={(e) => setMatchTitle(e.target.value)}
                 placeholder="Enter match name"
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-pink-400 border-opacity-50 focus:border-pink-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div>
-              <label className="block text-pink-400 font-bold mb-3">Match Date & Time:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Match Date & Time:</label>
               <input
                 type="datetime-local"
                 value={matchDate}
                 onChange={(e) => setMatchDate(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-pink-400 border-opacity-50 focus:border-pink-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div>
-              <label className="block text-pink-400 font-bold mb-3">Description:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Description:</label>
               <textarea
                 value={matchDescription}
                 onChange={(e) => setMatchDescription(e.target.value)}
                 placeholder="Enter match description"
                 rows="4"
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-pink-400 border-opacity-50 focus:border-pink-300 focus:outline-none transition resize-none"
+                className="w-full resize-none rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
-
-
             <div>
-              <label className="block text-pink-400 font-bold mb-3">Match Cover Media:</label>
-              <p className="text-pink-300 text-sm mb-2">Upload image, GIF, or video (MP4, WebM, OGG, JPG, PNG, GIF, WebP)</p>
+              <label className="mb-3 block font-bold text-brand-bluedd">Match Cover Media:</label>
+              <p className="mb-2 text-sm text-brand-mut">Upload image, GIF, or video (MP4, WebM, OGG, JPG, PNG, GIF, WebP)</p>
               <input
                 type="file"
                 accept="image/*,video/mp4,video/webm,video/ogg"
                 onChange={handleMatchImageChange}
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-pink-400 border-opacity-50 focus:border-pink-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
 
               {matchImagePreview && matchImage && (
                 <div className="mt-4">
                   {matchImage.type.startsWith('video/') ? (
-                    <video 
-                      src={matchImagePreview} 
+                    <video
+                      src={matchImagePreview}
                       autoPlay
                       loop
                       muted
-                      className="max-w-full max-h-60 rounded-lg border-2 border-pink-400"
+                      className="max-h-60 max-w-full rounded-xl border-2 border-brand-blue/40"
                     />
                   ) : (
-                    <img 
-                      src={matchImagePreview} 
-                      alt="Match Cover Preview" 
-                      className="max-w-full max-h-60 rounded-lg border-2 border-pink-400"
+                    <img
+                      src={matchImagePreview}
+                      alt="Match Cover Preview"
+                      className="max-h-60 max-w-full rounded-xl border-2 border-brand-blue/40"
                     />
                   )}
                 </div>
@@ -741,7 +739,7 @@ export default function Admin() {
             <button
               type="submit"
               disabled={matchLoading}
-              className="w-full py-3 bg-gradient-to-r from-pink-600 to-red-600 text-white font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 uppercase tracking-wider"
+              className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {matchLoading ? '⏳ Creating...' : '⚔️ Create Match'}
             </button>
@@ -749,22 +747,22 @@ export default function Admin() {
         </div>
 
         {/* Active Matches List */}
-        <div className="mt-12 pt-12 border-t border-pink-500 border-opacity-20">
-          <h2 className="text-3xl font-black text-white mb-6">📋 Active Matches</h2>
-          
+        <div className="mt-12 border-t border-brand-line pt-12">
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📋 Active Matches</h2>
+
           {matchesLoading ? (
-            <p className="text-gray-400">Loading matches...</p>
+            <p className="text-brand-mut">Loading matches...</p>
           ) : matches.length > 0 ? (
             <div className="space-y-3">
               {matches.map(match => (
-                <div key={match.id} className="flex items-center justify-between bg-gaming-dark rounded-lg p-4 border border-pink-500 border-opacity-20">
+                <div key={match.id} className="flex items-center justify-between rounded-xl border border-brand-line bg-white p-4 shadow-soft">
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{match.title}</h3>
-                    <p className="text-gray-400 text-sm">{match.description?.substring(0, 60)}...</p>
-                    <p className="text-pink-400 text-xs mt-1">
-                      📅 {new Date(match.match_date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
+                    <h3 className="text-lg font-bold text-brand-ink">{match.title}</h3>
+                    <p className="text-sm text-brand-mut">{match.description?.substring(0, 60)}...</p>
+                    <p className="mt-1 text-xs text-brand-bluedd">
+                      📅 {new Date(match.match_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
@@ -773,7 +771,7 @@ export default function Admin() {
                   </div>
                   <button
                     onClick={() => handleDeleteMatch(match.id)}
-                    className="ml-4 px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700 transition whitespace-nowrap"
+                    className="ml-4 whitespace-nowrap rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
                   >
                     🗑️ Delete
                   </button>
@@ -781,23 +779,23 @@ export default function Admin() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-400">No matches yet. Create one above!</p>
+            <p className="text-brand-mut">No matches yet. Create one above!</p>
           )}
         </div>
 
         {/* Item Image Upload Section */}
-        <div className="mt-12 bg-gaming-dark rounded-lg p-8 border border-yellow-400 border-opacity-30">
-          <h2 className="text-3xl font-black gradient-gaming mb-6">📦 Item Image Upload</h2>
-          
+        <div className="mt-12 rounded-2xl border border-brand-line bg-white p-8 shadow-lift">
+          <h2 className="mb-6 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-3xl font-black text-transparent">📦 Item Image Upload</h2>
+
           <form onSubmit={handleItemImageSubmit} className="space-y-6">
             {/* Item Select */}
             <div>
-              <label className="block text-yellow-400 font-bold mb-3">Select Item:</label>
+              <label className="mb-3 block font-bold text-brand-bluedd">Select Item:</label>
               <select
                 value={selectedItemId}
                 onChange={handleItemSelect}
                 required
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-yellow-400 border-opacity-50 focus:border-yellow-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               >
                 <option value="">-- Choose an Item --</option>
                 {Array.isArray(items) && items.map(item => (
@@ -808,15 +806,15 @@ export default function Admin() {
               </select>
 
               {selectedItem && (
-                <div className="mt-4 p-4 bg-yellow-500 bg-opacity-10 border-l-4 border-yellow-400 rounded">
-                  <p><strong className="text-yellow-400">Item:</strong> {selectedItem.name}</p>
+                <div className="mt-4 rounded-xl border-l-4 border-brand-blue bg-brand-bluesoft p-4">
+                  <p><strong className="text-brand-bluedd">Item:</strong> {selectedItem.name}</p>
                   {selectedItem && (
                     <div className="mt-3">
-                      <p className="text-yellow-400 text-sm font-semibold mb-2">Current Image:</p>
-                      <img 
+                      <p className="mb-2 text-sm font-semibold text-brand-bluedd">Current Image:</p>
+                      <img
                         src={`${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin)}/api/items/${selectedItem.id}/image?t=${Date.now()}`}
-                        alt={selectedItem.name} 
-                        className="w-20 h-20 rounded" 
+                        alt={selectedItem.name}
+                        className="h-20 w-20 rounded-lg border border-brand-line"
                         onError={(e) => {
                           e.target.style.display = 'none';
                         }}
@@ -829,22 +827,22 @@ export default function Admin() {
 
             {/* Image Upload */}
             <div>
-              <label className="block text-yellow-400 font-bold mb-3">Upload Item Image:</label>
-              <p className="text-yellow-300 text-sm mb-2">Supported: JPG, PNG, WebP, GIF, SVG, BMP, ICO</p>
+              <label className="mb-3 block font-bold text-brand-bluedd">Upload Item Image:</label>
+              <p className="mb-2 text-sm text-brand-mut">Supported: JPG, PNG, WebP, GIF, SVG, BMP, ICO</p>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleItemImageChange}
                 required
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded border-2 border-yellow-400 border-opacity-50 focus:border-yellow-300 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
 
               {itemImagePreview && (
                 <div className="mt-4">
-                  <img 
-                    src={itemImagePreview} 
-                    alt="Preview" 
-                    className="max-w-xs h-auto rounded-lg border-2 border-yellow-400"
+                  <img
+                    src={itemImagePreview}
+                    alt="Preview"
+                    className="max-w-xs rounded-xl border-2 border-brand-blue/40"
                   />
                 </div>
               )}
@@ -853,7 +851,7 @@ export default function Admin() {
             <button
               type="submit"
               disabled={itemLoading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold rounded-lg hover:from-yellow-600 hover:to-orange-600 disabled:opacity-50 transition"
+              className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd px-6 py-3 font-bold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {itemLoading ? '⏳ Uploading...' : '📤 Upload Item Image'}
             </button>
@@ -861,43 +859,43 @@ export default function Admin() {
 
           {/* Items Gallery */}
           {itemsLoading ? (
-            <p className="text-gray-400 mt-6">Loading items...</p>
+            <p className="mt-6 text-brand-mut">Loading items...</p>
           ) : items.length > 0 ? (
             <div className="mt-8">
-              <h3 className="text-xl font-bold text-yellow-400 mb-4">All Items</h3>
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+              <h3 className="mb-4 font-display text-xl font-bold text-brand-ink">All Items</h3>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-6">
                 {items.map(item => {
                   const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
                   return (
-                    <div key={item.id} className="bg-gray-800 rounded-lg p-3 border border-yellow-400 border-opacity-20 text-center">
-                      <img 
+                    <div key={item.id} className="rounded-xl border border-brand-line bg-brand-mist p-3 text-center">
+                      <img
                         src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
-                        alt={item.name} 
-                        className="w-full h-20 object-cover rounded mb-2" 
+                        alt={item.name}
+                        className="mb-2 h-20 w-full rounded object-cover"
                         onError={(e) => {
                           e.target.src = '';
                           e.target.style.display = 'none';
-                          e.target.parentElement.innerHTML = '<div class="w-full h-20 bg-gray-700 rounded mb-2 flex items-center justify-center"><span class="text-xs text-gray-400">No Image</span></div>';
+                          e.target.parentElement.innerHTML = '<div class="w-full h-20 bg-brand-cloud rounded mb-2 flex items-center justify-center"><span class="text-xs text-brand-faint">No Image</span></div>';
                         }}
                       />
-                      <p className="text-xs text-yellow-300 font-semibold truncate">{item.name}</p>
+                      <p className="truncate text-xs font-semibold text-brand-bluedd">{item.name}</p>
                     </div>
                   );
                 })}
               </div>
             </div>
           ) : (
-            <p className="text-gray-400 mt-6">No items available.</p>
+            <p className="mt-6 text-brand-mut">No items available.</p>
           )}
         </div>
 
         {/* Messages */}
         {message && (
           <div
-            className={`mt-6 p-4 rounded-lg font-bold text-center ${
+            className={`mt-6 rounded-xl border-2 p-4 text-center font-bold ${
               messageType === 'success'
-                ? 'bg-green-600 bg-opacity-20 border-2 border-green-500 text-green-300'
-                : 'bg-red-600 bg-opacity-20 border-2 border-red-500 text-red-300'
+                ? 'border-green-300 bg-green-50 text-green-700'
+                : 'border-red-300 bg-red-50 text-red-600'
             }`}
           >
             {message}

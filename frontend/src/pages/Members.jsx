@@ -33,18 +33,18 @@ export default function Members() {
   return (
     <Layout>
       <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-10 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">🏆 Community Leaderboard</h1>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="h-10 w-1 rounded bg-gradient-to-b from-brand-blue to-brand-bluedd"></div>
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl">🏆 Community Leaderboard</h1>
         </div>
-        <p className="text-gray-400 text-lg">Earn points by commenting on hero cards and suggesting builds!</p>
+        <p className="text-lg text-brand-mut">Earn points by commenting on hero cards and suggesting builds!</p>
       </div>
 
       {loading ? (
-        <div className="text-center text-gray-400">Loading leaderboard...</div>
+        <div className="text-center text-brand-mut">Loading leaderboard...</div>
       ) : leaderboard.length === 0 ? (
-        <div className="card-gaming p-8 text-center">
-          <p className="text-gray-400 mb-4">No players have earned points yet</p>
+        <div className="rounded-3xl border border-brand-line bg-white p-8 text-center shadow-soft">
+          <p className="mb-4 text-brand-mut">No players have earned points yet</p>
           <a href="/heroes" className="btn-primary inline-block">
             Get Started 🚀
           </a>
@@ -52,102 +52,57 @@ export default function Members() {
       ) : (
         <div className="space-y-3">
           {leaderboard.map((user, index) => (
-            <div key={user.id} className="card-gaming p-4 md:p-6 hover:border-cyan-400 transition flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="text-3xl w-12 text-center">{getRankBadge(user.rank)}</div>
+            <div key={user.id} className="flex items-center justify-between rounded-2xl border border-brand-line bg-white p-4 shadow-soft transition hover:border-brand-blue/40 md:p-6">
+              <div className="flex flex-1 items-center gap-4">
+                <div className="w-12 text-center text-3xl">{getRankBadge(user.rank)}</div>
                 <button
                   type="button"
                   onClick={() => setSelectedUserProfile(user)}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                    padding: '1.5px',
-                    animation: 'spin 4s linear infinite',
-                    flexShrink: 0,
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s',
-                  }}
-                  className="hover:scale-110"
+                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-brand-blue/50 bg-brand-bluelt text-white shadow-soft transition hover:scale-110"
+                  aria-label={`View ${user.username}'s profile`}
                 >
-                  <style>{`
-                    @keyframes spin {
-                      from { filter: hue-rotate(0deg); }
-                      to { filter: hue-rotate(360deg); }
-                    }
-                  `}</style>
-                  <div style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    backgroundColor: '#111827',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    overflow: 'hidden'
-                  }}>
-                    {user.avatar ? (
-                      <img 
-                        src={getImageUrl(user.avatar)} 
-                        alt={user.username} 
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          objectPosition: 'center'
-                        }}
-                      />
-                    ) : (
-                      <span style={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#22d3ee'
-                      }}>{user.username?.charAt(0)?.toUpperCase()}</span>
-                    )}
-                  </div>
+                  {user.avatar ? (
+                    <img
+                      src={getImageUrl(user.avatar)}
+                      alt={user.username}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-sm font-bold">{user.username?.charAt(0)?.toUpperCase()}</span>
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedUserProfile(user)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    flex: 1
-                  }}
-                  className="hover:opacity-80 transition"
+                  className="max-w-full flex-1 text-left transition hover:opacity-80"
                 >
-                  <h3 className="text-xl font-bold text-cyan-400 hover:text-cyan-300">{user.username}</h3>
-                  <p className="text-gray-500 text-sm">{user.rank === 1 ? 'Top Contributor' : 'Community Member'}</p>
+                  <h3 className="truncate text-xl font-bold text-brand-bluedd">{user.username}</h3>
+                  <p className="text-sm text-brand-faint">{user.rank === 1 ? 'Top Contributor' : 'Community Member'}</p>
                 </button>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">{user.points}</p>
-                <p className="text-gray-500 text-xs">Points</p>
+                <p className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-2xl font-bold text-transparent">{user.points}</p>
+                <p className="text-xs text-brand-faint">Points</p>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-12 card-gaming p-8 md:p-12 gradient-border">
-        <h2 className="text-2xl font-bold mb-4">How to Earn Points</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gray-900 bg-opacity-50 p-4 rounded-lg">
-            <p className="text-cyan-400 font-bold mb-2">💬 Comment on Hero Cards</p>
-            <p className="text-gray-400 text-sm">+10 points per comment</p>
+      <div className="mt-12 rounded-3xl border border-brand-line bg-white p-8 shadow-lift md:p-12">
+        <h2 className="mb-4 font-display text-2xl font-bold text-brand-ink">How to Earn Points</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-brand-blue/20 bg-brand-mist p-4">
+            <p className="mb-2 font-bold text-brand-bluedd">💬 Comment on Hero Cards</p>
+            <p className="text-sm text-brand-mut">+10 points per comment</p>
           </div>
-          <div className="bg-gray-900 bg-opacity-50 p-4 rounded-lg">
-            <p className="text-purple-400 font-bold mb-2">🔨 Suggest Builds</p>
-            <p className="text-gray-400 text-sm">+25 points per build suggestion</p>
+          <div className="rounded-2xl border border-brand-blue/20 bg-brand-mist p-4">
+            <p className="mb-2 font-bold text-brand-bluedd">🔨 Suggest Builds</p>
+            <p className="text-sm text-brand-mut">+25 points per build suggestion</p>
           </div>
         </div>
         <div className="mt-6 text-center">
-          <p className="text-gray-400 mb-4">Start earning points now!</p>
+          <p className="mb-4 text-brand-mut">Start earning points now!</p>
           <a href="/heroes" className="btn-primary inline-block">
             🚀 Explore Heroes
           </a>
@@ -155,8 +110,8 @@ export default function Members() {
       </div>
 
       {/* Profile Card Popup */}
-      <UserProfileCard 
-        user={selectedUserProfile} 
+      <UserProfileCard
+        user={selectedUserProfile}
         onClose={() => setSelectedUserProfile(null)}
       />
     </Layout>

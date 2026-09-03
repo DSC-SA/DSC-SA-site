@@ -143,26 +143,20 @@ export default function Register() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center px-4 py-12">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-        </div>
-
-        <div className="relative z-10 w-full max-w-md">
+      <div className="flex min-h-[70vh] items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
           {/* Step 1: Choice between Google and Email */}
           {step === 1 && (
-            <div className="bg-gray-800 bg-opacity-80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-cyan-500 border-opacity-30">
-              <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+            <div className="rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
+              <h1 className="mb-2 text-center font-display text-3xl font-bold text-brand-ink">
                 Join DSC
               </h1>
-              <p className="text-gray-300 text-center text-sm mb-8">
+              <p className="mb-8 text-center text-sm text-brand-mut">
                 Create your account to access the community
               </p>
 
               {error && (
-                <div className="mb-6 p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg text-red-300 text-sm">
+                <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-600">
                   {error}
                 </div>
               )}
@@ -171,9 +165,9 @@ export default function Register() {
               <button
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full mb-6 px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                className="mb-6 flex w-full items-center justify-center gap-2 rounded-xl border border-brand-line bg-white px-6 py-3 font-semibold text-brand-ink shadow-soft transition hover:bg-brand-mist disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -185,81 +179,63 @@ export default function Register() {
               {/* Divider */}
               <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-600"></div>
+                  <div className="w-full border-t border-brand-line"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-gray-800 text-gray-400">or register with email</span>
+                  <span className="bg-white px-2 text-brand-faint">or register with email</span>
                 </div>
               </div>
 
               {/* Email Registration Form */}
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                  <label className="mb-2 block text-sm font-medium text-brand-ink">Username</label>
                   <input
                     type="text"
                     name="username"
                     value={formData.username}
                     onChange={handleEmailChange}
-                    onFocus={() => setFocusedField('username')}
-                    onBlur={() => setFocusedField(null)}
                     placeholder="Choose your username"
-                    className={`w-full px-4 py-2 bg-gray-700 text-white rounded-lg border transition-all duration-300 placeholder-gray-500 focus:outline-none ${
-                      focusedField === 'username'
-                        ? 'border-cyan-400 shadow-lg shadow-cyan-500/50'
-                        : 'border-gray-600'
-                    }`}
+                    className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <label className="mb-2 block text-sm font-medium text-brand-ink">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleEmailChange}
-                    onFocus={() => setFocusedField('email')}
-                    onBlur={() => setFocusedField(null)}
                     placeholder="your@email.com"
-                    className={`w-full px-4 py-2 bg-gray-700 text-white rounded-lg border transition-all duration-300 placeholder-gray-500 focus:outline-none ${
-                      focusedField === 'email'
-                        ? 'border-cyan-400 shadow-lg shadow-cyan-500/50'
-                        : 'border-gray-600'
-                    }`}
+                    className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                  <label className="mb-2 block text-sm font-medium text-brand-ink">Password</label>
                   <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleEmailChange}
-                    onFocus={() => setFocusedField('password')}
-                    onBlur={() => setFocusedField(null)}
                     placeholder="At least 6 characters"
-                    className={`w-full px-4 py-2 bg-gray-700 text-white rounded-lg border transition-all duration-300 placeholder-gray-500 focus:outline-none ${
-                      focusedField === 'password'
-                        ? 'border-cyan-400 shadow-lg shadow-cyan-500/50'
-                        : 'border-gray-600'
-                    }`}
+                    className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-6 px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:shadow-cyan-500/50"
+                  className="w-full btn-primary mt-6 px-6 py-3 font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? 'Registering...' : 'Register'}
                 </button>
               </form>
 
-              <p className="text-center text-gray-400 text-sm mt-6">
+              <p className="mt-6 text-center text-sm text-brand-mut">
                 Already have an account?{' '}
-                <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold">
+                <Link to="/login" className="font-semibold text-brand-bluedd hover:underline">
                   Login here
                 </Link>
               </p>
@@ -268,63 +244,57 @@ export default function Register() {
 
           {/* Step 2: Email Verification */}
           {step === 2 && authMethod === 'email' && (
-            <div className="bg-gray-800 bg-opacity-80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-cyan-500 border-opacity-30">
+            <div className="rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
               <button
                 onClick={handleBack}
-                className="mb-4 text-cyan-400 hover:text-cyan-300 text-sm font-medium flex items-center gap-1 transition-colors"
+                className="mb-4 flex items-center gap-1 text-sm font-medium text-brand-bluedd transition hover:underline"
               >
                 ← Back
               </button>
 
-              <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              <h1 className="mb-2 text-center font-display text-3xl font-bold text-brand-ink">
                 Verify Your Email
               </h1>
-              <p className="text-gray-300 text-center text-sm mb-8">
+              <p className="mb-8 text-center text-sm text-brand-mut">
                 We sent a 6-digit code to<br />
-                <span className="text-cyan-400 font-semibold">{formData.email}</span>
+                <span className="font-semibold text-brand-bluedd">{formData.email}</span>
               </p>
 
               {error && (
-                <div className="mb-6 p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg text-red-300 text-sm">
+                <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-600">
                   {error}
                 </div>
               )}
 
               <form onSubmit={handleVerifyCode} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Verification Code</label>
+                  <label className="mb-2 block text-sm font-medium text-brand-ink">Verification Code</label>
                   <input
                     type="text"
                     name="verificationCode"
                     value={formData.verificationCode}
                     onChange={handleEmailChange}
-                    onFocus={() => setFocusedField('verificationCode')}
-                    onBlur={() => setFocusedField(null)}
                     placeholder="000000"
                     maxLength="6"
-                    className={`w-full px-4 py-3 bg-gray-700 text-white text-center text-2xl tracking-widest rounded-lg border transition-all duration-300 placeholder-gray-500 focus:outline-none font-mono ${
-                      focusedField === 'verificationCode'
-                        ? 'border-cyan-400 shadow-lg shadow-cyan-500/50'
-                        : 'border-gray-600'
-                    }`}
+                    className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-center font-mono text-2xl tracking-widest text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                   />
-                  <p className="text-xs text-gray-400 mt-2">Code expires in 10 minutes</p>
+                  <p className="mt-2 text-xs text-brand-faint">Code expires in 10 minutes</p>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-6 px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:shadow-cyan-500/50"
+                  className="w-full btn-primary mt-6 px-6 py-3 font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? 'Verifying...' : 'Verify Code'}
                 </button>
               </form>
 
-              <p className="text-center text-gray-400 text-sm mt-6">
-                Didn't receive the code?{' '}
+              <p className="mt-6 text-center text-sm text-brand-mut">
+                Didn&apos;t receive the code?{' '}
                 <button
                   onClick={() => setFormData(prev => ({ ...prev, verificationCode: '' }))}
-                  className="text-cyan-400 hover:text-cyan-300 font-semibold"
+                  className="font-semibold text-brand-bluedd hover:underline"
                 >
                   Request new code
                 </button>

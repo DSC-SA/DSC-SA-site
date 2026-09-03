@@ -31,44 +31,44 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="mt-16 pt-8 border-t border-purple-500 border-opacity-20">
-      <div className="max-w-md mx-auto">
+    <div className="mt-16 border-t border-brand-line pt-8">
+      <div className="mx-auto max-w-md">
         {!showLoginForm ? (
           <button
             onClick={() => setShowLoginForm(true)}
-            className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded-lg hover:opacity-90 transition text-sm"
+            className="w-full rounded-full border border-brand-line bg-white px-4 py-3 text-sm font-semibold text-brand-mut transition hover:border-brand-blue hover:text-brand-bluedd"
           >
-            🔐 Admin Access
+            Admin Access
           </button>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-gaming-dark rounded-lg p-6 border border-purple-500 border-opacity-30">
-            <h3 className="text-xl font-bold text-white mb-4">Admin Login</h3>
-            
+          <form onSubmit={handleSubmit} className="rounded-2xl border border-brand-line bg-white p-6 shadow-soft">
+            <h3 className="mb-4 font-display text-xl font-bold text-brand-ink">Admin Login</h3>
+
             {error && (
-              <div className="mb-4 p-3 bg-red-600 bg-opacity-20 border border-red-500 rounded text-red-300 text-sm">
+              <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-600">
                 {error}
               </div>
             )}
 
             <div className="mb-4">
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Username</label>
+              <label className="mb-2 block text-sm font-semibold text-brand-ink">Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded border border-gray-600 focus:border-cyan-400 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-2.5 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
             <div className="mb-6">
-              <label className="block text-gray-300 text-sm font-semibold mb-2">Password</label>
+              <label className="mb-2 block text-sm font-semibold text-brand-ink">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded border border-gray-600 focus:border-cyan-400 focus:outline-none transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-2.5 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
             </div>
 
@@ -76,7 +76,7 @@ export default function AdminLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold rounded hover:opacity-90 transition disabled:opacity-50"
+                className="btn-primary flex-1 disabled:opacity-50"
               >
                 {loading ? 'Logging in...' : 'Login'}
               </button>
@@ -88,7 +88,7 @@ export default function AdminLogin() {
                   setPassword('');
                   setError('');
                 }}
-                className="flex-1 py-2 bg-gray-700 text-white font-semibold rounded hover:bg-gray-600 transition"
+                className="btn-secondary flex-1"
               >
                 Cancel
               </button>

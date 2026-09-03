@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import HeroCard from '../components/HeroCard';
+import Reveal from '../components/Reveal';
 import { heroesAPI } from '../services/api';
+
+const ROLES = ['All', 'Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
 
 export default function HeroesList() {
   const [heroes, setHeroes] = useState([]);
@@ -19,85 +22,62 @@ export default function HeroesList() {
         setLoading(false);
       }
     };
-
     fetchHeroes();
   }, []);
 
-  const roles = ['All', 'Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
-
-  const getRoleColor = (role) => {
-    const colors = {
-      'Tank': 'from-amber-700 to-amber-500',
-      'Mage': 'from-blue-700 to-blue-500',
-      'Marksman': 'from-yellow-600 to-yellow-400',
-      'Assassin': 'from-purple-700 to-purple-500',
-      'Support': 'from-green-700 to-green-500',
-      'Fighter': 'from-orange-700 to-orange-500'
-    };
-    return colors[role] || 'from-amber-600 to-amber-400';
-  };
-
-  const filteredHeroes = selectedRole === 'All' 
-    ? heroes 
-    : heroes.filter(h => h.role === selectedRole);
+  const filteredHeroes = selectedRole === 'All' ? heroes : heroes.filter((h) => h.role === selectedRole);
 
   return (
     <Layout>
       <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-amber-400 to-amber-600 rounded"></div>
-              <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Heroes</h1>
-            </div>
-            <p className="text-gray-400 text-sm ml-4">Browse all {heroes.length} official heroes</p>
+        <Reveal>
+          <div className="mb-1 flex items-center gap-3">
+            <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
+            <h1 className="font-display text-3xl font-bold text-brand-ink md:text-5xl">Heroes</h1>
           </div>
-        </div>
+          <p className="ml-4 text-sm text-brand-mut">Browse all {heroes.length} official heroes</p>
+        </Reveal>
       </div>
 
-      {/* Role Filter Tabs */}
-      <div className="mb-8">
-        <div className="flex flex-wrap gap-3">
-          {roles.map(role => (
-            <button
-              key={role}
-              onClick={() => setSelectedRole(role)}
-              className="font-bold text-sm transition-all duration-200 rounded"
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#C0C0C0',
-                color: '#000000',
-                border: '2px solid #808080',
-                cursor: 'pointer'
-              }}
-            >
-              {role}
-            </button>
-          ))}
+      {/* Role filter — horizontal scroll on mobile */}
+      <div className="mb-7">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 sm:pb-0">
+          {ROLES.map((role) => {
+            const active = selectedRole === role;
+            return (
+              <button
+                key={role}
+                onClick={() => setSelectedRole(role)}
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  active
+                    ? 'bg-brand-blue text-white shadow-[0_8px_20px_-8px_rgba(91,181,232,0.7)]'
+                    : 'border border-brand-line bg-white text-brand-mut hover:border-brand-blue hover:text-brand-bluedd'
+                }`}
+              >
+                {role}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-20">
-          <div className="inline-block">
-            <div className="w-12 h-12 border-4 border-amber-500 border-t-amber-300 rounded-full animate-spin"></div>
-          </div>
-          <p className="text-gray-400 mt-4">Loading heroes...</p>
+        <div className="py-20 text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-brand-blue border-t-transparent"></div>
+          <p className="mt-4 text-sm text-brand-mut">Loading heroes...</p>
+        </div>
+      ) : filteredHeroes.length > 0 ? (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-4">
+          {filteredHeroes.map((hero, i) => (
+            <Reveal key={hero.id} delay={`${(i % 5) * 50}ms`}>
+              <div style={{ aspectRatio: '1 / 1' }}>
+                <HeroCard hero={hero} />
+              </div>
+            </Reveal>
+          ))}
         </div>
       ) : (
-        <div>
-          {filteredHeroes.length > 0 ? (
-            <div className="grid gap-2 grid-cols-3 sm:grid-cols-4 lg:grid-cols-5">
-              {filteredHeroes.map((hero) => (
-                <div key={hero.id} style={{ aspectRatio: '1/1' }}>
-                  <HeroCard hero={hero} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-400 py-12">No heroes found in this category</p>
-          )}
-        </div>
+        <p className="py-12 text-center text-brand-mut">No heroes found in this category</p>
       )}
     </Layout>
   );

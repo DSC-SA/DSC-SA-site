@@ -26,21 +26,24 @@ export default function Events() {
   return (
     <Layout>
       <div className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 led-animated">🎮 Events</h1>
-        <div className="led-line mb-6"></div>
-        <p className="text-gray-300 text-lg font-semibold">Join the DSC-SA community for epic matches, competitions, and challenges</p>
+        <h1 className="mb-4 text-4xl font-bold text-brand-ink md:text-5xl">🎮 Events</h1>
+        <div className="mb-6 h-1 w-24 rounded bg-gradient-to-r from-brand-blue to-brand-bluedd"></div>
+        <p className="text-lg font-semibold text-brand-mut">Join the DSC-SA community for epic matches, competitions, and challenges</p>
       </div>
 
       {loading ? (
-        <div className="text-center py-12">
-          <p className="text-gray-400">⏳ Loading events...</p>
+        <div className="py-12 text-center">
+          <p className="text-brand-mut">⏳ Loading events...</p>
         </div>
       ) : events.length > 0 ? (
         <div className="grid grid-cols-1 gap-8">
           {events.map(event => (
-            <div key={event.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-row !w-96 !h-32 !max-h-32">
+            <div
+              key={event.id}
+              className="group flex max-h-40 flex-row overflow-hidden rounded-2xl border border-brand-line bg-white shadow-soft transition-all duration-300 hover:border-brand-blue/40"
+            >
               {event.image && (
-                <div className="relative !w-48 !h-32 flex-shrink-0 overflow-hidden bg-gray-800 !max-h-32">
+                <div className="flex w-2/5 flex-shrink-0 overflow-hidden bg-brand-mist sm:w-48">
                   {event.image.startsWith('data:video/') ? (
                     <>
                       <video
@@ -48,33 +51,33 @@ export default function Events() {
                         autoPlay
                         loop
                         muted
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent"></div>
                     </>
                   ) : (
                     <>
                       <img
                         src={event.image}
                         alt={event.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent"></div>
                     </>
                   )}
                 </div>
               )}
-              
-              <div className="p-3 flex-1 flex flex-col justify-between overflow-hidden">
+
+              <div className="flex flex-1 flex-col justify-between overflow-hidden p-3">
                 <div className="min-w-0">
-                  <h3 className="text-sm font-bold text-white group-hover:text-cyan-400 transition line-clamp-1">{event.title}</h3>
-                  <p className="text-gray-300 line-clamp-1 text-xs leading-tight">{event.description}</p>
+                  <h3 className="line-clamp-1 text-sm font-bold text-brand-ink transition group-hover:text-brand-bluedd">{event.title}</h3>
+                  <p className="line-clamp-1 text-xs leading-tight text-brand-mut">{event.description}</p>
                 </div>
-                
-                <div className="flex items-center gap-1 text-purple-400 font-semibold text-xs">
+
+                <div className="flex items-center gap-1 text-xs font-semibold text-brand-bluedd">
                   <span>📅</span>
-                  <span className="line-clamp-1">{new Date(event.event_date).toLocaleDateString('en-US', { 
-                    month: 'short', 
+                  <span className="line-clamp-1">{new Date(event.event_date).toLocaleDateString('en-US', {
+                    month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
@@ -85,10 +88,10 @@ export default function Events() {
           ))}
         </div>
       ) : (
-        <div className="card-gaming p-12 text-center">
-          <p className="text-6xl mb-4">🏟️</p>
-          <p className="text-2xl font-bold mb-2">No Events Yet</p>
-          <p className="text-gray-400">Check back soon for exciting community events!</p>
+        <div className="rounded-3xl border border-brand-line bg-white p-12 text-center shadow-soft">
+          <p className="mb-4 text-6xl">🏟️</p>
+          <p className="mb-2 font-display text-2xl font-bold text-brand-ink">No Events Yet</p>
+          <p className="text-brand-mut">Check back soon for exciting community events!</p>
         </div>
       )}
     </Layout>

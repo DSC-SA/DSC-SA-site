@@ -24,57 +24,60 @@ export default function Matches() {
   return (
     <Layout>
       <div className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-10 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">⚔️ Match History</h1>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="h-10 w-1 rounded bg-gradient-to-b from-brand-blue to-brand-bluedd"></div>
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl">⚔️ Match History</h1>
         </div>
-        <p className="text-gray-400 text-lg">Track your legendary battles and epic victories</p>
+        <p className="text-lg text-brand-mut">Track your legendary battles and epic victories</p>
       </div>
 
       {loading ? (
-        <div className="text-center py-12">
-          <p className="text-gray-400">⏳ Loading matches...</p>
+        <div className="py-12 text-center">
+          <p className="text-brand-mut">⏳ Loading matches...</p>
         </div>
       ) : matches.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {matches.map(match => (
-            <div key={match.id} className="card-gaming overflow-hidden hover:border-cyan-400 transition-all duration-300 group flex flex-col lg:flex-row">
+            <div
+              key={match.id}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-brand-line bg-white shadow-soft transition-all duration-300 hover:border-brand-blue/40 lg:flex-row"
+            >
               {match.image && (
-                <div className="relative w-full lg:w-1/2 h-48 lg:h-auto overflow-hidden bg-gray-800 flex-shrink-0">
+                <div className="relative h-48 w-full flex-shrink-0 overflow-hidden bg-brand-mist lg:h-auto lg:w-1/2">
                   {match.image.startsWith('data:video/') ? (
                     <video
                       src={match.image}
                       autoPlay
                       loop
                       muted
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
                     <img
                       src={match.image}
                       alt={match.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent"></div>
                 </div>
               )}
-              
-              <div className="p-6 flex-1 flex flex-col justify-between">
+
+              <div className="flex flex-1 flex-col justify-between p-6">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-1 rounded-full text-xs font-bold bg-gray-600 text-gray-100">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-700">
                       ✓ Ended
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2 text-white group-hover:text-cyan-400 transition line-clamp-2">{match.title}</h3>
-                  <p className="text-gray-300 mb-4 line-clamp-3 text-sm leading-relaxed">{match.description}</p>
+                  <h3 className="mb-2 line-clamp-2 font-display text-2xl font-bold text-brand-ink transition group-hover:text-brand-bluedd">{match.title}</h3>
+                  <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-brand-mut">{match.description}</p>
                 </div>
-                
-                <div className="flex items-center gap-2 text-purple-400 font-semibold text-sm">
+
+                <div className="flex items-center gap-2 text-sm font-semibold text-brand-bluedd">
                   <span>📅</span>
-                  <span>{new Date(match.match_date).toLocaleDateString('en-US', { 
-                    month: 'short', 
+                  <span>{new Date(match.match_date).toLocaleDateString('en-US', {
+                    month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
@@ -85,11 +88,11 @@ export default function Matches() {
           ))}
         </div>
       ) : (
-        <div className="card-gaming p-12 text-center gradient-border">
-          <p className="text-6xl mb-4">🎬</p>
-          <p className="text-2xl font-bold mb-2">No Matches Yet</p>
-          <p className="text-gray-400 mb-6">Matches will appear here when they're scheduled!</p>
-          <div className="inline-block bg-gradient-to-r from-cyan-600 to-purple-600 px-8 py-3 rounded-lg font-semibold">
+        <div className="rounded-3xl border border-brand-line bg-white p-12 text-center shadow-lift">
+          <p className="mb-4 text-6xl">🎬</p>
+          <p className="mb-2 font-display text-2xl font-bold text-brand-ink">No Matches Yet</p>
+          <p className="mb-6 text-brand-mut">Matches will appear here when they're scheduled!</p>
+          <div className="inline-block rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd px-8 py-3 font-semibold text-white shadow-soft">
             ⚡ Stay Tuned
           </div>
         </div>

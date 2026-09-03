@@ -5,121 +5,64 @@ export default function UserProfileCard({ user, onClose }) {
   if (!user) return null;
 
   return (
-    <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
-      <div 
-        className="card-gaming p-8 max-w-sm w-full transform transition-all duration-300"
-        style={{
-          background: 'linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.95) 100%)',
-          border: '2px solid rgba(212, 175, 55, 0.3)',
-          boxShadow: '0 0 40px rgba(212, 175, 55, 0.2), inset 0 0 20px rgba(212, 175, 55, 0.1)'
-        }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="relative w-full max-w-sm rounded-3xl glass-white p-8 shadow-lift"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
+        {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-cyan-400 transition"
-          style={{ fontSize: '24px' }}
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-brand-faint transition hover:bg-brand-cloud hover:text-brand-ink"
+          aria-label="Close"
         >
           ✕
         </button>
 
-        {/* Profile Picture */}
-        <div className="flex justify-center mb-6">
-          <div style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-            padding: '2px',
-            animation: 'spin 4s linear infinite',
-            flexShrink: 0
-          }}>
-            <style>{`
-              @keyframes spin {
-                from { filter: hue-rotate(0deg); }
-                to { filter: hue-rotate(360deg); }
-              }
-            `}</style>
-            <div style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: '50%',
-              backgroundColor: '#111827',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden'
-            }}>
-              {user.avatar ? (
-                <img 
-                  src={getImageUrl(user.avatar)} 
-                  alt={user.username} 
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center'
-                  }}
-                />
-              ) : (
-                <span style={{
-                  fontSize: '32px',
-                  fontWeight: 'bold',
-                  color: '#22d3ee'
-                }}>{user.username?.charAt(0)?.toUpperCase()}</span>
-              )}
-            </div>
+        {/* Profile picture */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-brand-blue/50 bg-brand-bluelt text-white shadow-glow">
+            {user.avatar ? (
+              <img src={getImageUrl(user.avatar)} alt={user.username} className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-3xl font-bold">{user.username?.charAt(0)?.toUpperCase()}</span>
+            )}
           </div>
         </div>
 
         {/* Username */}
-        <h2 className="text-2xl font-bold text-cyan-400 text-center mb-2">
-          {user.username}
-        </h2>
+        <h2 className="mb-2 text-center font-display text-2xl font-bold text-brand-ink">{user.username}</h2>
 
         {/* Rank */}
         {user.rank && (
-          <p className="text-center text-purple-400 font-semibold mb-4">
-            Rank: <span className="text-yellow-400">{user.rank}</span>
+          <p className="mb-4 text-center font-semibold text-brand-mut">
+            Rank: <span className="text-brand-bluedd">{user.rank}</span>
           </p>
         )}
 
         {/* Points */}
         {user.points !== undefined && (
-          <div className="bg-gray-900 bg-opacity-50 rounded-lg p-3 mb-4 text-center border border-cyan-400 border-opacity-20">
-            <p className="text-gray-400 text-sm mb-1">Community Points</p>
-            <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-              {user.points}
-            </p>
+          <div className="mb-4 rounded-2xl border border-brand-blue/20 bg-brand-mist p-3 text-center">
+            <p className="mb-1 text-sm text-brand-mut">Community Points</p>
+            <p className="font-display text-2xl font-bold text-brand-bluedd">{user.points}</p>
           </div>
         )}
 
         {/* Bio */}
         {user.bio && (
-          <div className="bg-gray-900 bg-opacity-50 rounded-lg p-4 mb-6 border border-purple-400 border-opacity-20">
-            <p className="text-gray-400 text-sm mb-2 font-semibold">About</p>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              {user.bio}
-            </p>
+          <div className="mb-6 rounded-2xl border border-brand-line bg-brand-mist p-4">
+            <p className="mb-2 text-sm font-semibold text-brand-ink">About</p>
+            <p className="text-sm leading-relaxed text-brand-mut">{user.bio}</p>
           </div>
         )}
 
         {/* Status */}
-        <div className="text-center text-sm">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-green-400"></div>
-            <span className="text-gray-400">Active Member</span>
-          </div>
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <div className="h-2 w-2 rounded-full bg-emerald-400"></div>
+          <span className="text-brand-mut">Active Member</span>
         </div>
 
-        {/* Close hint */}
-        <p className="text-center text-gray-500 text-xs mt-4">
-          Click anywhere to close
-        </p>
+        <p className="mt-4 text-center text-xs text-brand-faint">Click anywhere to close</p>
       </div>
     </div>
   );

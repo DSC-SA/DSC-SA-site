@@ -20,66 +20,57 @@ const followLinks = [
   { href: 'https://www.facebook.com/share/1Lf9eZfQZD/', label: 'Facebook' }
 ];
 
+function FooterCol({ title, children }) {
+  return (
+    <div>
+      <h4 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-faint">{title}</h4>
+      <ul className="space-y-2.5 text-sm">{children}</ul>
+    </div>
+  );
+}
+
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-white/10 bg-surface1">
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="mb-8 grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div>
-            <h3 className="mb-4 text-2xl font-extrabold tracking-tight text-brand-gold">DSC-SA</h3>
+    <footer className="mt-16 border-t border-brand-line bg-white md:mt-24">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          <div className="col-span-2 md:col-span-1">
+            <span className="font-display text-2xl font-bold tracking-tight text-brand-bluedd">DSC-SA</span>
+            <p className="mt-3 max-w-xs text-sm text-brand-mut">
+              The Dawn Sphere Community — mobile legends made better.
+            </p>
           </div>
 
-          <div>
-            <h4 className="mb-4 text-lg font-bold">Quick Links</h4>
-            <ul className="space-y-2 text-slate-400">
-              {quickLinks.map((l) => (
-                <li key={l.label}>
-                  <Link to={l.to} className="transition hover:text-brand-gold">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 text-lg font-bold">Community</h4>
-            <ul className="space-y-2 text-slate-400">
-              {communityLinks.map((l) => (
-                <li key={l.label}>
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" className="transition hover:text-brand-gold">
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-4 text-lg font-bold">Follow Us</h4>
-            <ul className="space-y-2 text-slate-400">
-              {followLinks.map((l) => (
-                <li key={l.label}>
-                  <a href={l.href} target="_blank" rel="noopener noreferrer" className="transition hover:text-brand-gold">
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-              <li>
-                <Link to="/privacy" className="transition hover:text-brand-gold">Privacy Policy</Link>
+          <FooterCol title="Quick Links">
+            {quickLinks.map((l) => (
+              <li key={l.label}>
+                <Link to={l.to} className="text-brand-mut transition hover:text-brand-bluedd">{l.label}</Link>
               </li>
-              <li>
-                <Link to="/terms" className="transition hover:text-brand-gold">Terms of Service</Link>
+            ))}
+          </FooterCol>
+
+          <FooterCol title="Community">
+            {communityLinks.map((l) => (
+              <li key={l.label}>
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className="text-brand-mut transition hover:text-brand-bluedd">{l.label}</a>
               </li>
-            </ul>
-          </div>
+            ))}
+          </FooterCol>
+
+          <FooterCol title="Follow Us">
+            {followLinks.map((l) => (
+              <li key={l.label}>
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className="text-brand-mut transition hover:text-brand-bluedd">{l.label}</a>
+              </li>
+            ))}
+            <li><Link to="/privacy" className="text-brand-mut transition hover:text-brand-bluedd">Privacy Policy</Link></li>
+            <li><Link to="/terms" className="text-brand-mut transition hover:text-brand-bluedd">Terms of Service</Link></li>
+          </FooterCol>
         </div>
 
-        <div className="border-t border-white/10 pt-8">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-sm text-slate-500">© 2026 DSC-SA Community. All rights reserved.</p>
-            <p className="text-sm text-slate-500">Made with love for MLBB players</p>
-          </div>
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-brand-line pt-6 md:flex-row">
+          <p className="text-sm text-brand-faint">© 2026 DSC-SA Community. All rights reserved.</p>
+          <p className="text-sm text-brand-faint">Made with love for MLBB players</p>
         </div>
       </div>
     </footer>

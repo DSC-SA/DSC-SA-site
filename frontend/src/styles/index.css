@@ -1,38 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ==========================================================================
-   DSC-SA — Design Tokens
-   One background, one accent (gold), restrained surfaces. No glow, no flash.
+   DSC-SA — Light, airy, premium (silver + baby-blue)
    ========================================================================== */
 :root {
   /* Surfaces */
-  --bg: #0c0d10;
-  --surface-1: #14161b;
-  --surface-2: #1a1d24;
-  --surface-3: #22262f;
+  --bg: #f7f9fc;
+  --surface: #ffffff;
+  --surface-soft: #f1f5fa;
+  --surface-tint: #eaf2fa;
 
   /* Text */
-  --text: #e8eaed;
-  --text-muted: #9aa0aa;
-  --text-faint: #6b7280;
+  --text: #0f172a;
+  --text-muted: #5b6472;
+  --text-faint: #98a2b3;
 
   /* Lines */
-  --border: rgba(255, 255, 255, 0.09);
+  --border: #e3e8ef;
 
-  /* Accent — the single brand color */
-  --gold: #d4af37;
-  --gold-strong: #e6c75a;
-  --gold-soft: rgba(212, 175, 55, 0.12);
+  /* Accent — baby blue */
+  --blue: #5bb5e8;
+  --blue-strong: #2b86c9;
+  --blue-soft: rgba(91, 181, 232, 0.12);
 
   /* Radii + shadows */
-  --radius: 10px;
-  --radius-lg: 14px;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  --radius-lg: 20px;
+
+  /* Respect reduced-motion users */
+  --reveal-ms: 650ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --reveal-ms: 0ms;
+  }
 }
 
 * {
@@ -41,9 +47,13 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   overflow-x: hidden;
 }
@@ -54,7 +64,7 @@ body {
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
+  scroll-behavior: smooth;
 }
 
 #root {
@@ -67,25 +77,44 @@ body {
    Typography
    ========================================================================== */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text);
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
-h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
-h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
-h3 { font-size: clamp(1.15rem, 3vw, 1.4rem); }
+h1 { font-size: clamp(2rem, 7vw, 3.4rem); }
+h2 { font-size: clamp(1.6rem, 5vw, 2.5rem); }
+h3 { font-size: clamp(1.2rem, 3.5vw, 1.5rem); }
 h4 { font-size: 1.05rem; }
 
-p, li {
+p {
   color: var(--text-muted);
 }
 
 a {
   color: var(--text);
   text-decoration: none;
+}
+
+/* ==========================================================================
+   Glass + surface helpers
+   ========================================================================== */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-soft, 0 10px 30px -16px rgba(15, 23, 42, 0.18));
+}
+
+.glass-white {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 14px 40px -22px rgba(15, 23, 42, 0.25);
 }
 
 /* ==========================================================================
@@ -96,206 +125,165 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius);
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-family: 'Inter', system-ui, sans-serif;
   font-weight: 600;
   font-size: 0.875rem;
-  letter-spacing: 0.01em;
-  text-decoration: none;
+  letter-spacing: 0.005em;
   cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.12s ease;
-  text-transform: none;
   white-space: nowrap;
+  transition: transform 0.15s ease, box-shadow 0.18s ease,
+    background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
 }
 
 .btn-primary {
-  background: var(--gold);
-  color: #17181c;
-  border: 1px solid var(--gold);
-  padding: 12px 24px;
+  background: var(--blue);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 13px 26px;
+  box-shadow: 0 10px 26px -12px rgba(91, 181, 232, 0.6);
 }
 
 .btn-primary:hover {
-  background: var(--gold-strong);
-  border-color: var(--gold-strong);
-}
-
-.btn-primary:active {
-  transform: translateY(1px);
+  background: var(--blue-strong);
+  box-shadow: 0 14px 32px -12px rgba(43, 134, 201, 0.6);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--gold);
+  background: #ffffff;
+  color: var(--blue-strong);
   border: 1px solid var(--border);
-  padding: 12px 24px;
+  padding: 13px 26px;
 }
 
 .btn-secondary:hover {
-  border-color: var(--gold);
-  background: var(--gold-soft);
+  border-color: var(--blue);
+  color: var(--blue-strong);
+  box-shadow: var(--shadow-soft, 0 10px 30px -16px rgba(15, 23, 42, 0.18));
+  transform: translateY(-1px);
 }
 
 @media (max-width: 480px) {
   .btn-primary,
   .btn-secondary {
-    padding: 10px 16px;
+    padding: 11px 18px;
     font-size: 0.8rem;
   }
 }
 
 /* ==========================================================================
-   Buttons — inverse variant for light-on-accent labels (small "SSR" pills etc.)
-   ========================================================================== */
-.btn-inverse {
-  background: transparent;
-  color: var(--gold);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-}
-
-/* ==========================================================================
-   Cards — single shared surface
+   Cards — shared light surface
    ========================================================================== */
 .card,
 .card-gaming {
-  background: var(--surface-1);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 10px 30px -18px rgba(15, 23, 42, 0.18);
   padding: 24px;
 }
 
-/* Brand header accent bar */
-.brand-line {
-  height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-  border: none;
-}
-
 /* ==========================================================================
-   Badges
+   Reveal-on-scroll (animations; triggered by IntersectionObserver JS)
    ========================================================================== */
-.badge-gold {
-  display: inline-flex;
-  align-items: center;
-  background: var(--gold-soft);
-  color: var(--gold);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--reveal-ms) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--reveal-ms) cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
-/* ==========================================================================
-   Layout
-   ========================================================================== */
-main {
-  flex: 1;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem;
+/* Scroll-reveal stagger helper (set --d per element for delay) */
+.reveal[style*="--d"] {
+  transition-delay: var(--d, 0ms);
 }
 
-@media (min-width: 768px) {
-  main {
-    padding: 3rem 2rem;
-  }
-}
-
-/* ==========================================================================
-   Scrollbar
-   ========================================================================== */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-  background: #2b2f38;
-  border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #363b46;
-}
-
-/* ==========================================================================
-   Animations — subtle only
-   ========================================================================== */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.fade-in-up {
-  animation: fadeInUp 0.5s ease-out;
-}
+.fade-in-up { animation: fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
 
 @keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.slide-down {
-  animation: slideDown 0.4s ease-out;
-}
+.slide-down { animation: slideDown 0.45s ease-out; }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
-.scale-in {
-  animation: scaleIn 0.35s ease-out;
+.scale-in { animation: scaleIn 0.4s ease-out; }
+
+/* 3D tilt card (JS applies --rx/--ry/--coefficient) */
+.tilt-3d {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale3d(1, 1, 1);
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+}
+.tilt-3d .tilt-translate {
+  transform: translateZ(26px);
+}
+@media (hover: none), (pointer: coarse) {
+  /* Disable tilt on touch devices — rely on lift only */
+  .tilt-3d {
+    transform: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
 }
 
-/* Compatibility / legacy classes kept so nothing fractures.
-   These map flashy effects onto the clean baseline to guarantee
-   the site renders identically until components are refactored. */
-.logo-animated,
-.gradient-gaming {
-  color: var(--gold);
+/* Hero card hover glow */
+.hero-glow {
+  transition: box-shadow 0.3s ease;
+}
+@media (hover: hover) {
+  .hero-glow:hover {
+    box-shadow: 0 24px 55px -24px rgba(91, 181, 232, 0.55);
+  }
+}
+
+/* ==========================================================================
+   Legacy decorative classes neutralised to clean light tokens
+   (kept so existing refs never behave badly mid-migration)
+   ========================================================================== */
+.logo-animated {
+  color: var(--blue-strong);
   font-weight: 800;
 }
+.gradient-gaming {
+  background: linear-gradient(90deg, var(--blue-strong), var(--blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
 .led-animated {
-  color: var(--gold);
+  color: var(--blue-strong);
 }
 .led-line {
   height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
-  border: none;
-}
-.logo-float,
-.wave-emoji {
-  display: inline-block;
+  background: linear-gradient(90deg, var(--blue), transparent);
 }
 .rainbow-black-bar,
 .rainbow-bar-thin,
 .rainbow-bubble-border {
   display: none !important;
 }
+.logo-float,
+.wave-emoji {
+  display: inline-block;
+}
 
 /* ==========================================================================
-   Responsive hero-card aspect ratio (kept so card layout never shifts)
+   Responsive hero-card aspect ratio (kept — card layout must not shift)
    ========================================================================== */
 .bg-blue-900 {
   aspect-ratio: 1 / 1;
@@ -307,26 +295,15 @@ main {
 }
 
 /* ==========================================================================
-   Utilities (kept for components that reference them)
+   Scrollbar — light
    ========================================================================== */
-.text-center { text-align: center; }
-.mb-4 { margin-bottom: 1.5rem; }
-.mb-6 { margin-bottom: 2.5rem; }
-.mb-8 { margin-bottom: 3.5rem; }
-.mt-4 { margin-top: 1.5rem; }
-.gap-4 { gap: 1.5rem; }
-.gap-6 { gap: 1.5rem; }
-.max-w-7xl { max-width: 80rem; }
-.mx-auto { margin-left: auto; margin-right: auto; }
-.grid { display: grid; }
-.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-.md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-@media (min-width: 768px) {
-  .md\:flex { display: flex; }
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
 }
-@media (min-width: 1024px) {
-  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: #cdd6e2;
+  border-radius: 5px;
 }
+::-webkit-scrollbar-thumb:hover { background: #b7c2d1; }

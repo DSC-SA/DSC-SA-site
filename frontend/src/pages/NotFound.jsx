@@ -5,32 +5,32 @@ import Layout from '../components/Layout';
 export default function NotFound() {
   return (
     <Layout>
-      <div className="min-h-screen flex items-center justify-center py-12">
-        <div className="text-center max-w-md mx-auto">
+      <div className="flex min-h-[70vh] items-center justify-center py-12">
+        <div className="mx-auto max-w-md text-center">
           <div className="mb-8">
-            <p className="text-8xl mb-4">🎮</p>
-            <p className="text-7xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent mb-4">404</p>
+            <p className="mb-4 text-8xl">🎮</p>
+            <p className="mb-4 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-7xl font-bold text-transparent">404</p>
           </div>
-          
-          <h1 className="text-3xl font-bold mb-3">Page Not Found</h1>
-          <p className="text-gray-400 text-lg mb-8">
+
+          <h1 className="mb-3 font-display text-3xl font-bold text-brand-ink">Page Not Found</h1>
+          <p className="mb-8 text-lg text-brand-mut">
             Looks like this hero got banned from the game! The page you're looking for doesn't exist.
           </p>
 
-          <div className="card-gaming p-8 mb-6 gradient-border">
-            <p className="text-gray-300 mb-6">Let's get you back on track!</p>
+          <div className="mb-6 rounded-3xl border border-brand-line bg-white p-8 shadow-lift">
+            <p className="mb-6 text-brand-mut">Let&apos;s get you back on track!</p>
             <div className="space-y-3">
-              <Link to="/" className="block btn-primary py-3 font-semibold">
+              <Link to="/" className="btn-primary block py-3 font-semibold">
                 🏠 Back to Home
               </Link>
-              <Link to="/heroes" className="block bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-3 rounded-lg font-semibold transition">
+              <Link to="/heroes" className="block rounded-xl border border-brand-blue/30 bg-brand-bluesoft px-6 py-3 font-semibold text-brand-bluedd transition hover:bg-brand-bluelt hover:text-white">
                 🦸 Browse Heroes
               </Link>
             </div>
           </div>
 
-          <p className="text-gray-500 text-sm">
-            Need help? <a href="/" className="text-cyan-400 hover:text-cyan-300">Contact support</a>
+          <p className="text-sm text-brand-faint">
+            Need help? <a href="/" className="text-brand-bluedd hover:underline">Contact support</a>
           </p>
         </div>
       </div>

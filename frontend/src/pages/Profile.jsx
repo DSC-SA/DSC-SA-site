@@ -135,32 +135,31 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="h-8 w-1 rounded bg-gradient-to-b from-brand-blue to-brand-bluedd"></div>
+            <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
               My Profile
             </h1>
           </div>
-          <p className="text-gray-400 text-lg ml-4">Update your profile and gaming info</p>
+          <p className="ml-4 text-lg text-brand-mut">Update your profile and gaming info</p>
         </div>
 
         {/* Main Card */}
-        <div className="card-gaming p-6 md:p-8">
+        <div className="rounded-3xl border border-brand-line bg-white p-6 shadow-lift md:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            
             {/* Messages */}
             {error && (
-              <div className="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300 p-4 rounded-lg flex gap-2">
+              <div className="flex gap-2 rounded-lg border border-red-300 bg-red-50 p-4 text-red-600">
                 <span>⚠️</span>
                 <span>{error}</span>
               </div>
             )}
 
             {message && (
-              <div className="bg-green-500 bg-opacity-20 border border-green-500 border-opacity-50 text-green-300 p-4 rounded-lg flex gap-2">
+              <div className="flex gap-2 rounded-lg border border-green-300 bg-green-50 p-4 text-green-700">
                 <span>✓</span>
                 <span>{message}</span>
               </div>
@@ -168,16 +167,16 @@ export default function Profile() {
 
             {/* Profile Picture Section */}
             <div>
-              <label className="block text-sm font-semibold mb-4 text-gray-300">Profile Picture</label>
-              
+              <label className="mb-4 block text-sm font-semibold text-brand-ink">Profile Picture</label>
+
               {/* Preview */}
-              <div className="flex justify-center mb-6">
-                <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-500 p-1">
-                  <div className="w-full h-full rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden">
+              <div className="mb-6 flex justify-center">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-brand-blue to-brand-bluedd p-1 shadow-soft">
+                  <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-brand-mist">
                     {previewUrl ? (
-                      <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+                      <img src={previewUrl} alt="Profile" className="h-full w-full object-cover" />
                     ) : (
-                      <span className="text-6xl">📸</span>
+                      <span className="text-5xl">📸</span>
                     )}
                   </div>
                 </div>
@@ -193,36 +192,36 @@ export default function Profile() {
               />
               <label
                 htmlFor="avatarInput"
-                className="block w-full p-4 border-2 border-dashed border-cyan-400 border-opacity-40 rounded-lg hover:border-opacity-80 hover:bg-cyan-400 hover:bg-opacity-5 transition cursor-pointer text-center"
+                className="block w-full cursor-pointer rounded-xl border-2 border-dashed border-brand-blue/40 p-4 text-center transition hover:border-brand-blue hover:bg-brand-mist"
               >
-                <p className="text-gray-300 font-semibold">📤 Click to upload</p>
-                <p className="text-gray-500 text-xs mt-1">PNG, JPG or GIF (max 5MB)</p>
+                <p className="font-semibold text-brand-bluedd">📤 Click to upload</p>
+                <p className="mt-1 text-xs text-brand-faint">PNG, JPG or GIF (max 5MB)</p>
               </label>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-cyan-400 border-opacity-20"></div>
+            <div className="border-t border-brand-line"></div>
 
             {/* MLBB Rank */}
             <div>
-              <label className="block text-sm font-semibold mb-3 text-gray-300">MLBB Rank</label>
+              <label className="mb-3 block text-sm font-semibold text-brand-ink">MLBB Rank</label>
               <select
                 name="rank"
                 value={formData.rank}
                 onChange={handleChange}
-                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               >
                 <option value="">Select your rank...</option>
                 {MLBB_RANKS.map(rank => (
                   <option key={rank} value={rank}>{rank}</option>
                 ))}
               </select>
-              <p className="text-gray-500 text-xs mt-2">What's your current MLBB rank?</p>
+              <p className="mt-2 text-xs text-brand-faint">What&apos;s your current MLBB rank?</p>
             </div>
 
             {/* Bio */}
             <div>
-              <label className="block text-sm font-semibold mb-3 text-gray-300">Bio</label>
+              <label className="mb-3 block text-sm font-semibold text-brand-ink">Bio</label>
               <textarea
                 name="bio"
                 value={formData.bio}
@@ -230,37 +229,37 @@ export default function Profile() {
                 placeholder="Tell us about yourself... your favorite heroes, playstyle, etc."
                 maxLength={500}
                 rows={5}
-                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 placeholder-gray-600 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition resize-none"
+                className="w-full resize-none rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition placeholder:text-brand-faint focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               />
-              <p className="text-gray-500 text-xs mt-2">{formData.bio.length}/500 characters</p>
+              <p className="mt-2 text-xs text-brand-faint">{formData.bio.length}/500 characters</p>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-cyan-400 border-opacity-20"></div>
+            <div className="border-t border-brand-line"></div>
 
             {/* Username */}
             <div>
-              <label className="block text-sm font-semibold mb-3 text-gray-300">Username</label>
+              <label className="mb-3 block text-sm font-semibold text-brand-ink">Username</label>
               <input
                 type="text"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
                 maxLength={30}
-                className="w-full bg-gray-800 border border-cyan-400 border-opacity-30 rounded-lg px-4 py-3 text-gray-300 focus:outline-none focus:border-opacity-100 focus:ring-1 focus:ring-cyan-400 transition"
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                 placeholder="Enter your username"
               />
-              <p className="text-gray-500 text-xs mt-2">Username must be 3-30 characters</p>
+              <p className="mt-2 text-xs text-brand-faint">Username must be 3-30 characters</p>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-cyan-400 border-opacity-20"></div>
+            <div className="border-t border-brand-line"></div>
 
             {/* Rank Display */}
             {formData.rank && (
               <div>
-                <p className="text-gray-500 text-xs uppercase tracking-wide">Current Rank</p>
-                <p className="text-lg font-bold text-purple-400">{formData.rank}</p>
+                <p className="text-xs uppercase tracking-wide text-brand-faint">Current Rank</p>
+                <p className="text-lg font-bold text-brand-bluedd">{formData.rank}</p>
               </div>
             )}
 
@@ -268,7 +267,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-lg transition duration-200 transform hover:scale-105"
+              className="w-full btn-primary py-3 font-bold disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

@@ -4,41 +4,44 @@ import Layout from '../components/Layout';
 import { heroesAPI, buildsAPI, commentsAPI, itemsAPI, getImageUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import UserProfileCard from '../components/UserProfileCard';
+import Reveal from '../components/Reveal';
+
+const MAX_ITEMS = 7; // boots + 6 gear
+
+const STAGE_LABEL = ['Boots', 'Core', 'Core', 'Core', 'Late', 'Late', 'Late'];
 
 export default function HeroDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  // API Base URL for fetching item images from database
+
   const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+
   const [hero, setHero] = useState(null);
-  const [allHeroes, setAllHeroes] = useState([]);
-  const [selectedGalleryRole, setSelectedGalleryRole] = useState('All');
   const [builds, setBuilds] = useState({ recommendedBuilds: [], userBuilds: [] });
   const [comments, setComments] = useState([]);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [showBuildForm, setShowBuildForm] = useState(false);
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [newBuild, setNewBuild] = useState({ buildName: '', description: '', selectedItems: [] });
-  const [itemsGalleryOpen, setItemsGalleryOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerQuery, setPickerQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [heroRes, allHeroesRes, buildsRes, commentsRes, itemsRes] = await Promise.all([
+        const [heroRes, buildsRes, commentsRes, itemsRes] = await Promise.all([
           heroesAPI.getById(id),
-          heroesAPI.getAll(),
           buildsAPI.getForHero(id),
           commentsAPI.getForHero(id),
           itemsAPI.getAll()
         ]);
         setHero(heroRes.data);
-        setAllHeroes(allHeroesRes.data);
         setBuilds(buildsRes.data);
         setComments(commentsRes.data);
         setItems(itemsRes.data);
@@ -48,24 +51,15 @@ export default function HeroDetail() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id]);
 
   const handleAddComment = async (e) => {
     e.preventDefault();
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
+    if (!user) return navigate('/login');
     try {
-      await commentsAPI.add({
-        heroId: parseInt(id),
-        content: newComment
-      });
+      await commentsAPI.add({ heroId: parseInt(id), content: newComment });
       setNewComment('');
-      // Refresh comments
       const res = await commentsAPI.getForHero(id);
       setComments(res.data);
     } catch (err) {
@@ -76,49 +70,42 @@ export default function HeroDetail() {
   const handleLikeComment = async (commentId, currentLikes) => {
     try {
       await commentsAPI.like(commentId);
-      // Update the like count locally
-      setComments(comments.map(c => 
-        c.id === commentId ? { ...c, likes: currentLikes + 1 } : c
-      ));
+      setComments((cs) => cs.map((c) => (c.id === commentId ? { ...c, likes: currentLikes + 1 } : c)));
     } catch (err) {
       console.error('Error liking comment:', err);
     }
   };
 
   const handleReply = async (commentId) => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
+    if (!user) return navigate('/login');
     if (!replyText.trim()) return;
-
     try {
-      const res = await commentsAPI.reply(commentId, {
-        heroId: parseInt(id),
-        content: replyText
-      });
+      await commentsAPI.reply(commentId, { heroId: parseInt(id), content: replyText });
       setReplyText('');
       setReplyingTo(null);
-      // Refresh comments
-      const commentsRes = await commentsAPI.getForHero(id);
-      setComments(commentsRes.data);
+      const res = await commentsAPI.getForHero(id);
+      setComments(res.data);
     } catch (err) {
       console.error('Error adding reply:', err);
     }
   };
 
+  const toggleItem = (item) => {
+    setNewBuild((prev) => {
+      const exists = prev.selectedItems.find((i) => i.id === item.id);
+      if (exists) return { ...prev, selectedItems: prev.selectedItems.filter((i) => i.id !== item.id) };
+      if (prev.selectedItems.length >= MAX_ITEMS) return prev;
+      return { ...prev, selectedItems: [...prev.selectedItems, item] };
+    });
+  };
+
   const handleCreateBuild = async (e) => {
     e.preventDefault();
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
+    if (!user) return navigate('/login');
+    if (newBuild.selectedItems.length < 1) return;
     try {
-      const itemIds = newBuild.selectedItems.map(item => item.id);
-      const stages = newBuild.selectedItems.map((_, i) => i < 2 ? 'early' : i < 5 ? 'core' : 'late');
-
+      const itemIds = newBuild.selectedItems.map((i) => i.id);
+      const stages = newBuild.selectedItems.map((_, i) => (i < 1 ? 'early' : i < 4 ? 'core' : 'late'));
       await buildsAPI.create({
         heroId: parseInt(id),
         buildName: newBuild.buildName,
@@ -126,10 +113,9 @@ export default function HeroDetail() {
         itemIds,
         stages
       });
-
       setNewBuild({ buildName: '', description: '', selectedItems: [] });
+      setPickerOpen(false);
       setShowBuildForm(false);
-      // Refresh builds
       const res = await buildsAPI.getForHero(id);
       setBuilds(res.data);
     } catch (err) {
@@ -137,632 +123,460 @@ export default function HeroDetail() {
     }
   };
 
-  if (loading) return <Layout><div className="text-center py-12">⏳ Loading hero details...</div></Layout>;
-  if (!hero) return <Layout><div className="text-center py-12 text-red-400">❌ Hero not found</div></Layout>;
+  if (loading)
+    return (
+      <Layout>
+        <div className="py-20 text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-brand-blue border-t-transparent"></div>
+          <p className="mt-4 text-sm text-brand-mut">Loading hero details...</p>
+        </div>
+      </Layout>
+    );
 
-  const roles = ['All', 'Tank', 'Fighter', 'Assassin', 'Mage', 'Marksman', 'Support'];
-  
-  const getRoleColor = (role) => {
-    const colors = {
-      'Tank': 'from-red-600 to-red-400',
-      'Mage': 'from-blue-600 to-blue-400',
-      'Marksman': 'from-yellow-600 to-yellow-400',
-      'Assassin': 'from-purple-600 to-purple-400',
-      'Support': 'from-green-600 to-green-400',
-      'Fighter': 'from-orange-600 to-orange-400'
-    };
-    return colors[role] || 'from-purple-600 to-cyan-600';
+  if (!hero)
+    return (
+      <Layout>
+        <div className="py-20 text-center text-brand-mut">Hero not found</div>
+      </Layout>
+    );
+
+  const difficultyLabel =
+    hero.difficulty === 1 ? 'Very Easy – Great for beginners'
+    : hero.difficulty === 2 ? 'Easy – Recommended for new players'
+    : hero.difficulty === 3 ? 'Medium – Requires practice'
+    : hero.difficulty === 4 ? 'Hard – Advanced mechanics'
+    : hero.difficulty === 5 ? 'Very Hard – Expert level only'
+    : '';
+
+  const filteredItems = pickerQuery
+    ? items.filter((it) => it.name.toLowerCase().includes(pickerQuery.toLowerCase()))
+    : items;
+
+  const ItemIcon = ({ item, size = 40 }) => {
+    const sel = newBuild.selectedItems.findIndex((s) => s.id === item.id);
+    return (
+      <button
+        type="button"
+        onClick={() => toggleItem(item)}
+        title={item.name}
+        className={`relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2 transition ${
+          sel > -1
+            ? 'border-brand-blue bg-brand-bluelt shadow-[0_6px_16px_-6px_rgba(91,181,232,0.7)]'
+            : 'border-brand-line bg-brand-cloud hover:border-brand-blue'
+        }`}
+        style={{ width: size, height: size }}
+      >
+        <img
+          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+          alt={item.name}
+          onError={(e) => {
+            e.target.style.display = 'none';
+            e.currentTarget.nextElementSibling.style.display = 'flex';
+          }}
+          className="h-full w-full object-cover"
+        />
+        <span
+          className="hidden h-full w-full items-center justify-center bg-gradient-to-br from-brand-bluelt to-brand-bluelt/40 text-sm font-bold text-white"
+        >
+          {item.name.charAt(0)}
+        </span>
+        {sel > -1 && (
+          <span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-brand-blue text-[10px] font-bold text-white">
+            {sel + 1}
+          </span>
+        )}
+      </button>
+    );
   };
 
-  const filteredGalleryHeroes = selectedGalleryRole === 'All' 
-    ? allHeroes 
-    : allHeroes.filter(h => h.role === selectedGalleryRole);
+  const BuildItemCircle = ({ item, index }) => (
+    <div className="flex flex-col items-center gap-1">
+      <div
+        className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-brand-line bg-white shadow-soft"
+        title={item.name}
+      >
+        <img
+          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+          alt={item.name}
+          onError={(e) => {
+            e.target.style.display = 'none';
+            e.currentTarget.nextElementSibling.style.display = 'flex';
+          }}
+          className="h-full w-full object-cover"
+        />
+        <span className="hidden h-full w-full items-center justify-center bg-gradient-to-br from-brand-bluelt to-brand-cloud text-xs font-bold text-brand-bluedd">
+          {item.name.charAt(0)}
+        </span>
+        <span className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-blue text-[9px] font-bold text-white">
+          {index + 1}
+        </span>
+      </div>
+      <span className="text-[0.6rem] font-medium text-brand-faint">{STAGE_LABEL[index]}</span>
+    </div>
+  );
 
   return (
     <Layout>
-      {/* Hero Header */}
-      <div className="card-gaming mb-8 gradient-border overflow-hidden" style={{
-        backgroundImage: hero.icon_url ? `linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%), url('${getImageUrl(hero.icon_url)}')` : 'linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0.9) 100%)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center right',
-        backgroundAttachment: 'fixed'
-      }}>
-        <div className="p-8 md:p-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      {/* HERO HEADER */}
+      <section className="mb-8 overflow-hidden rounded-3xl border border-brand-line bg-white"
+        style={{
+          backgroundImage:
+            'radial-gradient(700px 320px at 90% -10%, rgba(91,181,232,0.25), transparent 60%), radial-gradient(600px 300px at -10% 120%, rgba(196,224,247,0.5), transparent 60%)'
+        }}
+      >
+        <div className="p-7 md:p-12">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">{hero.name}</h1>
-              <p className="text-gray-300 text-lg">Master this incredible hero</p>
+              <h1 className="mb-2 font-display text-5xl font-bold text-brand-ink md:text-6xl">{hero.name}</h1>
+              <p className="text-lg text-brand-mut">Master this incredible hero</p>
             </div>
-            <div className="bg-gradient-to-r from-purple-600 to-cyan-600 px-6 py-3 rounded-lg text-center">
-              <p className="text-xs text-gray-300 mb-1">CLASS</p>
-              <p className="text-2xl font-bold text-white">{hero.role}</p>
+            <div className="inline-flex flex-col rounded-2xl border border-brand-blue/30 bg-white/70 px-7 py-4 text-center shadow-soft w-fit">
+              <p className="mb-1 text-[0.6rem] font-bold uppercase tracking-widest text-brand-faint">Class</p>
+              <p className="font-display text-2xl font-bold text-brand-bluedd">{hero.role}</p>
             </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-8 md:p-12 pt-0">
-          <div className="bg-gray-800 bg-opacity-50 p-4 rounded-lg col-span-2 md:col-span-4">
-            <span className="text-purple-400 text-sm">DIFFICULTY</span>
-            <p className="text-3xl font-bold text-cyan-400 mt-2">
-              {'★'.repeat(hero.difficulty || 0)}{'☆'.repeat(5 - (hero.difficulty || 0))}
+          <div className="mt-7 rounded-2xl border border-brand-line bg-white/70 p-5">
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-faint">Difficulty</span>
+            <p className="mt-1 text-3xl font-bold text-brand-bluedd">
+              {'★'.repeat(hero.difficulty || 0)}
+              <span className="text-brand-line">{'☆'.repeat(5 - (hero.difficulty || 0))}</span>
             </p>
-            <p className="text-xs text-gray-400 mt-1">
-              {hero.difficulty === 1 && 'Very Easy - Great for beginners'}
-              {hero.difficulty === 2 && 'Easy - Recommended for new players'}
-              {hero.difficulty === 3 && 'Medium - Requires practice'}
-              {hero.difficulty === 4 && 'Hard - Advanced mechanics'}
-              {hero.difficulty === 5 && 'Very Hard - Expert level only'}
-            </p>
+            <p className="mt-1 text-sm text-brand-mut">{difficultyLabel}</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Recommended Builds */}
+      {/* RECOMMENDED BUILDS */}
       <section className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h2 className="text-3xl md:text-4xl font-bold">Recommended Builds</h2>
-        </div>
+        <Reveal>
+          <div className="mb-6 flex items-center gap-3">
+            <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
+            <h2 className="font-display text-2xl font-bold text-brand-ink md:text-4xl">Recommended Builds</h2>
+          </div>
+        </Reveal>
         {builds.recommendedBuilds.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {builds.recommendedBuilds.map((build, idx) => (
-              <div key={build.id} className="card-gaming p-6 hover:border-cyan-400 transition">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-xl font-bold text-cyan-400">Build #{idx + 1}</h3>
-                  <span className="bg-purple-600 px-3 py-1 rounded text-xs font-semibold">Pro</span>
-                </div>
-                <p className="text-white font-semibold mb-2">{build.build_name}</p>
-                <p className="text-gray-400 text-sm mb-4">{build.synergy_notes}</p>
-                <div className="mb-4">
-                  <p className="text-purple-400 text-xs font-semibold mb-3">ITEMS BUILD:</p>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
-                    {build.items && build.items.filter(i => i.id).map(item => (
-                      <div
-                        key={item.id}
-                        className="flex-shrink-0 relative group"
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          border: '2px solid rgba(139, 92, 246, 0.4)',
-                          padding: 0,
-                          overflow: 'hidden',
-                          transition: 'all 0.2s'
-                        }}
-                        title={item.name}
-                      >
-                        <img
-                          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
-                          alt={item.name}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            borderRadius: '50%',
-                            display: 'block'
-                          }}
-                          className="hover:scale-110 transition"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div
-                          style={{
-                            display: 'none',
-                            borderRadius: '50%',
-                            width: '100%',
-                            height: '100%',
-                            background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          <span className="text-xs font-bold text-white">{item.name.charAt(0)}</span>
-                        </div>
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block z-10">
-                          <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400">
-                            {item.name}
-                          </div>
-                        </div>
+              <Reveal key={build.id} delay={`${idx * 80}ms`}>
+                <div className="card h-full">
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="font-display text-lg font-bold text-brand-bluedd">Build #{idx + 1}</h3>
+                    <span className="rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-bold text-brand-bluedd">Pro</span>
+                  </div>
+                  <p className="mb-2 font-semibold text-brand-ink">{build.build_name}</p>
+                  {build.synergy_notes && <p className="mb-4 text-sm text-brand-mut">{build.synergy_notes}</p>}
+                  <div className="mb-4">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-widest text-brand-faint">Items build</p>
+                    {build.items && build.items.filter((i) => i.id).length > 0 ? (
+                      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+                        {build.items.filter((i) => i.id).map((item, i) => (
+                          <BuildItemCircle key={item.id} item={item} index={i} />
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="text-sm text-brand-faint">No items listed</p>
+                    )}
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         ) : (
-          <div className="card-gaming p-8 text-center text-gray-400">
-            📖 No recommended builds yet. Check back soon!
-          </div>
+          <div className="card py-10 text-center text-brand-mut">No recommended builds yet. Check back soon!</div>
         )}
       </section>
 
-      {/* Community Builds */}
+      {/* COMMUNITY BUILDS */}
       <section className="mb-12">
-        <div className="flex items-center justify-between mb-6 flex-col md:flex-row gap-4">
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-            <h2 className="text-3xl md:text-4xl font-bold">Community Builds</h2>
-          </div>
-          {user && (
-            <button
-              onClick={() => setShowBuildForm(!showBuildForm)}
-              className="btn-primary w-full md:w-auto"
-            >
-              {showBuildForm ? '❌ Cancel' : '⚡ Share Build'}
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <Reveal>
+            <div className="flex items-center gap-3">
+              <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
+              <h2 className="font-display text-2xl font-bold text-brand-ink md:text-4xl">Community Builds</h2>
+            </div>
+          </Reveal>
+          {user ? (
+            <button onClick={() => { setShowBuildForm((v) => !v); setPickerOpen(false); }} className="btn-primary w-full md:w-auto">
+              {showBuildForm ? 'Cancel' : 'Share Build'}
             </button>
-          )}
-          {!user && (
-            <p className="text-gray-400 w-full md:w-auto text-center">
-              <a href="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold">Sign in</a> to contribute builds
+          ) : (
+            <p className="text-sm text-brand-mut md:text-right">
+              <a href="/login" className="font-semibold text-brand-bluedd hover:underline">Sign in</a> to contribute builds
             </p>
           )}
         </div>
 
-        {/* Build Form */}
+        {/* CREATE BUILD FORM */}
         {showBuildForm && (
-          <form onSubmit={handleCreateBuild} className="card-gaming p-6 md:p-8 mb-6 gradient-border">
-            <h3 className="text-xl font-bold mb-6 text-cyan-400">Create Your Build</h3>
-            <div className="space-y-4">
+          <form onSubmit={handleCreateBuild} className="card mb-8">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="font-display text-xl font-bold text-brand-ink">Create Your Build</h3>
+              <span className={`rounded-full px-3 py-1 text-xs font-bold ${newBuild.selectedItems.length === MAX_ITEMS ? 'bg-brand-blue text-white' : 'bg-brand-cloud text-brand-mut'}`}>
+                {newBuild.selectedItems.length}/{MAX_ITEMS} items
+              </span>
+            </div>
+
+            <div className="mb-5 space-y-4">
               <input
                 type="text"
                 placeholder="Give your build a name (e.g., Burst Damage Build)"
                 value={newBuild.buildName}
                 onChange={(e) => setNewBuild({ ...newBuild, buildName: e.target.value })}
-                style={{
-                  width: '100%',
-                  backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                  color: 'white',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: '2px solid rgba(236, 72, 153, 0.6)',
-                  outline: 'none'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(236, 72, 153, 1)';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(236, 72, 153, 0.3)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(236, 72, 153, 0.6)';
-                  e.target.style.boxShadow = 'none';
-                }}
+                className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                 required
               />
               <textarea
                 placeholder="Explain your build strategy and when to use it..."
                 value={newBuild.description}
                 onChange={(e) => setNewBuild({ ...newBuild, description: e.target.value })}
-                style={{
-                  width: '100%',
-                  backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                  color: 'white',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: '2px solid rgba(236, 72, 153, 0.6)',
-                  outline: 'none',
-                  height: '96px',
-                  fontFamily: 'inherit'
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(236, 72, 153, 1)';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(236, 72, 153, 0.3)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(236, 72, 153, 0.6)';
-                  e.target.style.boxShadow = 'none';
-                }}
+                className="h-24 w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                 required
               />
-              
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setItemsGalleryOpen(!itemsGalleryOpen)}
-                  className="w-full flex items-center justify-between mb-3 p-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded font-bold text-white text-sm transition"
-                >
-                  <span className="flex items-center gap-2">
-                    📦 Items ({newBuild.selectedItems.length}/6)
-                  </span>
-                  <span className={`transform transition-transform text-lg ${itemsGalleryOpen ? 'rotate-180' : ''}`}>
-                    ▼
-                  </span>
-                </button>
+            </div>
 
-                {itemsGalleryOpen && (
-                  <div className="bg-gray-900 bg-opacity-70 rounded p-3 border border-yellow-400 border-opacity-30 mb-4">
-                    {/* Items Grid - 5 columns circular */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', maxHeight: '240px', overflowY: 'auto', autoRows: '1fr', backgroundColor: 'rgba(168, 85, 247, 0.2)' }} className="mb-3 p-2 rounded-lg">
-                      {items.map(item => {
-                        const isSelected = newBuild.selectedItems.find(i => i.id === item.id);
-                        return (
-                          <button
-                            key={item.id}
-                            type="button"
-                            onClick={() => {
-                              if (isSelected) {
-                                setNewBuild({ ...newBuild, selectedItems: newBuild.selectedItems.filter(i => i.id !== item.id) });
-                              } else if (newBuild.selectedItems.length < 6) {
-                                setNewBuild({ ...newBuild, selectedItems: [...newBuild.selectedItems, item] });
-                              }
-                            }}
-                            style={{ aspectRatio: '1/1', borderRadius: '50%', minHeight: '50px', minWidth: '50px', padding: 0 }}
-                            className={`relative overflow-hidden transition transform hover:scale-110 group ${isSelected ? 'ring-2 ring-cyan-400 scale-110' : 'hover:ring-1 hover:ring-purple-400'}`}
-                            title={item.name}
-                          >
-                              <img
-                                src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
-                                alt={item.name}
-                                style={{ borderRadius: '50%', width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                                className=""
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'flex';
-                                }}
-                              />
-                            <div
-                              style={{ display: 'none', borderRadius: '50%' }}
-                              className="w-full h-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center"
-                            >
-                              <span className="text-xs font-bold text-white text-center px-1 line-clamp-1">{item.name}</span>
-                            </div>
-                            {isSelected && (
-                              <div style={{ borderRadius: '50%' }} className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <span className="text-lg font-bold text-cyan-400">✓</span>
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
+            {/* 7 SLOTS */}
+            <div className="mb-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-brand-faint">Build your loadout (Boots + 6)</p>
+              <div className="flex flex-wrap gap-2.5">
+                {Array.from({ length: MAX_ITEMS }).map((_, i) => {
+                  const item = newBuild.selectedItems[i];
+                  return item ? (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setNewBuild((prev) => ({ ...prev, selectedItems: prev.selectedItems.filter((_, j) => j !== i) }))}
+                      title={`Remove ${item.name}`}
+                      className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-brand-blue bg-white shadow-soft transition hover:border-red-400"
+                    >
+                      <img
+                        src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                        alt={item.name}
+                        onError={(e) => { e.target.style.display = 'none'; e.currentTarget.nextElementSibling.style.display = 'flex'; }}
+                        className="h-full w-full object-cover"
+                      />
+                      <span className="hidden h-full w-full items-center justify-center bg-gradient-to-br from-brand-bluelt to-brand-cloud text-xs font-bold text-brand-bluedd">
+                        {item.name.charAt(0)}
+                      </span>
+                      <span className="absolute inset-0 hidden items-center justify-center bg-red-500/80 text-2xl font-bold text-white group-hover:flex">
+                        ×
+                      </span>
+                      <span className="absolute left-1 top-1 rounded-full bg-brand-blue px-1.5 text-[9px] font-bold text-white">
+                        {STAGE_LABEL[i]}
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setPickerOpen(true)}
+                      className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-dashed border-brand-line text-brand-faint transition hover:border-brand-blue hover:text-brand-bluedd"
+                      title={i === 0 ? 'Pick a boot' : 'Pick an item'}
+                    >
+                      <span className="text-2xl">+</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ITEM PICKER */}
+            <div className="mb-5">
+              <button
+                type="button"
+                onClick={() => setPickerOpen((v) => !v)}
+                className="flex w-full items-center justify-between rounded-xl border border-brand-line bg-brand-cloud px-4 py-3 text-sm font-semibold text-brand-ink transition hover:border-brand-blue"
+              >
+                <span>Pick items ({newBuild.selectedItems.length}/{MAX_ITEMS})</span>
+                <span className="text-brand-bluedd">{pickerOpen ? '−' : '+'}</span>
+              </button>
+
+              {pickerOpen && (
+                <div className="mt-3 rounded-2xl border border-brand-line bg-white p-4">
+                  <input
+                    type="text"
+                    placeholder="Search items..."
+                    value={pickerQuery}
+                    onChange={(e) => setPickerQuery(e.target.value)}
+                    className="mb-3 w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-2.5 text-sm text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
+                  />
+                  {filteredItems.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-6 md:grid-cols-7">
+                      {filteredItems.map((item) => (
+                        <ItemIcon key={item.id} item={item} size={52} />
+                      ))}
                     </div>
+                  ) : (
+                    <p className="py-6 text-center text-sm text-brand-faint">No items match “{pickerQuery}”.</p>
+                  )}
+                </div>
+              )}
+            </div>
 
-                    {/* Selected Items Badges */}
-                    {newBuild.selectedItems.length > 0 && (
-                      <div className="border-t border-yellow-400 border-opacity-30 pt-2 mt-2">
-                        <p className="text-xs text-yellow-400 font-semibold mb-2">Selected:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {newBuild.selectedItems.map(item => (
-                            <div key={item.id} className="text-xs bg-gradient-to-r from-cyan-600 to-purple-600 px-2 py-1 rounded text-white flex items-center gap-1 hover:from-cyan-700 hover:to-purple-700 transition">
-                              <span className="truncate">{item.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => setNewBuild({ ...newBuild, selectedItems: newBuild.selectedItems.filter(i => i.id !== item.id) })}
-                                className="font-bold hover:text-red-300 ml-0.5"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button type="submit" className="btn-primary flex-1">🚀 Publish Build</button>
-                <button type="button" onClick={() => setShowBuildForm(false)} className="card-gaming px-6 py-3 rounded font-semibold border border-gray-600">Cancel</button>
-              </div>
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+              <button type="submit" className="btn-primary flex-1">Publish Build</button>
+              <button type="button" onClick={() => setShowBuildForm(false)} className="btn-secondary">
+                Cancel
+              </button>
             </div>
           </form>
         )}
 
-        {/* User Builds List */}
+        {/* USER BUILDS */}
         {builds.userBuilds.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {builds.userBuilds.map(build => (
-              <div key={build.id} className="card-gaming p-6 hover:border-cyan-400 transition">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-bold text-cyan-400 flex-1">{build.build_name}</h3>
-                  <span className="text-purple-400 text-xs font-semibold">Community</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-3">👤 by <span className="text-cyan-300">{build.username}</span></p>
-                <p className="text-gray-300 mb-4 text-sm">{build.description}</p>
-                <div className="mb-4">
-                  <p className="text-purple-400 text-xs font-semibold mb-3">ITEMS BUILD:</p>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
-                    {build.items && build.items.filter(i => i.id).map(item => (
-                      <div
-                        key={item.id}
-                        className="flex-shrink-0 relative group"
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          borderRadius: '50%',
-                          border: '2px solid rgba(139, 92, 246, 0.4)',
-                          padding: 0,
-                          overflow: 'hidden',
-                          transition: 'all 0.2s'
-                        }}
-                        title={item.name}
-                      >
-                        <img
-                          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
-                          alt={item.name}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            borderRadius: '50%',
-                            display: 'block'
-                          }}
-                          className="hover:scale-110 transition"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div
-                          style={{
-                            display: 'none',
-                            borderRadius: '50%',
-                            width: '100%',
-                            height: '100%',
-                            background: 'linear-gradient(135deg, #ec4899, #8b5cf6)',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}
-                        >
-                          <span className="text-xs font-bold text-white">{item.name.charAt(0)}</span>
-                        </div>
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 hidden group-hover:block z-10">
-                          <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap border border-purple-400">
-                            {item.name}
-                          </div>
-                        </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {builds.userBuilds.map((build, bi) => (
+              <Reveal key={build.id} delay={`${(bi % 2) * 80}ms`}>
+                <div className="card h-full">
+                  <div className="mb-1 flex items-start justify-between">
+                    <h3 className="flex-1 pr-3 font-display text-lg font-bold text-brand-ink">{build.build_name}</h3>
+                    <span className="rounded-full bg-brand-cloud px-3 py-1 text-xs font-bold text-brand-mut">Community</span>
+                  </div>
+                  <p className="mb-1 text-sm text-brand-mut">
+                    by <span className="font-semibold text-brand-bluedd">{build.username}</span>
+                  </p>
+                  {build.description && <p className="mb-4 text-sm text-brand-mut">{build.description}</p>}
+                  <div className="mb-4">
+                    <p className="mb-3 text-xs font-bold uppercase tracking-widest text-brand-faint">Items build</p>
+                    {build.items && build.items.filter((i) => i.id).length > 0 ? (
+                      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+                        {build.items.filter((i) => i.id).map((item, i) => (
+                          <BuildItemCircle key={item.id} item={item} index={i} />
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="text-sm text-brand-faint">No items listed</p>
+                    )}
+                  </div>
+                  <div className="mt-3 flex gap-4 border-t border-brand-line pt-3 text-sm text-brand-mut">
+                    <span>❤️ {build.likes} likes</span>
+                    <span>👁️ {build.views} views</span>
                   </div>
                 </div>
-                <div className="flex justify-between text-sm border-t border-gray-700 pt-3 mt-4">
-                  <span className="text-gray-400">❤️ {build.likes} likes</span>
-                  <span className="text-gray-400">👁️ {build.views} views</span>
-                </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         ) : (
-          <div className="card-gaming p-8 text-center text-gray-400">
-            🤔 No community builds yet. Be the first to share one!
-          </div>
+          <div className="card py-10 text-center text-brand-mut">No community builds yet. Be the first to share one!</div>
         )}
       </section>
 
-      {/* Comments Section */}
+      {/* COMMENTS */}
       <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-purple-500 rounded"></div>
-          <h2 className="text-3xl md:text-4xl font-bold">💬 Discussion</h2>
-        </div>
-        
-        {/* Add Comment */}
+        <Reveal>
+          <div className="mb-6 flex items-center gap-3">
+            <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
+            <h2 className="font-display text-2xl font-bold text-brand-ink md:text-4xl">Discussion</h2>
+          </div>
+        </Reveal>
+
         {user ? (
-          <form onSubmit={handleAddComment} className="card-gaming p-6 md:p-8 mb-6 gradient-border">
-            <label className="block text-sm font-semibold text-cyan-400 mb-3">Share Your Thoughts</label>
+          <form onSubmit={handleAddComment} className="card mb-6">
+            <label className="mb-3 block text-sm font-semibold text-brand-ink">Share Your Thoughts</label>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="What do you think about this hero? Tips, strategies, or experiences?"
-              className="w-full bg-gray-800 bg-opacity-50 p-4 rounded-lg border border-purple-500 border-opacity-30 focus:outline-none focus:border-cyan-400 focus:bg-opacity-100 transition h-24 mb-4"
+              className="mb-4 h-24 w-full rounded-xl border border-brand-line bg-brand-mist p-4 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               required
             />
-            <button type="submit" className="btn-primary">✈️ Post Comment</button>
+            <button type="submit" className="btn-primary">Post Comment</button>
           </form>
         ) : (
-          <div className="card-gaming p-8 text-center mb-6">
-            <p className="text-gray-400 mb-4">Join the discussion about {hero.name}</p>
-            <a href="/login" className="btn-primary inline-block">🔐 Sign In to Comment</a>
+          <div className="card mb-6 py-8 text-center">
+            <p className="mb-4 text-brand-mut">Join the discussion about {hero.name}</p>
+            <a href="/login" className="btn-primary inline-block">Sign In to Comment</a>
           </div>
         )}
 
-        {/* Comments List */}
         {comments.length > 0 ? (
           <div className="space-y-4">
             {comments
-              .filter(comment => !comment.parent_id) // Only show top-level comments
-              .map(comment => {
-                const replies = comments.filter(c => c.parent_id === comment.id); // Get replies for this comment
-                
+              .filter((c) => !c.parent_id)
+              .map((comment) => {
+                const replies = comments.filter((c) => c.parent_id === comment.id);
                 return (
-                  <div key={comment.id} className="card-gaming p-5 hover:border-purple-400 transition">
-                    <div className="flex justify-between items-start mb-3">
+                  <div key={comment.id} className="card">
+                    <div className="mb-3 flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() => setSelectedUserProfile(comment)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '50%',
-                            background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                            padding: '1.5px',
-                            animation: 'spin 4s linear infinite',
-                            flexShrink: 0,
-                            border: 'none',
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s',
-                          }}
-                          className="hover:scale-110"
+                          className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-brand-bluelt text-white transition hover:ring-4 hover:ring-brand-blue/20"
                         >
-                          <style>{`
-                            @keyframes spin {
-                              from { filter: hue-rotate(0deg); }
-                              to { filter: hue-rotate(360deg); }
-                            }
-                          `}</style>
-                          <div style={{
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '50%',
-                            backgroundColor: '#111827',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            overflow: 'hidden'
-                          }}>
-                            {comment.avatar ? (
-                              <img 
-                                src={getImageUrl(comment.avatar)} 
-                                alt={comment.username} 
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover',
-                                  objectPosition: 'center'
-                                }}
-                              />
-                            ) : (
-                              <span style={{
-                                fontSize: '12px',
-                                fontWeight: 'bold',
-                                color: '#22d3ee'
-                              }}>{comment.username?.charAt(0)?.toUpperCase()}</span>
-                            )}
-                          </div>
+                          {comment.avatar ? (
+                            <img src={getImageUrl(comment.avatar)} alt={comment.username} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="text-sm font-bold">{comment.username?.charAt(0)?.toUpperCase()}</span>
+                          )}
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedUserProfile(comment)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: 0,
-                            cursor: 'pointer',
-                            textAlign: 'left'
-                          }}
-                          className="hover:opacity-80 transition"
-                        >
-                          <h4 className="font-bold text-cyan-400 hover:text-cyan-300 transition">{comment.username}</h4>
-                          <span className="text-gray-500 text-xs">📅 {new Date(comment.created_at).toLocaleDateString()}</span>
-                        </button>
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedUserProfile(comment)}
+                            className="block text-left font-bold text-brand-ink hover:text-brand-bluedd"
+                          >
+                            {comment.username}
+                          </button>
+                          <span className="text-xs text-brand-faint">{new Date(comment.created_at).toLocaleDateString()}</span>
+                        </div>
                       </div>
-                      <span className="bg-purple-600 bg-opacity-30 px-2 py-1 rounded text-xs text-purple-300">Member</span>
+                      <span className="rounded-full bg-brand-cloud px-3 py-1 text-xs font-semibold text-brand-mut">Member</span>
                     </div>
-                    <p className="text-gray-300 leading-relaxed">{comment.content}</p>
-                    <div className="mt-3 flex gap-4 text-sm text-gray-500">
-                      <button 
-                        type="button"
-                        onClick={() => handleLikeComment(comment.id, comment.likes)}
-                        className="hover:text-pink-400 transition"
-                      >
+                    <p className="leading-relaxed text-brand-mut">{comment.content}</p>
+                    <div className="mt-3 flex gap-5 text-sm text-brand-mut">
+                      <button type="button" onClick={() => handleLikeComment(comment.id, comment.likes)} className="transition hover:text-brand-bluedd">
                         ❤️ {comment.likes}
                       </button>
-                      <button 
-                        type="button"
-                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                        className="hover:text-cyan-400 transition"
-                      >
+                      <button type="button" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} className="transition hover:text-brand-bluedd">
                         💬 Reply
                       </button>
                     </div>
 
-                    {/* Reply Form */}
                     {replyingTo === comment.id && (
-                      <div className="mt-4 pt-4 border-t border-gray-700">
+                      <div className="mt-4 border-t border-brand-line pt-4">
                         <textarea
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
                           placeholder="Write a reply..."
-                          className="w-full bg-gray-800 bg-opacity-50 p-3 rounded-lg border border-purple-500 border-opacity-30 focus:outline-none focus:border-cyan-400 focus:bg-opacity-100 transition h-20 mb-3"
+                          className="mb-3 h-20 w-full rounded-xl border border-brand-line bg-brand-mist p-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
                         />
                         <div className="flex gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleReply(comment.id)}
-                            className="btn-primary text-sm py-2 px-4"
-                          >
-                            ✈️ Reply
+                          <button type="button" onClick={() => handleReply(comment.id)} className="btn-primary px-4 py-2 text-sm">
+                            Reply
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setReplyingTo(null);
-                              setReplyText('');
-                            }}
-                            className="card-gaming px-4 py-2 rounded text-sm border border-gray-600"
-                          >
+                          <button type="button" onClick={() => { setReplyingTo(null); setReplyText(''); }} className="btn-secondary px-4 py-2 text-sm">
                             Cancel
                           </button>
                         </div>
                       </div>
                     )}
 
-                    {/* Replies */}
                     {replies.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-700 space-y-3">
-                        {replies.map(reply => (
-                          <div key={reply.id} className="ml-4 pl-4 border-l-2 border-purple-500 border-opacity-30">
-                            <div className="flex items-center gap-2 mb-2">
+                      <div className="mt-4 space-y-3 border-t border-brand-line pt-4">
+                        {replies.map((reply) => (
+                          <div key={reply.id} className="ml-3 border-l-2 border-brand-blue/30 pl-4">
+                            <div className="mb-1 flex items-center gap-2">
                               <button
                                 type="button"
                                 onClick={() => setSelectedUserProfile(reply)}
-                                style={{
-                                  width: '24px',
-                                  height: '24px',
-                                  borderRadius: '50%',
-                                  background: 'conic-gradient(from 0deg, #d4af37, #ffd700, #d4af37)',
-                                  padding: '1px',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  flexShrink: 0
-                                }}
+                                className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full bg-brand-bluelt text-white"
                               >
-                                <div style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  borderRadius: '50%',
-                                  backgroundColor: '#111827',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  overflow: 'hidden'
-                                }}>
-                                  {reply.avatar ? (
-                                    <img 
-                                      src={getImageUrl(reply.avatar)} 
-                                      alt={reply.username}
-                                      style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover'
-                                      }}
-                                    />
-                                  ) : (
-                                    <span style={{
-                                      fontSize: '9px',
-                                      fontWeight: 'bold',
-                                      color: '#22d3ee'
-                                    }}>{reply.username?.charAt(0)?.toUpperCase()}</span>
-                                  )}
-                                </div>
+                                {reply.avatar ? (
+                                  <img src={getImageUrl(reply.avatar)} alt={reply.username} className="h-full w-full object-cover" />
+                                ) : (
+                                  <span className="text-xs font-bold">{reply.username?.charAt(0)?.toUpperCase()}</span>
+                                )}
                               </button>
-                              <button
-                                type="button"
-                                onClick={() => setSelectedUserProfile(reply)}
-                                style={{
-                                  background: 'none',
-                                  border: 'none',
-                                  padding: 0,
-                                  cursor: 'pointer',
-                                  textAlign: 'left'
-                                }}
-                                className="hover:opacity-80 transition"
-                              >
-                                <span className="text-cyan-400 text-sm font-bold hover:text-cyan-300">{reply.username}</span>
+                              <button type="button" onClick={() => setSelectedUserProfile(reply)} className="text-sm font-bold text-brand-ink hover:text-brand-bluedd">
+                                {reply.username}
                               </button>
                             </div>
-                            <p className="text-gray-300 text-sm leading-relaxed">{reply.content}</p>
-                            <div className="mt-2 flex gap-3 text-xs text-gray-500">
-                              <button
-                                type="button"
-                                onClick={() => handleLikeComment(reply.id, reply.likes)}
-                                className="hover:text-pink-400 transition"
-                              >
+                            <p className="text-sm leading-relaxed text-brand-mut">{reply.content}</p>
+                            <div className="mt-1.5 flex gap-3 text-xs text-brand-faint">
+                              <button type="button" onClick={() => handleLikeComment(reply.id, reply.likes)} className="transition hover:text-brand-bluedd">
                                 ❤️ {reply.likes}
                               </button>
-                              <span className="text-gray-600">📅 {new Date(reply.created_at).toLocaleDateString()}</span>
+                              <span>{new Date(reply.created_at).toLocaleDateString()}</span>
                             </div>
                           </div>
                         ))}
@@ -773,17 +587,11 @@ export default function HeroDetail() {
               })}
           </div>
         ) : (
-          <div className="card-gaming p-8 text-center text-gray-400">
-            🤐 No comments yet. Be the first to start the discussion!
-          </div>
+          <div className="card py-10 text-center text-brand-mut">No comments yet. Be the first to start the discussion!</div>
         )}
       </section>
 
-      {/* Profile Card Popup */}
-      <UserProfileCard 
-        user={selectedUserProfile} 
-        onClose={() => setSelectedUserProfile(null)}
-      />
+      <UserProfileCard user={selectedUserProfile} onClose={() => setSelectedUserProfile(null)} />
     </Layout>
   );
 }

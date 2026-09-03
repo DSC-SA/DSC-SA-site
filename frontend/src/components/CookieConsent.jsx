@@ -30,36 +30,36 @@ export default function CookieConsent() {
       }`}
       style={{ pointerEvents: leaving ? 'none' : 'auto' }}
     >
-      <div className="max-w-4xl mx-auto bg-gradient-to-br from-gaming-dark to-gray-900 border border-cyan-500 border-opacity-40 rounded-2xl shadow-2xl p-5 sm:p-6 backdrop-blur-md">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div className="mx-auto max-w-4xl rounded-2xl glass-white p-5 sm:p-6 shadow-lift">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
           <div className="flex-1">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
-              🍪 We use cookies
+            <h3 className="mb-1 font-display text-lg font-bold text-brand-ink sm:text-xl">
+              We use cookies
             </h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-brand-mut">
               We use cookies to improve your experience, analyze traffic, and
               remember your preferences. By continuing to use this site, you
               agree to our{' '}
-              <Link to="/privacy" className="text-cyan-400 hover:text-cyan-300 underline">
+              <Link to="/privacy" className="font-semibold text-brand-bluedd hover:underline">
                 Privacy Policy
               </Link>{' '}
               and{' '}
-              <Link to="/terms" className="text-cyan-400 hover:text-cyan-300 underline">
+              <Link to="/terms" className="font-semibold text-brand-bluedd hover:underline">
                 Terms of Service
               </Link>
               .
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+          <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
             <button
               onClick={() => handleChoice(false)}
-              className="btn-secondary text-xs px-4 py-2.5 text-center"
+              className="btn-secondary px-4 py-2.5 text-center text-xs"
             >
               Decline
             </button>
             <button
               onClick={() => handleChoice(true)}
-              className="btn-primary text-xs px-4 py-2.5 text-center"
+              className="btn-primary px-4 py-2.5 text-center text-xs"
             >
               Accept All
             </button>
