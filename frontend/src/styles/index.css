@@ -309,149 +309,38 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 /* ==========================================================================
-   Vertical 3D spiral carousel — cards wrap the central pole with real depth.
-   translateX = sin(θ)·r, translateZ = cos(θ)·r (front/behind the pole),
-   translateY = const spacing + scroll offset.
-   CONTAINMENT: the sticky .spiral-viewport clips EVERYTHING to the viewport
-   (overflow hidden), perspective is a fixed 1200px, radius ≤ 200px, and cards
-   have rigid pixel dimensions + backface-visibility hidden so nothing can
-   stretch, flip, or bleed across the page.
+   Infinite 3D DNA helix — high-performance GPU pipeline.
+   JS only writes two cheap CSS custom properties per card
+   (--helix-y, --helix-angle); the browser composites the whole 3D transform
+   on the GPU via transform: translateY/rotateY/translateZ in calc(). Cards
+   loop forever using modulo wrap so the roster never runs out. Ambient
+   particles orbit the pole with pure CSS @keyframes (zero JS cost).
    ========================================================================== */
-.spiral-viewport {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-}
 
-.spiral-stage {
-  position: absolute;
-  inset: 0;
-  perspective: 1200px;
-  transform-style: preserve-3d;
-  overflow: hidden;
-}
-
-/* rigid 0×0 anchor at the exact center of the viewport/pole; the inner card
-   is centered on it via negative margins. Real 3D transform only on this host. */
-.spiral-card {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  will-change: transform, opacity, filter;
-  z-index: auto;
-}
-@-moz-document url-prefix() {
-  .spiral-card { backface-visibility: hidden; }
-}
-
-/* rigid card container — fixed px size, image never gets a 3D transform here */
-.spiral-card__inner {
+/* The scroll container / viewport for the helix. It scrolls internally so the
+   roster has its OWN infinite vertical scroll — this is what eliminates the
+   "blank space when scrolling down". */
+.helix-stage {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 150px;
-  height: 220px;
-  border-radius: 14px;
-  border: 1px solid rgb(var(--border) / 0.7);
-  background: rgb(var(--surface));
-  box-shadow: 0 14px 34px -18px rgba(15, 23, 42, 0.45);
-  text-align: left;
-  color: rgb(var(--text));
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.spiral-card__inner:hover {
-  border-color: rgb(var(--blue));
-}
-.spiral-card__inner.is-focus {
-  border-color: rgb(var(--blue));
-  box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.9);
-}
-
-/* hero art region — top of the container */
-.spiral-card__art {
-  position: relative;
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
-  background:
-    radial-gradient(150px 100px at 20% 0%, rgb(var(--blue-lt) / 0.45), transparent 60%),
-    rgb(var(--surface-soft));
-}
-/* STRICT image rules — no skew, no 3D transform on the image itself */
-.spiral-card__img {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: none;
-  backface-visibility: hidden;
-}
-.spiral-card__placeholder {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 2.6rem;
-  color: rgb(var(--blue-strong));
-  opacity: 0.85;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  perspective: 1200px;
+  perspective-origin: 50% 35%;
+  -webkit-overflow-scrolling: touch; /* smooth inertia on mobile webview */
 }
 
-.spiral-card__num {
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  background: rgb(var(--surface) / 0.6);
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: rgb(var(--text-faint));
-}
-.spiral-card__inner.is-focus .spiral-card__num {
-  color: rgb(var(--blue-strong));
-}
-
-/* name / role bar — bottom of the container */
-.spiral-card__body {
-  padding: 8px 10px 10px;
-  border-top: 1px solid rgb(var(--border) / 0.6);
-}
-.spiral-card__name {
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: rgb(var(--text));
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.spiral-card__role {
-  margin-top: 2px;
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: rgb(var(--text-muted));
-}
-
-/* central pole — a child of the 3D stage at z=0 so cards genuinely pass
-   in front of (tz>0) and behind (tz<0) it in the shared preserve-3d space */
-.spiral-pole {
-  position: absolute;
+/* The fixed central pole tracker — split across the front/back depth boundary */
+.blue-pole {
+  position: fixed;
   left: 50%;
-  top: -10%;
-  bottom: -10%;
-  width: 6px;
-  margin-left: -3px;
-  border-radius: 9999px;
+  top: 0;
+  width: 4px;
+  height: 100vh;
+  transform: translateX(-50%);
+  z-index: 5; /* depth boundary: cards with higher z pass IN FRONT of the pole */
+  pointer-events: none;
   background: linear-gradient(
     180deg,
     rgb(var(--blue-lt)),
@@ -461,8 +350,132 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
 }
 
+/* Shared 3D space isolation — cards + particles both stack in preserve-3d */
+.hero-cards-wrapper,
+.particle-container {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+/* Rigid card — fixed px dimensions, GPU-composited transform via CSS vars.
+   will-change + backface-visibility force a compositor layer. The 3D
+   transform (translateY, rotateY, translateZ) is entirely CSS calc();
+   JS never writes raw left/top. */
+.hero-card {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  width: 150px;
+  height: 220px;
+  margin-left: -75px; /* perfect horizontal centre registration */
+  display: block;
+  text-decoration: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--border) / 0.7);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  color: rgb(var(--text));
+  pointer-events: auto;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform:
+    translateY(calc(var(--helix-y) * 1px))
+    rotateY(calc(var(--helix-angle) * 1rad))
+    translateZ(180px); /* cylinder radius held off the axis */
+}
+.hero-card:hover {
+  border-color: rgb(var(--blue));
+}
+.hero-card.is-focus {
+  border-color: rgb(var(--blue));
+  box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.7);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .spiral-card { transition: transform 0.6s ease; }
+  .hero-card { transition: transform 0.6s ease; }
+}
+
+/* Image containment — forced aspect-ratio stability, 3D only inherits from
+   the parent card (never warp or stretch the artwork). */
+.hero-img {
+  width: 100%;
+  height: 70%;
+  display: block;
+  object-fit: cover;
+  transform: none !important;
+  backface-visibility: hidden;
+}
+
+/* Letter placeholder when a hero has no art yet */
+.hero-card__placeholder {
+  width: 100%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 2rem;
+  color: rgb(var(--blue-strong));
+  background: rgb(var(--surface-soft));
+}
+
+.hero-info {
+  box-sizing: border-box;
+  height: 30%;
+  padding: 10px 12px;
+}
+.hero-info h3 {
+  margin: 0 0 2px 0;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgb(var(--text));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hero-info p {
+  margin: 0;
+  font-size: 11px;
+  color: rgb(var(--text-muted));
+}
+
+/* Ambient orbiting particles — pure CSS animation, no JS per-frame cost.
+   Each particle has its own --p-y / --p-radius / --p-speed from the generator. */
+.ambient-particle {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  background: rgba(91, 181, 232, 0.6);
+  border-radius: 50%;
+  will-change: transform;
+  animation: spinParticle var(--p-speed) linear infinite;
+  transform:
+    translateY(calc(var(--p-y) * 1px))
+    rotateY(0deg)
+    translateZ(calc(var(--p-radius) * 1px));
+}
+
+@keyframes spinParticle {
+  from {
+    transform:
+      translateY(calc(var(--p-y) * 1px))
+      rotateY(0deg)
+      translateZ(calc(var(--p-radius) * 1px));
+  }
+  to {
+    transform:
+      translateY(calc(var(--p-y) * 1px))
+      rotateY(360deg)
+      translateZ(calc(var(--p-radius) * 1px));
+  }
 }
 
 /* 3D tilt card (JS applies --rx/--ry/--coefficient) */

@@ -1,31 +1,37 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../services/api';
 
-const SPACING = 168; // const vertical step between cards
-const CARD_W = 150; // rigid container width (px)
-const CARD_H = 220; // rigid container height (px)
-const TURNS = 3.5; // revolutions across the roster
-const MULT = 1.4; // scroll → revolutions multiplier
-const MAX_RADIUS = 200; // hard cap (translateZ must never exceed this)
-const PERSPECTIVE = 1200; // exact perspective on the 3D stage
+/* ---- Helix configuration (drives the GPU pipeline) ---- */
+const ANGLE_SPACING = 0.65; // spiral rotation angle step per card (radians)
+const VERTICAL_SPACING = 130; // vertical drop per card (px)
+const SCROLL_ANGLE_RATE = 0.004; // scrollTop -> radians of extra rotation
+const RADIUS_HINT = 180; // translateZ cylinder radius (kept under the 200px cap)
+const PARTICLES = 45; // orbiting ambient particles
 
 export default function HelixSpiral({ items }) {
   const stageRef = useRef(null);
   const els = useRef(new Map());
   const [reduced, setReduced] = useState(false);
-  const [small, setSmall] = useState(false);
   const [active, setActive] = useState(-1);
   const activeRef = useRef(active);
   activeRef.current = active;
 
   const list = items.slice(0, 160);
-  const n = list.length;
-  const totalTravel = Math.max(n * SPACING, 1);
+  const n = list.length || 0;
+  const loopHeight = Math.max(n * VERTICAL_SPACING, 1);
 
-  const cw = small ? 116 : CARD_W;
-  const ch = small ? 168 : CARD_H;
-  const radius = small ? Math.min(120, MAX_RADIUS) : MAX_RADIUS;
+  /* particles are generated once, purely declaratively — the CSS @keyframes
+     animates them on the GPU with zero JS per-frame cost */
+  const particles = useMemo(
+    () =>
+      Array.from({ length: PARTICLES }, () => ({
+        y: Math.random() * loopHeight,
+        r: Math.random() * 120 + 90,
+        speed: `${Math.random() * 5 + 3}s`,
+      })),
+    [loopHeight]
+  );
 
   useEffect(() => {
     if (typeof matchMedia === 'undefined') return;
@@ -36,13 +42,8 @@ export default function HelixSpiral({ items }) {
     return () => mq.removeEventListener?.('change', onChange);
   }, []);
 
-  useEffect(() => {
-    const updateSize = () => setSmall(window.innerWidth < 640);
-    updateSize();
-    window.addEventListener('resize', updateSize, { passive: true });
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-
+  /* Infinite looping layout — cheap CSS var writes per frame, transformed on
+     the GPU by the .hero-card transform rule (translateY/rotateY/translateZ) */
   useEffect(() => {
     if (n === 0) return;
     const stage = stageRef.current;
@@ -51,57 +52,55 @@ export default function HelixSpiral({ items }) {
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
-      raf = requestAnimationFrame(update);
+      raf = requestAnimationFrame(layout);
     };
 
-    const update = () => {
+    const layout = () => {
       raf = 0;
-      const vh = window.innerHeight || 1;
-      const rect = stage.getBoundingClientRect();
-      const travel = Math.max(totalTravel, 1);
-      // p = 0 when section top enters the viewport, 1 when section bottom exits
-      const p = reduced ? 0 : Math.min(Math.max(-rect.top / travel, 0), 1);
-      const scrollPx = p * totalTravel;
-      const originY = vh / 2; // pole + spiral centered vertically in the viewport
-      const rotOffset = p * 360 * MULT;
+      const scrollTop = stage.scrollTop;
 
       let best = -1;
       let bestD = Infinity;
-      const nearThreshold = radius * 0.1;
 
-      els.current.forEach((el, i) => {
-        if (!el) return;
-        const angle = (i / (n || 1)) * 360 * TURNS + rotOffset;
-        const rad = (angle * Math.PI) / 180;
-        const tx = Math.sin(rad) * radius;
-        const tz = Math.cos(rad) * radius; // +z toward camera, -z behind pole
-        const ty = i * SPACING - scrollPx - originY; // rel. to vertical center
+      for (let i = 0; i < n; i++) {
+        const el = els.current.get(i);
+        if (!el) continue;
 
-        // cull off-screen for perf + no bleed
-        if (ty < -ch * 2 || ty > vh + ch * 2 || Math.abs(tz) > MAX_RADIUS) {
-          el.style.visibility = 'hidden';
-          el.classList.remove('is-focus');
-          return;
+        let angle = i * ANGLE_SPACING + (reduced ? 0 : scrollTop * SCROLL_ANGLE_RATE);
+        let height = i * VERTICAL_SPACING - scrollTop;
+
+        // SEAMLESS INFINITE LOOP — recycle cards that leave the visible band
+        if (height < -300) {
+          const wraps = Math.ceil(Math.abs(height + 300) / loopHeight);
+          height += wraps * loopHeight;
+          angle += wraps * n * ANGLE_SPACING;
+        } else if (height > loopHeight - 300) {
+          const wraps = Math.ceil((height - (loopHeight - 300)) / loopHeight);
+          height -= wraps * loopHeight;
+          angle -= wraps * n * ANGLE_SPACING;
         }
-        el.style.visibility = 'visible';
 
-        // depth via pure perspective (translateZ) — no manual scale so cards
-        // never stretch. blur+opacity reinforce depth.
-        const depthScale = 0.55 + 0.55 * (tz / radius + 1) / 2;
+        // ship values to CSS custom properties (composited on GPU)
+        el.style.setProperty('--helix-y', height);
+        el.style.setProperty('--helix-angle', angle);
 
-        el.style.transform = `translate3d(${tx}px, ${ty}px, ${tz}px) rotateY(${angle}deg)`;
-        el.style.filter = `blur(${(1 - depthScale) * 3.2}px)`;
-        el.style.opacity = reduced ? 1 : String(0.35 + 0.65 * depthScale);
-        el.style.zIndex = String(Math.round(tz));
-
-        if (tz > nearThreshold) {
-          const d = Math.abs(ty);
+        // depth-driven layering + soft backdrop for cards behind the pole
+        const cosZ = Math.cos(angle);
+        if (cosZ < 0) {
+          el.style.zIndex = Math.round((cosZ + 1) * 2);
+          el.style.opacity = '0.28';
+          el.classList.remove('is-focus');
+        } else {
+          el.style.zIndex = Math.round((cosZ + 1) * 20) + 10;
+          el.style.opacity = '1';
+          const center = scrollTop + stage.clientHeight * 0.35 + 110;
+          const d = Math.abs(height - center);
           if (d < bestD) {
             bestD = d;
             best = i;
           }
         }
-      });
+      }
 
       if (best !== -1) {
         els.current.forEach((el, i) => el.classList.toggle('is-focus', i === best));
@@ -109,81 +108,84 @@ export default function HelixSpiral({ items }) {
       }
     };
 
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    layout();
+    stage.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      stage.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
       cancelAnimationFrame(raf);
     };
-  }, [n, small, reduced, totalTravel, radius]);
+  }, [n, reduced, loopHeight]);
 
   if (n === 0) return null;
   const focus = list[active >= 0 ? active : Math.floor(n / 2)];
 
   return (
-    <section ref={stageRef} className="relative w-full" style={{ height: totalTravel }}>
-      {/* sticky viewport: the ONLY 3D / visual container. overflow hidden keeps
-          every card clipped to the viewport — nothing bleeds across the page. */}
-      <div className="spiral-viewport">
-        {/* the 3D stage: perspective fixed, preserve-3d so pole + cards share depth */}
-        <div className="spiral-stage">
-          {/* pole at z=0, runs full height of the viewport */}
-          <div className="spiral-pole" aria-hidden />
+    <section className="helix-stage" ref={stageRef}>
+      {/* central static axis */}
+      <div className="blue-pole" aria-hidden />
 
-          {list.map((hero, i) => (
-            <div
-              key={hero.id}
-              ref={(node) => (node ? els.current.set(i, node) : els.current.delete(i))}
-              className="spiral-card"
-            >
-              <Link
-                to={`/heroes/${hero.id}`}
-                onClick={() => setActive(i)}
-                aria-label={hero.name}
-                className="spiral-card__inner"
-                style={{ width: cw, height: ch, marginLeft: -cw / 2, marginTop: -ch / 2 }}
-              >
-                <div className="spiral-card__art">
-                  {hero.icon_url ? (
-                    <img
-                      src={`${getImageUrl(hero.icon_url)}${
-                        getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
-                      }t=${Date.now()}`}
-                      alt={hero.name}
-                      loading="lazy"
-                      className="spiral-card__img"
-                    />
-                  ) : (
-                    <div className="spiral-card__placeholder">{hero.name.charAt(0)}</div>
-                  )}
-                  <span className="spiral-card__num">{String(i + 1).padStart(2, '0')}</span>
-                </div>
-                <div className="spiral-card__body">
-                  <h3 className="spiral-card__name">{hero.name}</h3>
-                  {hero.role && <p className="spiral-card__role">{hero.role}</p>}
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        {/* pinned readout */}
-        {focus && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-5 z-[999] flex flex-col items-center gap-2">
-            <p className="rounded-full bg-brand-snow/70 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-brand-faint">
-              Scroll — the roster spirals around the line
-            </p>
-            <Link
-              to={`/heroes/${focus.id}`}
-              className="btn-primary pointer-events-auto whitespace-nowrap px-6 py-2.5 text-sm shadow-lift"
-            >
-              View {focus.name} →
-            </Link>
-          </div>
-        )}
+      {/* ambient orbiting particles — pure CSS animation */}
+      <div className="particle-container" aria-hidden>
+        {particles.map((p, i) => (
+          <div
+            key={i}
+            className="ambient-particle"
+            style={{
+              '--p-y': p.y,
+              '--p-radius': p.r,
+              '--p-speed': p.speed,
+            }}
+          />
+        ))}
       </div>
+
+      {/* the 3D spiral ecosystem — cards recycled infinitely */}
+      <div className="hero-cards-wrapper">
+        {list.map((hero, i) => (
+          <Link
+            key={hero.id}
+            to={`/heroes/${hero.id}`}
+            onClick={() => setActive(i)}
+            aria-label={hero.name}
+            ref={(node) => (node ? els.current.set(i, node) : els.current.delete(i))}
+            className="hero-card"
+          >
+            {hero.icon_url ? (
+              <img
+                src={`${getImageUrl(hero.icon_url)}${
+                  getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
+                }t=${Date.now()}`}
+                alt={hero.name}
+                loading="lazy"
+                className="hero-img"
+              />
+            ) : (
+              <div className="hero-card__placeholder">{hero.name.charAt(0)}</div>
+            )}
+            <div className="hero-info">
+              <h3>{hero.name}</h3>
+              {hero.role && <p>{hero.role}</p>}
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* pinned readout */}
+      {focus && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-5 z-[999] flex flex-col items-center gap-2">
+          <p className="rounded-full bg-brand-snow/70 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-brand-faint">
+            Scroll inside the tunnel — the roster spirals forever
+          </p>
+          <Link
+            to={`/heroes/${focus.id}`}
+            className="btn-primary pointer-events-auto whitespace-nowrap px-6 py-2.5 text-sm shadow-lift"
+          >
+            View {focus.name} →
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
