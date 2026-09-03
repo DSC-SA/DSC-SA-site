@@ -258,9 +258,12 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 .hero-ring {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
   transform-style: preserve-3d;
-  transition: transform 0.08s linear; /* tiny easing = invisible smoothing */
   will-change: transform;
 }
 
@@ -276,12 +279,13 @@ a { color: rgb(var(--text)); text-decoration: none; }
 .hero-pole {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
+  height: 100%;
   width: 6px;
-  transform: translate(-50%, -50%);
-  border-radius: 9999px;
+  transform: translateX(-50%);
+  border-radius: 0;
   background: linear-gradient(180deg, rgb(var(--blue-lt)), rgb(var(--blue)), rgb(var(--blue-strong)));
-  box-shadow: 0 0 26px rgba(91, 181, 232, 0.55), 0 0 60px rgba(91, 181, 232, 0.35);
+  box-shadow: 0 0 26px rgba(91, 181, 232, 0.35), 0 0 60px rgba(91, 181, 232, 0.2);
 }
 
 /* drifting particles */

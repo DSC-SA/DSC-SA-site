@@ -41,21 +41,24 @@ export default function HeroesList() {
         </Reveal>
       </div>
 
-      {/* Featured meta — scroll-driven 3D ring */}
+      {/* Interactive hero list — scroll-driven 3D pole carousel */}
       {!loading && (
-        <Reveal className="mb-10">
-          <div className="mb-2 flex items-center gap-3">
-            <div className="mb-1 h-8 w-1 rounded-full bg-gradient-to-b from-brand-blue to-brand-bluelt"></div>
-            <h2 className="font-display text-xl font-bold text-brand-ink md:text-2xl">Featured Meta</h2>
+        <div className="mb-14 -mx-4 sm:mx-0">
+          <div className="mb-6 px-4 text-center sm:px-0">
+            <p className="mb-1 font-display text-xl font-bold text-brand-ink sm:text-2xl">The Meta</p>
+            <p className="text-sm text-brand-mut">Scroll to spin the rotation and explore the current meta</p>
           </div>
-          <p className="ml-4 mb-6 text-sm text-brand-mut">Keep scrolling — the ring spins with you</p>
-
           {(() => {
             const featured = FEATURED.map((name) => heroes.find((h) => h.name === name)).filter(Boolean);
             return featured.length >= 2 ? <ScrollRing items={featured} /> : null;
           })()}
-        </Reveal>
+        </div>
       )}
+
+      {/* Role filter + full roster */}
+      <div className="mb-5">
+        <h2 className="mb-4 font-display text-lg font-bold text-brand-ink sm:text-xl">All Heroes</h2>
+      </div>
 
       {/* Role filter — horizontal scroll on mobile */}
       <div className="mb-7">
