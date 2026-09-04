@@ -309,29 +309,29 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 /* ==========================================================================
-   Infinite 3D DNA helix — high-performance GPU pipeline.
-   JS only writes two cheap CSS custom properties per card
-   (--helix-y, --helix-angle); the browser composites the whole 3D transform
-   on the GPU via transform: translateY/rotateY/translateZ in calc(). Cards
-   loop forever using modulo wrap so the roster never runs out. Ambient
-   particles orbit the pole with pure CSS @keyframes (zero JS cost).
+   60fps page-scroll helix — a tall section creates page scroll height; a
+   sticky viewport clips the 3D spiral to the screen. Cards get CSS-var
+   transforms from JS (one two-var write per visible card per frame);
+   off-screen cards are culled. Particles orbit via pure CSS @keyframes.
    ========================================================================== */
 
-/* The scroll container / viewport for the helix. It scrolls internally so the
-   roster has its OWN infinite vertical scroll — this is what eliminates the
-   "blank space when scrolling down". */
-.helix-stage {
+/* Tall section — its height IS the page-scroll extent. */
+.helix-track {
   position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  perspective: 1200px;
-  perspective-origin: 50% 35%;
-  -webkit-overflow-scrolling: touch; /* smooth inertia on mobile webview */
 }
 
-/* The fixed central pole tracker — split across the front/back depth boundary */
+/* Sticky viewport — stays pinned to the top of the viewport while the tall
+   section scrolls beneath it. overflow:hidden clips the 3D to the screen. */
+.helix-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+/* Central blue axis — fixed to viewport, not affected by scroll. */
 .blue-pole {
   position: fixed;
   left: 50%;
@@ -339,7 +339,7 @@ a { color: rgb(var(--text)); text-decoration: none; }
   width: 4px;
   height: 100vh;
   transform: translateX(-50%);
-  z-index: 5; /* depth boundary: cards with higher z pass IN FRONT of the pole */
+  z-index: 5;
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -350,26 +350,25 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
 }
 
-/* Shared 3D space isolation — cards + particles both stack in preserve-3d */
-.hero-cards-wrapper,
-.particle-container {
+/* Particle field + card container — share the 3D space inside the viewport */
+.particle-container,
+.helix-cards {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
   pointer-events: none;
 }
 
-/* Rigid card — fixed px dimensions, GPU-composited transform via CSS vars.
-   will-change + backface-visibility force a compositor layer. The 3D
-   transform (translateY, rotateY, translateZ) is entirely CSS calc();
-   JS never writes raw left/top. */
+/* Rigid card — fixed 150×220 px, GPU composited via --helix-y/--helix-angle.
+   Positioned at viewport centre; JS writes only these two cheap vars. */
 .hero-card {
   position: absolute;
   left: 50%;
-  top: 35%;
+  top: 50%;
   width: 150px;
   height: 220px;
-  margin-left: -75px; /* perfect horizontal centre registration */
+  margin-left: -75px;
+  margin-top: -110px;
   display: block;
   text-decoration: none;
   border-radius: 16px;
@@ -384,7 +383,7 @@ a { color: rgb(var(--text)); text-decoration: none; }
   transform:
     translateY(calc(var(--helix-y) * 1px))
     rotateY(calc(var(--helix-angle) * 1rad))
-    translateZ(180px); /* cylinder radius held off the axis */
+    translateZ(180px);
 }
 .hero-card:hover {
   border-color: rgb(var(--blue));
@@ -393,26 +392,21 @@ a { color: rgb(var(--text)); text-decoration: none; }
   border-color: rgb(var(--blue));
   box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.7);
 }
-
 @media (prefers-reduced-motion: reduce) {
   .hero-card { transition: transform 0.6s ease; }
 }
 
-/* Image containment — forced aspect-ratio stability, 3D only inherits from
-   the parent card (never warp or stretch the artwork). */
+/* Image — stable aspect, 3D only from the card parent */
 .hero-img {
   width: 100%;
-  height: 70%;
+  height: 68%;
   display: block;
   object-fit: cover;
   transform: none !important;
-  backface-visibility: hidden;
 }
-
-/* Letter placeholder when a hero has no art yet */
 .hero-card__placeholder {
   width: 100%;
-  height: 70%;
+  height: 68%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,10 +416,9 @@ a { color: rgb(var(--text)); text-decoration: none; }
   color: rgb(var(--blue-strong));
   background: rgb(var(--surface-soft));
 }
-
 .hero-info {
   box-sizing: border-box;
-  height: 30%;
+  height: 32%;
   padding: 10px 12px;
 }
 .hero-info h3 {
@@ -444,16 +437,15 @@ a { color: rgb(var(--text)); text-decoration: none; }
   color: rgb(var(--text-muted));
 }
 
-/* Ambient orbiting particles — pure CSS animation, no JS per-frame cost.
-   Each particle has its own --p-y / --p-radius / --p-speed from the generator. */
+/* Ambient particles — pure CSS orbit, zero JS cost */
 .ambient-particle {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 4px;
-  height: 4px;
-  margin-left: -2px;
-  background: rgba(91, 181, 232, 0.6);
+  width: 3.5px;
+  height: 3.5px;
+  margin-left: -1.75px;
+  background: rgba(91, 181, 232, 0.5);
   border-radius: 50%;
   will-change: transform;
   animation: spinParticle var(--p-speed) linear infinite;
@@ -462,7 +454,6 @@ a { color: rgb(var(--text)); text-decoration: none; }
     rotateY(0deg)
     translateZ(calc(var(--p-radius) * 1px));
 }
-
 @keyframes spinParticle {
   from {
     transform:
