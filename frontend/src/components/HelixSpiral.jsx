@@ -2,33 +2,27 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../services/api';
 
-const ANGLE_STEP = 0.65; // radians per card (helix twist)
-const SPACING = 130; // vertical px per card slot
-const RADIUS = 180; // cylinder radius (translateZ, ≤200px cap)
-const SCROLL_ROT_MULT = 1.4; // extra full revolutions as you scroll top→bottom
-const VH_RATIO = 0.5; // spiral centred at 50% of viewport
-const PARTICLES = 45;
+const SPACING = 56; // vertical px per card down the pole
+const ANGLE_STEP = 0.17; // radians per card (tight corkscrew phase)
+const RADIUS = 180; // helix radius (translateZ)
+const PARTICLES = 90;
 
 export default function HelixSpiral({ items }) {
-  const sectionRef = useRef(null);
   const els = useRef(new Map());
   const [reduced, setReduced] = useState(false);
-  const [active, setActive] = useState(-1);
-  const activeRef = useRef(active);
-  activeRef.current = active;
 
   const list = items;
   const n = list.length || 0;
-  const totalTravel = n * SPACING; // page-pixels the helix spans
+  const totalHeight = n * SPACING; // tall scroll extent (the long pole)
 
   const particles = useMemo(
     () =>
       Array.from({ length: PARTICLES }, () => ({
-        y: Math.random() * (totalTravel + 600),
-        r: Math.random() * 110 + 70,
-        speed: `${Math.random() * 5 + 3}s`,
+        y: Math.random() * (totalHeight + 400),
+        r: Math.random() * 140 + 70,
+        speed: `${Math.random() * 6 + 3}s`,
       })),
-    [totalTravel]
+    [totalHeight]
   );
 
   useEffect(() => {
@@ -40,152 +34,100 @@ export default function HelixSpiral({ items }) {
     return () => mq.removeEventListener?.('change', fn);
   }, []);
 
+  // Gentle continuous auto-spin — the whole helix turns around the pole so,
+  // as you scroll the long ladder, the cards visibly corkscrew. Only cards
+  // near the viewport get their rotateY updated (culled off-screen).
   useEffect(() => {
-    if (n === 0) return;
-    const section = sectionRef.current;
-    if (!section) return;
-
+    if (reduced || n === 0) return;
     let raf = 0;
-    let lastBest = -1;
-
+    let t = 0;
+    let last = -1;
     const tick = () => {
-      raf = 0;
-      const rect = section.getBoundingClientRect();
+      raf = requestAnimationFrame(tick);
+      t += 0.003; // radians/frame -> slow seamless rotation
       const vh = window.innerHeight || 1;
-
-      // p = 0 when section top enters viewport, 1 when section bottom exits
-      const p = reduced
-        ? 0
-        : Math.min(Math.max(-rect.top / totalTravel, 0), 1);
-      const scrollPx = p * totalTravel;
-      const center = vh * VH_RATIO;
-
-      let best = -1;
-      let bestD = Infinity;
-
+      const y0 = -220, y1 = vh + 220;
+      let best = -1, bestD = Infinity, cy = vh / 2;
       for (let i = 0; i < n; i++) {
-        const angle =
-          i * ANGLE_STEP + p * Math.PI * 2 * SCROLL_ROT_MULT;
-        // card vertical position relative to viewport centre
-        const ty = i * SPACING - scrollPx - center;
-
-        // cull off-screen
-        if (ty < -250 || ty > vh + 250) {
-          const el = els.current.get(i);
-          if (el) el.style.visibility = 'hidden';
-          continue;
-        }
-
         const el = els.current.get(i);
         if (!el) continue;
-        el.style.visibility = 'visible';
-        el.style.setProperty('--helix-y', ty);
-        el.style.setProperty('--helix-angle', angle);
-
-        const cosZ = Math.cos(angle);
-        if (cosZ < 0) {
-          el.style.zIndex = Math.round((cosZ + 1) * 2);
-          el.style.opacity = '0.28';
-        } else {
-          el.style.zIndex = Math.round((cosZ + 1) * 20) + 10;
-          el.style.opacity = '1';
-          const d = Math.abs(ty);
-          if (d < bestD) { bestD = d; best = i; }
+        const hy = -(i * SPACING);
+        // cull far off-screen
+        if (hy < y0 || hy > y1) {
+          if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
+          continue;
         }
+        if (el.style.visibility !== 'visible') el.style.visibility = 'visible';
+        const angle = i * ANGLE_STEP + t;
+        const cos = Math.cos(angle);
+        el.style.setProperty('--hx', Math.sin(angle));
+        el.style.setProperty('--hz', cos);
+        el.style.zIndex = cos < 0 ? Math.round((cos + 1) * 2) : Math.round((cos + 1) * 20) + 10;
+        el.style.opacity = cos < 0 ? 0.3 : 1;
+        const d = Math.abs(-hy - cy);
+        if (d < bestD) { bestD = d; best = i; }
       }
-
-      if (best !== -1 && best !== lastBest) {
-        lastBest = best;
+      if (best !== -1 && best !== last) {
+        last = best;
         els.current.forEach((el, i) => el.classList.toggle('is-focus', i === best));
-        if (best !== activeRef.current) setActive(best);
       }
     };
-
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(tick); };
-
-    tick();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, [n, totalTravel, reduced]);
-
-  if (n === 0) return null;
-  const focus = list[active >= 0 ? active : 0];
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [reduced, n, SPACING]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="helix-track"
-      style={{ height: totalTravel }}
-    >
-      <div className="helix-viewport">
-        <div className="blue-pole" aria-hidden />
+    <section className="helix-track" style={{ height: totalHeight + 300 }}>
+      <div className="helix-spine" aria-hidden />
 
-        <div className="particle-container" aria-hidden>
-          {particles.map((p, i) => (
-            <div
-              key={i}
-              className="ambient-particle"
-              style={{
-                '--p-y': p.y,
-                '--p-radius': p.r,
-                '--p-speed': p.speed,
-              }}
-            />
-          ))}
-        </div>
+      <div className="ambient" aria-hidden>
+        {particles.map((p, i) => (
+          <div
+            key={i}
+            className="ambient-particle"
+            style={{
+              '--p-y': p.y,
+              '--p-radius': p.r,
+              '--p-speed': p.speed,
+            }}
+          />
+        ))}
+      </div>
 
-        <div className="helix-cards">
-          {list.map((hero, i) => (
-            <Link
-              key={hero.id}
-              to={`/heroes/${hero.id}`}
-              onClick={() => setActive(i)}
-              aria-label={hero.name}
-              ref={(node) =>
-                node ? els.current.set(i, node) : els.current.delete(i)
-              }
-              className="hero-card"
-            >
-              {hero.icon_url ? (
-                <img
-                  src={`${getImageUrl(hero.icon_url)}${
-                    getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
-                  }t=${Date.now()}`}
-                  alt={hero.name}
-                  loading="lazy"
-                  className="hero-img"
-                />
-              ) : (
-                <div className="hero-card__placeholder">
-                  {hero.name.charAt(0)}
-                </div>
-              )}
-              <div className="hero-info">
-                <h3>{hero.name}</h3>
-                {hero.role && <p>{hero.role}</p>}
+      <div className="helix-wall">
+        {list.map((hero, i) => (
+          <Link
+            key={hero.id}
+            to={`/heroes/${hero.id}`}
+            aria-label={hero.name}
+            ref={(node) => (node ? els.current.set(i, node) : els.current.delete(i))}
+            className="hero-card"
+            style={{
+              '--hy': -(i * SPACING),
+              '--hx': 0,
+              '--hz': 1,
+            }}
+          >
+            {hero.icon_url ? (
+              <img
+                src={`${getImageUrl(hero.icon_url)}${
+                  getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
+                }t=${Date.now()}`}
+                alt={hero.name}
+                loading="lazy"
+                className="hero-img"
+              />
+            ) : (
+              <div className="hero-card__placeholder">
+                {hero.name.charAt(0)}
               </div>
-            </Link>
-          ))}
-        </div>
-
-        {focus && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-5 z-[999] flex flex-col items-center gap-2">
-            <p className="rounded-full bg-brand-snow/70 px-3 py-1 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-brand-faint">
-              Scroll — the roster spirals around the line
-            </p>
-            <Link
-              to={`/heroes/${focus.id}`}
-              className="btn-primary pointer-events-auto whitespace-nowrap px-6 py-2.5 text-sm shadow-lift"
-            >
-              View {focus.name} →
-            </Link>
-          </div>
-        )}
+            )}
+            <div className="hero-info">
+              <h3>{hero.name}</h3>
+              {hero.role && <p>{hero.role}</p>}
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );

@@ -309,37 +309,29 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 /* ==========================================================================
-   60fps page-scroll helix — a tall section creates page scroll height; a
-   sticky viewport clips the 3D spiral to the screen. Cards get CSS-var
-   transforms from JS (one two-var write per visible card per frame);
-   off-screen cards are culled. Particles orbit via pure CSS @keyframes.
+   LONG scroll-driven DNA helix — a tall, statically-scrolled corkscrew.
+   The helix spin is a real page scroll: the track has height = the pole
+   length, every card is laid out ONE its own vertical slot around the
+   pole, and scrolling the page travels down the long spiral revealing the
+   wrapping cards. No sticky viewport, no internal scroll — the spiral is
+   physically LONG and you scroll through it.
    ========================================================================== */
 
-/* Tall section — its height IS the page-scroll extent. */
+/* Tall section — its height IS the page-scroll length of the pole. */
 .helix-track {
   position: relative;
-}
-
-/* Sticky viewport — stays pinned to the top of the viewport while the tall
-   section scrolls beneath it. overflow:hidden clips the 3D to the screen. */
-.helix-viewport {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
   perspective: 1200px;
-  perspective-origin: 50% 50%;
+  perspective-origin: 50% 40%;
 }
 
-/* Central blue axis — fixed to viewport, not affected by scroll. */
-.blue-pole {
-  position: fixed;
+/* The long central spine — runs the full length of the helix. */
+.helix-spine {
+  position: absolute;
   left: 50%;
   top: 0;
+  bottom: 0;
   width: 4px;
-  height: 100vh;
   transform: translateX(-50%);
-  z-index: 5;
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -350,25 +342,25 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
 }
 
-/* Particle field + card container — share the 3D space inside the viewport */
-.particle-container,
-.helix-cards {
+/* Card container shares the 3D space (preserve-3d) with the particles. */
+.helix-wall,
+.ambient {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
   pointer-events: none;
 }
 
-/* Rigid card — fixed 150×220 px, GPU composited via --helix-y/--helix-angle.
-   Positioned at viewport centre; JS writes only these two cheap vars. */
+/* Rigid card — sits in 3D space on the pole at its own vertical slot.
+   --hy = distance down the pole, --hx/--hz = X/Z offset around the pole
+   (sin/cos of its angular phase). Everything is a static layout transform:
+   the browser composites it once; scrolling is native page scroll. */
 .hero-card {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 0;
   width: 150px;
   height: 220px;
-  margin-left: -75px;
-  margin-top: -110px;
   display: block;
   text-decoration: none;
   border-radius: 16px;
@@ -378,12 +370,10 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   color: rgb(var(--text));
   pointer-events: auto;
-  will-change: transform, opacity;
   backface-visibility: hidden;
   transform:
-    translateY(calc(var(--helix-y) * 1px))
-    rotateY(calc(var(--helix-angle) * 1rad))
-    translateZ(180px);
+    translate(-50%, calc(var(--hy) * 1px))
+    translate3d(calc(var(--hx) * 200px), 0, calc(var(--hz) * 200px));
 }
 .hero-card:hover {
   border-color: rgb(var(--blue));
@@ -391,9 +381,6 @@ a { color: rgb(var(--text)); text-decoration: none; }
 .hero-card.is-focus {
   border-color: rgb(var(--blue));
   box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.7);
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-card { transition: transform 0.6s ease; }
 }
 
 /* Image — stable aspect, 3D only from the card parent */
