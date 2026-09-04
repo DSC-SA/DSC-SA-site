@@ -6,6 +6,7 @@ const CARD_H = 220;
 const STEP = 150; // vertical step per card -> dense packed column
 const TURN_CARDS = 12; // cards per full 360° twist
 const SETP = (Math.PI * 2) / TURN_CARDS; // rad/card
+const START_TWIST = -0.8; // initial phase so the first visible band faces FRONT
 const RADIUS = 95; // tight around the spine
 const REVOLUTIONS = 2.5; // extra full turns over the whole scroll
 const PARTICLES = 40;
@@ -74,14 +75,14 @@ export default function HelixSpiral({ items }) {
         if (!el) continue;
         if (el.style.visibility !== 'visible') el.style.visibility = 'visible';
 
-        const ang = i * SETP + spin;
+        const ang = i * SETP + spin + START_TWIST;
         const cos = Math.cos(ang);
         const prev = last.get(i);
         const zi =
           cos < 0
             ? Math.round((cos + 1) * 2)
             : Math.round((cos + 1) * 20) + 10;
-        const op = cos < -0.2 ? 0.3 : 1;
+        const op = Math.round((Math.max(0.3, (cos + 1) * 0.5)) * 100) / 100;
         if (!prev || prev.zi !== zi) el.style.zIndex = zi;
         if (!prev || prev.op !== op) el.style.opacity = op;
         if (!prev || prev.a !== ang) {
@@ -149,7 +150,7 @@ export default function HelixSpiral({ items }) {
               node ? els.current.set(i, node) : els.current.delete(i)
             }
             className="hero-card"
-            style={{ '--hy': i * STEP, '--a': i * SETP }}
+            style={{ '--hy': i * STEP, '--a': i * SETP + START_TWIST }}
           >
             {hero.icon_url ? (
               <img
