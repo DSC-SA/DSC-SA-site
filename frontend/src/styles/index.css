@@ -309,28 +309,29 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 /* ==========================================================================
-   60fps GPU helix — the ENTIRE 3D track rotates natively on the GPU via a
-   single CSS custom property (--scroll-offset) written once per frame on the
-   parent wrapper. No per-card JS loop, no per-card style writes — the browser
-   composites the whole corkscrew in the compositor at full frame rate.
-   Cards sit at fixed angular stations from --card-index; the track translates
-   + rotates as the user scrolls. Ambient particles are pure CSS @keyframes.
+   Infinite 3D DNA helix — high-performance GPU pipeline.
+   JS only writes two cheap CSS custom properties per card
+   (--helix-y, --helix-angle); the browser composites the whole 3D transform
+   on the GPU via transform: translateY/rotateY/translateZ in calc(). Cards
+   loop forever using modulo wrap so the roster never runs out. Ambient
+   particles orbit the pole with pure CSS @keyframes (zero JS cost).
    ========================================================================== */
 
-/* The scroll container / viewport. Scrolls internally on the GPU thread. */
-.spiral-stage {
+/* The scroll container / viewport for the helix. It scrolls internally so the
+   roster has its OWN infinite vertical scroll — this is what eliminates the
+   "blank space when scrolling down". */
+.helix-stage {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  perspective: 1600px; /* deep, comfortable depth — nothing clips the screen */
+  perspective: 1200px;
   perspective-origin: 50% 35%;
   -webkit-overflow-scrolling: touch; /* smooth inertia on mobile webview */
-  will-change: perspective;
 }
 
-/* The fixed central pole — the corkscrew axis tracer */
+/* The fixed central pole tracker — split across the front/back depth boundary */
 .blue-pole {
   position: fixed;
   left: 50%;
@@ -338,7 +339,7 @@ a { color: rgb(var(--text)); text-decoration: none; }
   width: 4px;
   height: 100vh;
   transform: translateX(-50%);
-  z-index: 5; /* depth boundary: nearer cards pass IN FRONT of the pole */
+  z-index: 5; /* depth boundary: cards with higher z pass IN FRONT of the pole */
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -349,7 +350,8 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
 }
 
-/* Particle field — pure-CSS animated, zero JS cost */
+/* Shared 3D space isolation — cards + particles both stack in preserve-3d */
+.hero-cards-wrapper,
 .particle-container {
   position: absolute;
   inset: 0;
@@ -357,94 +359,80 @@ a { color: rgb(var(--text)); text-decoration: none; }
   pointer-events: none;
 }
 
-/* ===== THE CORE ROTATION ENGINE =====
-   One GPU-composited transform driven by a single --scroll-offset var.
-   translateY moves the spiral up/down; rotateY spins it around the pole.
-   Both coefficients are tuned for a tight, aggressive, deeply-3D corkscrew. */
-.hero-spiral-track {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  pointer-events: none;
-  will-change: transform;
-  transform:
-    translateY(calc(var(--scroll-offset) * -1px))
-    rotateY(calc(var(--scroll-offset) * 0.006rad));
-}
-
-/* Small, rigid hero card — fixed angular station from --card-index.
-   Smaller footprint (125x185) for polish; tighter vertical drop (110px) and a
-   wide angular step (0.85rad) make the spiral twist into a tight deep tunnel.
-   Backface-visibility visible so cards sweep cleanly behind the pole. */
+/* Rigid card — fixed px dimensions, GPU-composited transform via CSS vars.
+   will-change + backface-visibility force a compositor layer. The 3D
+   transform (translateY, rotateY, translateZ) is entirely CSS calc();
+   JS never writes raw left/top. */
 .hero-card {
   position: absolute;
   left: 50%;
   top: 35%;
-  width: 125px;
-  height: 185px;
-  margin-left: -62.5px; /* perfect horizontal centre registration */
+  width: 150px;
+  height: 220px;
+  margin-left: -75px; /* perfect horizontal centre registration */
   display: block;
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   background: rgb(var(--surface));
   border: 1px solid rgb(var(--border) / 0.7);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   color: rgb(var(--text));
   pointer-events: auto;
-  will-change: transform;
-  backface-visibility: visible;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
   transform:
-    translateY(calc(var(--card-index) * 110px))
-    rotateY(calc(var(--card-index) * 0.85rad))
-    translateZ(155px); /* depth radius held off the axis */
+    translateY(calc(var(--helix-y) * 1px))
+    rotateY(calc(var(--helix-angle) * 1rad))
+    translateZ(180px); /* cylinder radius held off the axis */
 }
 .hero-card:hover {
   border-color: rgb(var(--blue));
 }
 .hero-card.is-focus {
   border-color: rgb(var(--blue));
-  box-shadow: 0 20px 46px -18px rgba(91, 181, 232, 0.7);
+  box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.7);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-card { transition: transform 0.6s ease; }
 }
 
-/* Image containment — stable aspect, 3D inherits only from the card parent */
+/* Image containment — forced aspect-ratio stability, 3D only inherits from
+   the parent card (never warp or stretch the artwork). */
 .hero-img {
   width: 100%;
-  height: 68%;
+  height: 70%;
   display: block;
   object-fit: cover;
   transform: none !important;
+  backface-visibility: hidden;
 }
 
 /* Letter placeholder when a hero has no art yet */
 .hero-card__placeholder {
   width: 100%;
-  height: 68%;
+  height: 70%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: rgb(var(--blue-strong));
   background: rgb(var(--surface-soft));
 }
 
 .hero-info {
   box-sizing: border-box;
-  height: 32%;
-  padding: 8px 10px;
-  background: rgb(var(--surface));
+  height: 30%;
+  padding: 10px 12px;
 }
 .hero-info h3 {
   margin: 0 0 2px 0;
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   color: rgb(var(--text));
   white-space: nowrap;
   overflow: hidden;
@@ -452,19 +440,20 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 .hero-info p {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   color: rgb(var(--text-muted));
 }
 
-/* Ambient orbiting particles — pure CSS animation, zero JS per-frame cost */
+/* Ambient orbiting particles — pure CSS animation, no JS per-frame cost.
+   Each particle has its own --p-y / --p-radius / --p-speed from the generator. */
 .ambient-particle {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 3.5px;
-  height: 3.5px;
-  margin-left: -1.75px;
-  background: rgba(91, 181, 232, 0.5);
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  background: rgba(91, 181, 232, 0.6);
   border-radius: 50%;
   will-change: transform;
   animation: spinParticle var(--p-speed) linear infinite;
