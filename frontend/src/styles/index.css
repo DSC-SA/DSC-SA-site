@@ -309,22 +309,21 @@ a { color: rgb(var(--text)); text-decoration: none; }
 }
 
 /* ==========================================================================
-   LONG scroll-driven DNA helix — a tall, statically-scrolled corkscrew.
-   The helix spin is a real page scroll: the track has height = the pole
-   length, every card is laid out ONE its own vertical slot around the
-   pole, and scrolling the page travels down the long spiral revealing the
-   wrapping cards. No sticky viewport, no internal scroll — the spiral is
-   physically LONG and you scroll through it.
+   LONG scroll-driven DNA helix — a tall, dense vertical column of cards
+   spiraling around a central spine. The track is as tall as the pole, every
+   hero sits flush at its own vertical slot and twists around the spine;
+   scrolling the page both descends through the cards AND rotates the whole
+   column around the spine (scroll-linked spin). No auto-spin, no gaps —
+   cards pack one under the next, name/role bar at the bottom of each.
    ========================================================================== */
 
 /* Tall section — its height IS the page-scroll length of the pole. */
 .helix-track {
   position: relative;
-  perspective: 1200px;
-  perspective-origin: 50% 40%;
 }
 
-/* The long central spine — runs the full length of the helix. */
+/* The long central spine — runs the FULL length of the helix. It lives in
+   front of the "behind the pole" cards (z<6) and behind the front cards. */
 .helix-spine {
   position: absolute;
   left: 50%;
@@ -332,6 +331,7 @@ a { color: rgb(var(--text)); text-decoration: none; }
   bottom: 0;
   width: 4px;
   transform: translateX(-50%);
+  z-index: 6;
   pointer-events: none;
   background: linear-gradient(
     180deg,
@@ -342,19 +342,19 @@ a { color: rgb(var(--text)); text-decoration: none; }
   box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
 }
 
-/* Card container shares the 3D space (preserve-3d) with the particles. */
+/* Card container wraps the column around the spine, same 3D space as the
+   particles. pointer-events none so only the cards themselves are clickable. */
 .helix-wall,
 .ambient {
   position: absolute;
   inset: 0;
-  transform-style: preserve-3d;
   pointer-events: none;
 }
 
-/* Rigid card — sits in 3D space on the pole at its own vertical slot.
-   --hy = distance down the pole, --hx/--hz = X/Z offset around the pole
-   (sin/cos of its angular phase). Everything is a static layout transform:
-   the browser composites it once; scrolling is native page scroll. */
+/* Rigid card — packed vertically (no gaps), twisted around the spine.
+   --hy = distance DOWN the pole; --a = angular phase + scroll spin (rad).
+   X offset sweeps across the pole via sin(--a), then scale + opacity give
+   depth (cards pointing away shrink/fade behind the spine). */
 .hero-card {
   position: absolute;
   left: 50%;
@@ -373,7 +373,8 @@ a { color: rgb(var(--text)); text-decoration: none; }
   backface-visibility: hidden;
   transform:
     translate(-50%, calc(var(--hy) * 1px))
-    translate3d(calc(var(--hx) * 200px), 0, calc(var(--hz) * 200px));
+    translateX(calc(sin(var(--a)) * 95px))
+    scale(calc(0.72 + 0.28 * cos(var(--a))));
 }
 .hero-card:hover {
   border-color: rgb(var(--blue));
