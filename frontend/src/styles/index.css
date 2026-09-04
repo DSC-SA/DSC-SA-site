@@ -322,26 +322,6 @@ a { color: rgb(var(--text)); text-decoration: none; }
   position: relative;
 }
 
-/* The long central spine — runs the FULL length of the helix. It lives in
-   front of the "behind the pole" cards (z<6) and behind the front cards. */
-.helix-spine {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  transform: translateX(-50%);
-  z-index: 6;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgb(var(--blue-lt)),
-    rgb(var(--blue)),
-    rgb(var(--blue-strong))
-  );
-  box-shadow: 0 0 22px rgba(91, 181, 232, 0.5), 0 0 54px rgba(91, 181, 232, 0.28);
-}
-
 /* Card container wraps the column around the spine, same 3D space as the
    particles. pointer-events none so only the cards themselves are clickable. */
 .helix-wall,
@@ -351,10 +331,9 @@ a { color: rgb(var(--text)); text-decoration: none; }
   pointer-events: none;
 }
 
-/* Rigid card — packed vertically (no gaps), twisted around the spine.
+/* Rigid card — packed vertically (no gaps), twisted around the centre.
    --hy = distance DOWN the pole; --a = angular phase + scroll spin (rad).
-   X offset sweeps across the pole via sin(--a), then scale + opacity give
-   depth (cards pointing away shrink/fade behind the spine). */
+   X offset sweeps across the pole via sin(--a), scale gives depth. */
 .hero-card {
   position: absolute;
   left: 50%;

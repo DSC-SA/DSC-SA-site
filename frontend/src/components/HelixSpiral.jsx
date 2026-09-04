@@ -82,12 +82,10 @@ export default function HelixSpiral({ items }) {
           cos < 0
             ? Math.round((cos + 1) * 2)
             : Math.round((cos + 1) * 20) + 10;
-        const op = Math.round((Math.max(0.3, (cos + 1) * 0.5)) * 100) / 100;
         if (!prev || prev.zi !== zi) el.style.zIndex = zi;
-        if (!prev || prev.op !== op) el.style.opacity = op;
         if (!prev || prev.a !== ang) {
           el.style.setProperty('--a', ang);
-          last.set(i, { zi, op, a: ang });
+          last.set(i, { zi, a: ang });
         }
 
         if (cos > bestD) {
@@ -123,8 +121,6 @@ export default function HelixSpiral({ items }) {
       ref={trackRef}
       style={{ height: trackHeight + 200 }}
     >
-      <div className="helix-spine" aria-hidden />
-
       <div className="ambient" aria-hidden>
         {particles.map((p, i) => (
           <div
