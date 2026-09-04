@@ -322,10 +322,9 @@ a { color: rgb(var(--text)); text-decoration: none; }
   position: relative;
 }
 
-/* Card container wraps the column around the spine, same 3D space as the
-   particles. pointer-events none so only the cards themselves are clickable. */
-.helix-wall,
-.ambient {
+/* Card container wraps the column around the centre. pointer-events none so
+   only the cards themselves are clickable. */
+.helix-wall {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -354,13 +353,18 @@ a { color: rgb(var(--text)); text-decoration: none; }
     translate(-50%, calc(var(--hy) * 1px))
     translateX(calc(sin(var(--a)) * 95px))
     scale(calc(0.72 + 0.28 * cos(var(--a))));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 .hero-card:hover {
   border-color: rgb(var(--blue));
+  box-shadow: 0 18px 42px -18px rgba(91, 181, 232, 0.55);
 }
 .hero-card.is-focus {
-  border-color: rgb(var(--blue));
-  box-shadow: 0 22px 54px -20px rgba(91, 181, 232, 0.7);
+  border-color: rgb(var(--blue-strong));
+  box-shadow: 0 26px 60px -22px rgba(91, 181, 232, 0.7);
+}
+.hero-card.is-focus .hero-img {
+  filter: saturate(1.08);
 }
 
 /* Image — stable aspect, 3D only from the card parent */
@@ -402,38 +406,6 @@ a { color: rgb(var(--text)); text-decoration: none; }
   margin: 0;
   font-size: 11px;
   color: rgb(var(--text-muted));
-}
-
-/* Ambient particles — pure CSS orbit, zero JS cost */
-.ambient-particle {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 3.5px;
-  height: 3.5px;
-  margin-left: -1.75px;
-  background: rgba(91, 181, 232, 0.5);
-  border-radius: 50%;
-  will-change: transform;
-  animation: spinParticle var(--p-speed) linear infinite;
-  transform:
-    translateY(calc(var(--p-y) * 1px))
-    rotateY(0deg)
-    translateZ(calc(var(--p-radius) * 1px));
-}
-@keyframes spinParticle {
-  from {
-    transform:
-      translateY(calc(var(--p-y) * 1px))
-      rotateY(0deg)
-      translateZ(calc(var(--p-radius) * 1px));
-  }
-  to {
-    transform:
-      translateY(calc(var(--p-y) * 1px))
-      rotateY(360deg)
-      translateZ(calc(var(--p-radius) * 1px));
-  }
 }
 
 /* 3D tilt card (JS applies --rx/--ry/--coefficient) */

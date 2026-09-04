@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../services/api';
 
 const CARD_H = 220;
-const STEP = 150; // vertical step per card -> dense packed column
-const TURN_CARDS = 12; // cards per full 360° twist
-const SETP = (Math.PI * 2) / TURN_CARDS; // rad/card
-const START_TWIST = -0.8; // initial phase so the first visible band faces FRONT
-const RADIUS = 95; // tight around the spine
-const REVOLUTIONS = 2.5; // extra full turns over the whole scroll
-const PARTICLES = 40;
+const STEP = 150;
+const TURN_CARDS = 12;
+const SETP = (Math.PI * 2) / TURN_CARDS;
+const START_TWIST = -0.8;
+const REVOLUTIONS = 2.5;
+const SMOOTH_MS = 90;
+const MARGIN = 600;
 
 export default function HelixSpiral({ items }) {
   const trackRef = useRef(null);
@@ -22,16 +22,6 @@ export default function HelixSpiral({ items }) {
   const list = items;
   const n = list.length || 0;
   const trackHeight = n * STEP;
-
-  const particles = useMemo(
-    () =>
-      Array.from({ length: PARTICLES }, () => ({
-        y: Math.random() * trackHeight,
-        r: Math.random() * 90 + 60,
-        speed: `${Math.random() * 6 + 3}s`,
-      })),
-    [trackHeight]
-  );
 
   useEffect(() => {
     const mq = matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -50,23 +40,27 @@ export default function HelixSpiral({ items }) {
     let raf = 0;
     let lastBest = -1;
     const last = new Map();
+    const p = { cur: 0 };
+    const alpha = 1 - Math.exp(-0.016 / (SMOOTH_MS / 1000));
 
-    const tick = () => {
-      raf = 0;
-      const rect = track.getBoundingClientRect();
+    const frame = () => {
+      raf = requestAnimationFrame(frame);
       const vh = window.innerHeight || 1;
+      const rect = track.getBoundingClientRect();
       const topY = -rect.top;
-      const progress = reduced
-        ? 0
-        : Math.min(Math.max(topY / (rect.height - vh), 0), 1);
-      const spin = progress * Math.PI * 2 * REVOLUTIONS;
+      const total = rect.height - vh;
+      const target = reduced ? 0 : Math.min(Math.max(topY / (total || 1), 0), 1);
+      p.cur += (target - p.cur) * alpha;
+      const spin = p.cur * Math.PI * 2 * REVOLUTIONS;
 
+      const lo = topY - CARD_H * 2;
+      const hi = topY + vh + CARD_H * 2;
       let best = -1;
       let bestD = Infinity;
 
       for (let i = 0; i < n; i++) {
         const y = i * STEP;
-        if (y < topY - CARD_H - 80 || y > topY + vh + 80) {
+        if (y < lo || y > hi) {
           const el = els.current.get(i);
           if (el && el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
           continue;
@@ -101,19 +95,42 @@ export default function HelixSpiral({ items }) {
       }
     };
 
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(tick); };
-    tick();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
+    const start = () => {
+      if (!raf) {
+        p.cur = 0;
+        raf = requestAnimationFrame(frame);
+      }
+    };
+    const stop = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) start();
+          else {
+            stop();
+            els.current.forEach((el) => el.classList.remove('is-focus'));
+          }
+        }
+      },
+      { rootMargin: `${MARGIN}px 0px` }
+    );
+    io.observe(track);
+
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      stop();
+      io.disconnect();
       cancelAnimationFrame(raf);
     };
   }, [n, STEP, reduced, trackHeight]);
 
   if (n === 0) return null;
-  const focus = list[active >= 0 ? active : 0];
+  const focus = list[active >= 0 ? active : Math.floor(n / 2)];
 
   return (
     <section
@@ -121,20 +138,6 @@ export default function HelixSpiral({ items }) {
       ref={trackRef}
       style={{ height: trackHeight + 200 }}
     >
-      <div className="ambient" aria-hidden>
-        {particles.map((p, i) => (
-          <div
-            key={i}
-            className="ambient-particle"
-            style={{
-              '--p-y': p.y,
-              '--p-radius': p.r,
-              '--p-speed': p.speed,
-            }}
-          />
-        ))}
-      </div>
-
       <div className="helix-wall">
         {list.map((hero, i) => (
           <Link
