@@ -65,20 +65,11 @@ export default function HelixSpiral({ items }) {
       let bestD = Infinity;
 
       for (let i = 0; i < n; i++) {
-        // bare-minimum per-card math on numbers only (no DOM reads)
-        let angle = i * ANGLE_SPACING + (reduced ? 0 : scrollTop * SCROLL_ANGLE_RATE);
-        let height = i * VERTICAL_SPACING - scrollTop;
-
-        // SEAMLESS INFINITE LOOP — recycle cards that leave the visible band
-        if (height < -300) {
-          const wraps = Math.ceil(Math.abs(height + 300) / loopHeight);
-          height += wraps * loopHeight;
-          angle += wraps * n * ANGLE_SPACING;
-        } else if (height > loopHeight - 300) {
-          const wraps = Math.ceil((height - (loopHeight - 300)) / loopHeight);
-          height -= wraps * loopHeight;
-          angle -= wraps * n * ANGLE_SPACING;
-        }
+        // bare-minimum per-card math on numbers only (no DOM reads).
+        // Each hero keeps its own slot — all |n| heroes pass through as you
+        // scroll the full helix height (no recycling of the same few cards).
+        const angle = i * ANGLE_SPACING + (reduced ? 0 : scrollTop * SCROLL_ANGLE_RATE);
+        const height = i * VERTICAL_SPACING - scrollTop;
 
         // CULL off-screen cards: skip ALL style writes for cards outside the
         // visible band — only the handful on screen cost any DOM work. This is
@@ -154,8 +145,9 @@ export default function HelixSpiral({ items }) {
         ))}
       </div>
 
-      {/* the 3D spiral ecosystem — cards recycled infinitely */}
-      <div className="hero-cards-wrapper">
+      {/* the 3D spiral ecosystem — each hero occupies its own slot, so the
+          whole roster flows past as you scroll */}
+      <div className="hero-cards-wrapper" style={{ height: loopHeight + 1200 }}>
         {list.map((hero, i) => (
           <Link
             key={hero.id}
