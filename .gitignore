@@ -22,3 +22,6 @@ lerna-debug.log*
 Thumbs.db
 .cache/
 *.env.*.local
+
+# Uploaded media is generated at runtime (served from disk, not versioned)
+backend/uploads/

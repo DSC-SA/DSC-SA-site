@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const { createTables } = require('./db/schema');
@@ -8,30 +10,63 @@ const pool = require('./config/database');
 
 const app = express();
 
-// Middleware
+app.disable('x-powered-by');
+
+// ---- Security headers (sanitized XSS / clickjacking / MIME sniffing) ----
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: false, // SPA + inline React; CSP handled at CDN if needed
+  })
+);
+
+// ---- Tight CORS: only allow the known frontend origins. Requests from bots
+//      or unknown origins are rejected (no blanket allow-all). ----
+const allowedOrigins = (process.env.FRONTEND_URL || 'https://dsc-sa-site-production.up.railway.app')
+  .split(',')
+  .map((o) => o.trim())
+  .concat(['http://localhost:3000', 'http://localhost:3001']);
+
 const corsOptions = {
-  origin: function(origin, callback) {
-    const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : ['http://localhost:3000', 'http://localhost:3001'];
-    
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.includes(origin) || process.env.FRONTEND_URL === '*') {
-      callback(null, true);
-    } else if (process.env.NODE_ENV === 'development') {
-      // In development, allow all origins
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow for now, can be more restrictive later
+  origin(origin, callback) {
+    // Allow non-browser requests (curl, health checks, server-to-server) and
+    // known frontend origins. Reject everything else.
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+      return callback(null, true);
     }
+    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// ---- Body size caps: reject oversized payloads (DoS protection) ----
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ limit: '1mb', extended: true }));
+
+// ---- Rate limiting: protect the whole API from abuse/bots ----
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 300, // max 300 requests per window per IP
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Too many requests. Please slow down and try again later.' }
+});
+
+// Stricter limiter for auth endpoints (brute-force / credential stuffing)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20, // 20 auth attempts per 15 min per IP
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Too many attempts. Please try again in a few minutes.' }
+});
+
+app.use('/api', apiLimiter);
 
 // Serve static files and uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -54,7 +89,7 @@ app.use(
 );
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/heroes', require('./routes/heroes'));
 app.use('/api/items', require('./routes/items'));
 app.use('/api/builds', require('./routes/builds'));
