@@ -24,9 +24,9 @@ export default function Members() {
   };
 
   const getRankBadge = (rank) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
+    if (rank === 1) return '';
+    if (rank === 2) return '';
+    if (rank === 3) return '';
     return `#${rank}`;
   };
 
@@ -35,7 +35,7 @@ export default function Members() {
       <div className="mb-12">
         <div className="mb-6 flex items-center gap-3">
           <div className="h-10 w-1 rounded bg-gradient-to-b from-brand-blue to-brand-bluedd"></div>
-          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl">🏆 Community Leaderboard</h1>
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl"> Community Leaderboard</h1>
         </div>
         <p className="text-lg text-brand-mut">Earn points by commenting on hero cards and suggesting builds!</p>
       </div>
@@ -46,7 +46,7 @@ export default function Members() {
         <div className="rounded-3xl border border-brand-line bg-brand-snow p-8 text-center shadow-soft">
           <p className="mb-4 text-brand-mut">No players have earned points yet</p>
           <a href="/heroes" className="btn-primary inline-block">
-            Get Started 🚀
+            Get Started 
           </a>
         </div>
       ) : (
@@ -93,18 +93,18 @@ export default function Members() {
         <h2 className="mb-4 font-display text-2xl font-bold text-brand-ink">How to Earn Points</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-brand-blue/20 bg-brand-mist p-4">
-            <p className="mb-2 font-bold text-brand-bluedd">💬 Comment on Hero Cards</p>
+            <p className="mb-2 font-bold text-brand-bluedd"> Comment on Hero Cards</p>
             <p className="text-sm text-brand-mut">+10 points per comment</p>
           </div>
           <div className="rounded-2xl border border-brand-blue/20 bg-brand-mist p-4">
-            <p className="mb-2 font-bold text-brand-bluedd">🔨 Suggest Builds</p>
+            <p className="mb-2 font-bold text-brand-bluedd"> Suggest Builds</p>
             <p className="text-sm text-brand-mut">+25 points per build suggestion</p>
           </div>
         </div>
         <div className="mt-6 text-center">
           <p className="mb-4 text-brand-mut">Start earning points now!</p>
           <a href="/heroes" className="btn-primary inline-block">
-            🚀 Explore Heroes
+             Explore Heroes
           </a>
         </div>
       </div>

@@ -54,8 +54,8 @@ export default function Home() {
           style={{ background: 'radial-gradient(720px 420px at 20% -20%, rgba(91,181,232,0.18), transparent 62%)' }}
         />
 
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-y-12 px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:px-8 lg:pb-24">
-          <div className="text-center lg:text-left">
+        <div className="mx-auto max-w-3xl px-4 pb-16 pt-16 text-center sm:px-6 sm:pt-24 lg:pb-24">
+          <div>
             <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-line bg-brand-snow px-3 py-1 text-xs font-semibold text-brand-mut">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
               Community platform
@@ -68,40 +68,17 @@ export default function Home() {
               <span className="text-brand-mut">Community Hub</span>
             </h1>
 
-            <p className="mx-auto mb-9 max-w-md text-lg leading-relaxed text-brand-mut lg:mx-0">
-              Master the meta with hero tiers, community builds, and ranked insights — curated for the sharpest minds in the game.
+            <p className="mx-auto mb-9 max-w-md text-lg leading-relaxed text-brand-mut">
+              Track hero tiers, community builds, and ranked insights — curated for the sharpest minds in the game.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Link to="/heroes" className="btn-primary px-7 py-3.5">
                 Explore Heroes
               </Link>
               <Link to="/events" className="btn-secondary px-7 py-3.5">
                 View Events
               </Link>
-            </div>
-          </div>
-
-          {/* refined product card */}
-          <div className="scale-in">
-            <div className="mx-auto max-w-md rounded-3xl border border-brand-line bg-brand-snow p-7 shadow-lift lg:p-9">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-mut">The Meta</p>
-              <h3 className="mb-3 font-display text-2xl font-bold text-brand-ink">Master the Meta</h3>
-              <p className="mb-7 border-b border-brand-line pb-7 text-sm leading-relaxed text-brand-mut">
-                Strategic gameplay, community builds, and pro tier lists — in one place.
-              </p>
-              <div className="flex items-center justify-around gap-2">
-                {[
-                  ['10', 'SSR metas'],
-                  ['133', 'Heroes'],
-                  ['7', 'Item slots']
-                ].map(([v, l]) => (
-                  <div key={l} className="text-center">
-                    <p className="font-display text-2xl font-bold text-brand-bluedd">{v}</p>
-                    <p className="mt-1 text-[0.7rem] font-medium uppercase tracking-wide text-brand-faint">{l}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>

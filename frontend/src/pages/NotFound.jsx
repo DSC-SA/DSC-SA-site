@@ -8,7 +8,7 @@ export default function NotFound() {
       <div className="flex min-h-[70vh] items-center justify-center py-12">
         <div className="mx-auto max-w-md text-center">
           <div className="mb-8">
-            <p className="mb-4 text-8xl">🎮</p>
+            <p className="mb-4 text-8xl"></p>
             <p className="mb-4 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-7xl font-bold text-transparent">404</p>
           </div>
 
@@ -21,10 +21,10 @@ export default function NotFound() {
             <p className="mb-6 text-brand-mut">Let&apos;s get you back on track!</p>
             <div className="space-y-3">
               <Link to="/" className="btn-primary block py-3 font-semibold">
-                🏠 Back to Home
+                 Back to Home
               </Link>
               <Link to="/heroes" className="block rounded-xl border border-brand-blue/30 bg-brand-bluesoft px-6 py-3 font-semibold text-brand-bluedd transition hover:bg-brand-bluelt hover:text-white">
-                🦸 Browse Heroes
+                 Browse Heroes
               </Link>
             </div>
           </div>

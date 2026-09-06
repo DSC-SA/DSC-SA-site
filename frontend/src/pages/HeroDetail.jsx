@@ -448,8 +448,8 @@ export default function HeroDetail() {
                     )}
                   </div>
                   <div className="mt-3 flex gap-4 border-t border-brand-line pt-3 text-sm text-brand-mut">
-                    <span>❤️ {build.likes} likes</span>
-                    <span>👁️ {build.views} views</span>
+                    <span> {build.likes} likes</span>
+                    <span> {build.views} views</span>
                   </div>
                 </div>
               </Reveal>
@@ -525,10 +525,10 @@ export default function HeroDetail() {
                     <p className="leading-relaxed text-brand-mut">{comment.content}</p>
                     <div className="mt-3 flex gap-5 text-sm text-brand-mut">
                       <button type="button" onClick={() => handleLikeComment(comment.id, comment.likes)} className="transition hover:text-brand-bluedd">
-                        ❤️ {comment.likes}
+                         {comment.likes}
                       </button>
                       <button type="button" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} className="transition hover:text-brand-bluedd">
-                        💬 Reply
+                         Reply
                       </button>
                     </div>
 
@@ -574,7 +574,7 @@ export default function HeroDetail() {
                             <p className="text-sm leading-relaxed text-brand-mut">{reply.content}</p>
                             <div className="mt-1.5 flex gap-3 text-xs text-brand-faint">
                               <button type="button" onClick={() => handleLikeComment(reply.id, reply.likes)} className="transition hover:text-brand-bluedd">
-                                ❤️ {reply.likes}
+                                 {reply.likes}
                               </button>
                               <span>{new Date(reply.created_at).toLocaleDateString()}</span>
                             </div>

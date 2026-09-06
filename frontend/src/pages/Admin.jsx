@@ -249,7 +249,7 @@ export default function Admin() {
       const result = await response.json();
 
       if (response.ok) {
-        showMessage('✅ Image uploaded successfully! Refresh to see changes.', 'success');
+        showMessage(' Image uploaded successfully! Refresh to see changes.', 'success');
         setSelectedHeroId('');
         setSelectedHero(null);
         setImageFile(null);
@@ -328,7 +328,7 @@ export default function Admin() {
       const result = await response.json();
 
       if (response.ok) {
-        showMessage('✅ Event created successfully!', 'success');
+        showMessage(' Event created successfully!', 'success');
         setEventTitle('');
         setEventDate('');
         setEventDescription('');
@@ -380,7 +380,7 @@ export default function Admin() {
         });
 
         if (response.ok) {
-          showMessage('✅ Event deleted successfully!', 'success');
+          showMessage(' Event deleted successfully!', 'success');
           loadEvents();
         } else {
           const result = await response.json();
@@ -430,7 +430,7 @@ export default function Admin() {
       const result = await response.json();
 
       if (response.ok) {
-        showMessage('✅ Match created successfully!', 'success');
+        showMessage(' Match created successfully!', 'success');
         setMatchTitle('');
         setMatchDate('');
         setMatchDescription('');
@@ -454,7 +454,7 @@ export default function Admin() {
         const response = await matchesAPI.delete(matchId);
 
         if (response.ok || response.status === 200) {
-          showMessage('✅ Match deleted successfully!', 'success');
+          showMessage(' Match deleted successfully!', 'success');
           loadMatches();
         } else {
           showMessage('Error: Failed to delete match', 'error');
@@ -473,7 +473,7 @@ export default function Admin() {
     <Layout>
       <div className="mx-auto max-w-3xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-4xl font-black text-transparent md:text-5xl">🎮 Hero Image Upload</h1>
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-4xl font-black text-transparent md:text-5xl"> Hero Image Upload</h1>
           <button
             onClick={handleLogout}
             className="rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
@@ -537,13 +537,13 @@ export default function Admin() {
             disabled={loading}
             className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? '⏳ Uploading...' : '📤 Upload Image'}
+            {loading ? ' Uploading...' : ' Upload Image'}
           </button>
         </form>
 
         {/* Event Scheduler */}
         <div className="mt-12 border-t border-brand-line pt-12">
-          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📅 Event Scheduler</h2>
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink"> Event Scheduler</h2>
 
           <form onSubmit={handleCreateEvent} className="space-y-6 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
             <div>
@@ -585,8 +585,8 @@ export default function Admin() {
                 onChange={(e) => setEventStatus(e.target.value)}
                 className="w-full rounded-xl border border-brand-line bg-brand-mist px-4 py-3 text-brand-ink outline-none transition focus:border-brand-blue focus:ring-4 focus:ring-brand-blue/15"
               >
-                <option value="upcoming">🔜 Upcoming</option>
-                <option value="live">🟢 Live</option>
+                <option value="upcoming"> Upcoming</option>
+                <option value="live"> Live</option>
               </select>
             </div>
 
@@ -626,14 +626,14 @@ export default function Admin() {
               disabled={eventLoading}
               className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
             >
-              {eventLoading ? '⏳ Creating...' : '📌 Create Event'}
+              {eventLoading ? ' Creating...' : ' Create Event'}
             </button>
           </form>
         </div>
 
         {/* Active Events List */}
         <div className="mt-12 border-t border-brand-line pt-12">
-          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📋 Active Events</h2>
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink"> Active Events</h2>
 
           {eventsLoading ? (
             <p className="text-brand-mut">Loading events...</p>
@@ -645,7 +645,7 @@ export default function Admin() {
                     <h3 className="text-lg font-bold text-brand-ink">{event.title}</h3>
                     <p className="text-sm text-brand-mut">{event.description?.substring(0, 60)}...</p>
                     <p className="mt-1 text-xs text-brand-bluedd">
-                      📅 {new Date(event.event_date).toLocaleDateString('en-US', {
+                       {new Date(event.event_date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
@@ -658,7 +658,7 @@ export default function Admin() {
                     onClick={() => handleDeleteEvent(event.id)}
                     className="ml-4 whitespace-nowrap rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
                   >
-                    🗑️ Delete
+                     Delete
                   </button>
                 </div>
               ))}
@@ -670,7 +670,7 @@ export default function Admin() {
 
         {/* Match History */}
         <div className="mt-12 border-t border-brand-line pt-12">
-          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">⚔️ Match History</h2>
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink"> Match History</h2>
 
           <form onSubmit={handleCreateMatch} className="space-y-6 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
             <div>
@@ -741,14 +741,14 @@ export default function Admin() {
               disabled={matchLoading}
               className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd py-3 font-bold uppercase tracking-wider text-white transition hover:opacity-90 disabled:opacity-50"
             >
-              {matchLoading ? '⏳ Creating...' : '⚔️ Create Match'}
+              {matchLoading ? ' Creating...' : ' Create Match'}
             </button>
           </form>
         </div>
 
         {/* Active Matches List */}
         <div className="mt-12 border-t border-brand-line pt-12">
-          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink">📋 Active Matches</h2>
+          <h2 className="mb-6 font-display text-3xl font-black text-brand-ink"> Active Matches</h2>
 
           {matchesLoading ? (
             <p className="text-brand-mut">Loading matches...</p>
@@ -760,7 +760,7 @@ export default function Admin() {
                     <h3 className="text-lg font-bold text-brand-ink">{match.title}</h3>
                     <p className="text-sm text-brand-mut">{match.description?.substring(0, 60)}...</p>
                     <p className="mt-1 text-xs text-brand-bluedd">
-                      📅 {new Date(match.match_date).toLocaleDateString('en-US', {
+                       {new Date(match.match_date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
@@ -773,7 +773,7 @@ export default function Admin() {
                     onClick={() => handleDeleteMatch(match.id)}
                     className="ml-4 whitespace-nowrap rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition hover:bg-red-700"
                   >
-                    🗑️ Delete
+                     Delete
                   </button>
                 </div>
               ))}
@@ -785,7 +785,7 @@ export default function Admin() {
 
         {/* Item Image Upload Section */}
         <div className="mt-12 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
-          <h2 className="mb-6 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-3xl font-black text-transparent">📦 Item Image Upload</h2>
+          <h2 className="mb-6 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-3xl font-black text-transparent"> Item Image Upload</h2>
 
           <form onSubmit={handleItemImageSubmit} className="space-y-6">
             {/* Item Select */}
@@ -853,7 +853,7 @@ export default function Admin() {
               disabled={itemLoading}
               className="w-full rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd px-6 py-3 font-bold text-white transition hover:opacity-90 disabled:opacity-50"
             >
-              {itemLoading ? '⏳ Uploading...' : '📤 Upload Item Image'}
+              {itemLoading ? ' Uploading...' : ' Upload Item Image'}
             </button>
           </form>
 

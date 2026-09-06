@@ -34,7 +34,7 @@ export default function HeroesList() {
           <h1 className="font-display text-3xl font-bold text-brand-ink md:text-4xl">Heroes</h1>
         </div>
         <p className="ml-4 text-sm text-brand-mut">
-          The full roster wraps around the pole — scroll to spin it past
+          Scroll down to spin the full roster past
         </p>
       </div>
 

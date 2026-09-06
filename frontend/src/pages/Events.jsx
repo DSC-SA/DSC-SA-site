@@ -32,7 +32,7 @@ function EventCard({ event, index }) {
       <img src={event.image} alt={event.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
     )
   ) : (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-blue/15 to-brand-bluelt/25 text-5xl">🎮</div>
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-blue/15 to-brand-bluelt/25 text-5xl"></div>
   );
 
   return (
@@ -120,7 +120,7 @@ export default function Events() {
               </span>
               Live calendar
             </span>
-            <h1 className="font-display text-4xl font-bold text-brand-ink md:text-5xl">🎮 Events</h1>
+            <h1 className="font-display text-4xl font-bold text-brand-ink md:text-5xl">Events</h1>
             <div className="mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-brand-blue to-brand-bluedd" />
             <p className="mt-4 max-w-xl text-base font-medium text-brand-mut sm:text-lg">
               Join the DSC-SA community for epic matches, competitions, and challenges
@@ -151,7 +151,6 @@ export default function Events() {
       ) : (
         <div className="relative overflow-hidden rounded-3xl border border-brand-line bg-brand-snow p-14 text-center shadow-soft">
           <div aria-hidden className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-brand-blue/10 blur-3xl" />
-          <p className="mb-4 text-6xl">🏟️</p>
           <p className="mb-2 font-display text-2xl font-bold text-brand-ink">No Events Yet</p>
           <p className="text-brand-mut">Check back soon for exciting community events!</p>
         </div>

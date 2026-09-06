@@ -153,7 +153,7 @@ export default function Profile() {
             {/* Messages */}
             {error && (
               <div className="flex gap-2 rounded-lg border border-red-300 bg-red-50 p-4 text-red-600">
-                <span>⚠️</span>
+                <span></span>
                 <span>{error}</span>
               </div>
             )}
@@ -176,7 +176,7 @@ export default function Profile() {
                     {previewUrl ? (
                       <img src={previewUrl} alt="Profile" className="h-full w-full object-cover" />
                     ) : (
-                      <span className="text-5xl">📸</span>
+                      <span className="text-5xl"></span>
                     )}
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function Profile() {
                 htmlFor="avatarInput"
                 className="block w-full cursor-pointer rounded-xl border-2 border-dashed border-brand-blue/40 p-4 text-center transition hover:border-brand-blue hover:bg-brand-mist"
               >
-                <p className="font-semibold text-brand-bluedd">📤 Click to upload</p>
+                <p className="font-semibold text-brand-bluedd"> Click to upload</p>
                 <p className="mt-1 text-xs text-brand-faint">PNG, JPG or GIF (max 5MB)</p>
               </label>
             </div>
@@ -271,7 +271,7 @@ export default function Profile() {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="inline-block animate-spin">⏳</span>
+                  <span className="inline-block animate-spin"></span>
                   Saving...
                 </span>
               ) : (

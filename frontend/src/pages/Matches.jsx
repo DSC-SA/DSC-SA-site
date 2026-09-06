@@ -26,14 +26,14 @@ export default function Matches() {
       <div className="mb-12">
         <div className="mb-6 flex items-center gap-3">
           <div className="h-10 w-1 rounded bg-gradient-to-b from-brand-blue to-brand-bluedd"></div>
-          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl">⚔️ Match History</h1>
+          <h1 className="bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text text-4xl font-bold text-transparent md:text-5xl"> Match History</h1>
         </div>
         <p className="text-lg text-brand-mut">Track your legendary battles and epic victories</p>
       </div>
 
       {loading ? (
         <div className="py-12 text-center">
-          <p className="text-brand-mut">⏳ Loading matches...</p>
+          <p className="text-brand-mut"> Loading matches...</p>
         </div>
       ) : matches.length > 0 ? (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -75,7 +75,7 @@ export default function Matches() {
                 </div>
 
                 <div className="flex items-center gap-2 text-sm font-semibold text-brand-bluedd">
-                  <span>📅</span>
+                  <span></span>
                   <span>{new Date(match.match_date).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -89,11 +89,11 @@ export default function Matches() {
         </div>
       ) : (
         <div className="rounded-3xl border border-brand-line bg-brand-snow p-12 text-center shadow-lift">
-          <p className="mb-4 text-6xl">🎬</p>
+          <p className="mb-4 text-6xl"></p>
           <p className="mb-2 font-display text-2xl font-bold text-brand-ink">No Matches Yet</p>
           <p className="mb-6 text-brand-mut">Matches will appear here when they're scheduled!</p>
           <div className="inline-block rounded-lg bg-gradient-to-r from-brand-blue to-brand-bluedd px-8 py-3 font-semibold text-white shadow-soft">
-            ⚡ Stay Tuned
+             Stay Tuned
           </div>
         </div>
       )}
