@@ -1,8 +1,16 @@
-import React from 'react';
-import { getImageUrl } from '../services/api';
+import React, { useState } from 'react';
 
 export default function UserProfileCard({ user, onClose }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
   if (!user) return null;
+
+  const getAvatarSrc = () => {
+    if (!user.has_avatar && user.avatar && /^https?:\/\//.test(user.avatar)) {
+      return user.avatar;
+    }
+    return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -22,8 +30,8 @@ export default function UserProfileCard({ user, onClose }) {
         {/* Profile picture */}
         <div className="mb-6 flex justify-center">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-brand-blue/50 bg-brand-bluelt text-white shadow-glow">
-            {user.avatar ? (
-              <img src={getImageUrl(user.avatar)} alt={user.username} className="h-full w-full object-cover" />
+            {!imgFailed ? (
+              <img src={getAvatarSrc()} alt={user.username} onError={() => setImgFailed(true)} className="h-full w-full object-cover" />
             ) : (
               <span className="text-3xl font-bold">{user.username?.charAt(0)?.toUpperCase()}</span>
             )}

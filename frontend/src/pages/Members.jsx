@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { api, getImageUrl } from '../services/api';
+import { api } from '../services/api';
 import UserProfileCard from '../components/UserProfileCard';
 
 export default function Members() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
+  const [avatarErrors, setAvatarErrors] = useState({});
 
   useEffect(() => {
     fetchLeaderboard();
@@ -28,6 +29,17 @@ export default function Members() {
     if (rank === 2) return '';
     if (rank === 3) return '';
     return `#${rank}`;
+  };
+
+  const getAvatarSrc = (user) => {
+    if (!user.has_avatar && user.avatar && /^https?:\/\//.test(user.avatar)) {
+      return user.avatar;
+    }
+    return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
+  };
+
+  const handleAvatarError = (userId) => {
+    setAvatarErrors((prev) => ({ ...prev, [userId]: true }));
   };
 
   return (
@@ -61,14 +73,15 @@ export default function Members() {
                   className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-brand-blue/50 bg-brand-bluelt text-white shadow-soft transition hover:scale-110"
                   aria-label={`View ${user.username}'s profile`}
                 >
-                  {user.avatar ? (
+                  {avatarErrors[user.id] ? (
+                    <span className="text-sm font-bold">{user.username?.charAt(0)?.toUpperCase()}</span>
+                  ) : (
                     <img
-                      src={getImageUrl(user.avatar)}
+                      src={getAvatarSrc(user)}
                       alt={user.username}
+                      onError={() => handleAvatarError(user.id)}
                       className="h-full w-full object-cover"
                     />
-                  ) : (
-                    <span className="text-sm font-bold">{user.username?.charAt(0)?.toUpperCase()}</span>
                   )}
                 </button>
                 <button

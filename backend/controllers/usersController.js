@@ -112,7 +112,7 @@ const updateProfile = async (req, res) => {
 const getLeaderboard = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, username, points, avatar, rank 
+      `SELECT id, username, points, avatar, rank, (avatar_data IS NOT NULL) AS has_avatar
        FROM users 
        WHERE points > 0 
        ORDER BY points DESC 

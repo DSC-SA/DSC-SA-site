@@ -4,6 +4,8 @@ import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { verificationAPI } from '../services/api';
 
+const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/FaYoaGoshAu6QrKBsJAJNh?s=cl&p=a&mlu=4&ilr=4';
+
 export default function NSFW() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -161,14 +163,24 @@ export default function NSFW() {
               <div className="rounded-2xl border border-brand-line bg-brand-snow p-6 shadow-lift sm:p-8">
                 <h2 className="mb-2 font-display text-xl font-bold text-brand-ink">You are verified</h2>
                 <p className="mb-6 text-brand-mut">
-                  Your age verification was approved. You now have access to the restricted section. Thank you for being part of the community.
+                  Your age verification was approved. You now have access to the community group. Join us on WhatsApp to get started.
                 </p>
-                <button
-                  onClick={() => navigate('/')}
-                  className="btn-primary px-6 py-2.5 text-sm"
-                >
-                  Continue
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <a
+                    href={WHATSAPP_GROUP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary flex-1 px-6 py-2.5 text-center text-sm"
+                  >
+                    Join WhatsApp Group
+                  </a>
+                  <button
+                    onClick={() => navigate('/')}
+                    className="btn-secondary flex-1 px-6 py-2.5 text-sm"
+                  >
+                    Continue
+                  </button>
+                </div>
               </div>
             )}
 
