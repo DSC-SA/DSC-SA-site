@@ -147,6 +147,10 @@ const startServer = async () => {
     await seedVerifiedData();
     console.log('✓ Database seeded with verified MLBB heroes and items');
 
+    // Wipe any corrupted hero/item art (runs once when art exists, then idempotent)
+    const { migrateClearArt } = require('./db/migrate-clear-art');
+    await migrateClearArt();
+
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`✓ Server running on port ${PORT}`);
