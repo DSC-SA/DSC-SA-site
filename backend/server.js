@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
@@ -117,6 +118,9 @@ app.get('*', (req, res) => {
 // Initialize database and start server
 const startServer = async () => {
   try {
+    // Ensure upload directories exist (gitignored, so missing after each deploy)
+    fs.mkdirSync(path.join(__dirname, 'uploads', 'heroes'), { recursive: true });
+
     // Test connection
     const result = await pool.query('SELECT NOW()');
     console.log('✓ Connected to Koyeb PostgreSQL');
