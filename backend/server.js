@@ -142,6 +142,10 @@ const startServer = async () => {
     const { addAvatarDataToUsers } = require('./db/migrate-add-avatar-data');
     await addAvatarDataToUsers();
 
+    // Add hero image columns to existing heroes table (if not present)
+    const { migrateHeroImages } = require('./db/migrate-hero-images');
+    await migrateHeroImages();
+
     // Seed all items from 2026 equipment list
     const { seedAllItems } = require('./db/seed-items-official');
     await seedAllItems();
@@ -150,10 +154,6 @@ const startServer = async () => {
     const { seedVerifiedData } = require('./db/seed-verified-export');
     await seedVerifiedData();
     console.log('✓ Database seeded with verified MLBB heroes and items');
-
-    // Wipe any corrupted hero/item art (runs once when art exists, then idempotent)
-    const { migrateClearArt } = require('./db/migrate-clear-art');
-    await migrateClearArt();
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {

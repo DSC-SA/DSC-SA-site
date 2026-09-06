@@ -76,6 +76,11 @@ export const getImageUrl = (relativePath) => {
   return fullUrl;
 };
 
+// Helper to construct hero image URLs served from the database
+export const getHeroImageUrl = (heroId) => {
+  return `${STATIC_BASE_URL}/api/heroes/${heroId}/image?t=${Date.now()}`;
+};
+
 // Auth API
 export const authAPI = {
   register: (data) => API.post('/auth/register', data),

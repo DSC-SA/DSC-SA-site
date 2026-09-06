@@ -1,6 +1,5 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
 const sharp = require('sharp');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
@@ -71,7 +70,7 @@ const upload = multer({
   }
 });
 
-// Upload hero image with automatic resizing
+// Upload hero image with automatic resizing (stored in database)
 router.post('/upload-hero-image', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
     console.log('=== UPLOAD REQUEST ===');
@@ -81,55 +80,45 @@ router.post('/upload-hero-image', verifyAdmin, upload.single('image'), async (re
     const { heroId } = req.body;
 
     if (!heroId || !req.file) {
-      console.log('❌ Missing heroId or file');
+      console.log('Missing heroId or file');
       return res.status(400).json({ message: 'Hero ID and image are required' });
     }
 
-    // Process image with sharp: resize to fit card aspect ratio (1/1.2 = 400x480px)
-    const ext = '.webp'; // Convert all to WebP for optimization
-    const filename = `hero-${heroId}${ext}`;
-    const filepath = path.join(__dirname, '../uploads/heroes', filename);
-
+    let processedBuffer;
     try {
-      // Resize and crop image to perfectly fit hero card (400x480px, aspect ratio 1:1.2)
-      await sharp(req.file.buffer)
+      // Resize and crop image to fit hero card (400x480px, aspect ratio 1:1.2), compress to WebP
+      processedBuffer = await sharp(req.file.buffer)
         .resize(400, 480, {
-          fit: 'cover', // Center crop if needed
+          fit: 'cover',
           position: 'center'
         })
-        .webp({ quality: 85 }) // Optimize to WebP format
-        .toFile(filepath);
-      
-      console.log('✅ Image processed:', filename);
+        .webp({ quality: 85 })
+        .toBuffer();
+      console.log('Image processed:', req.file.originalname, '->', processedBuffer.length, 'bytes');
     } catch (sharpError) {
-      console.error('❌ Image processing error:', sharpError);
+      console.error('Image processing error:', sharpError);
       return res.status(400).json({ message: 'Failed to process image: ' + sharpError.message });
     }
 
-    // Construct the image URL/path
-    const imageUrl = `/uploads/heroes/${filename}`;
-    console.log('Image URL:', imageUrl);
-
-    // Update hero with image URL
-    console.log('Updating hero ID:', heroId, 'with URL:', imageUrl);
+    // Store image directly in the database
     const result = await pool.query(
-      'UPDATE heroes SET icon_url = $1 WHERE id = $2 RETURNING *',
-      [imageUrl, heroId]
+      'UPDATE heroes SET image_data = $1, image_mimetype = $2, icon_url = NULL WHERE id = $3 RETURNING id, name',
+      [processedBuffer, 'image/webp', heroId]
     );
 
     console.log('Update result rows:', result.rows.length);
     if (result.rows.length === 0) {
-      console.log('❌ Hero not found with ID:', heroId);
+      console.log('Hero not found with ID:', heroId);
       return res.status(404).json({ message: 'Hero not found' });
     }
 
-    console.log('✅ Success! Updated hero:', result.rows[0].name);
+    console.log('Success! Updated hero:', result.rows[0].name);
     res.json({
       message: 'Image uploaded successfully',
       hero: result.rows[0]
     });
   } catch (error) {
-    console.error('❌ Upload error:', error);
+    console.error('Upload error:', error);
     res.status(500).json({ message: 'Upload failed: ' + error.message });
   }
 });

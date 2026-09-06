@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { heroesAPI, buildsAPI, commentsAPI, itemsAPI, getImageUrl } from '../services/api';
+import { heroesAPI, buildsAPI, commentsAPI, itemsAPI, getImageUrl, getHeroImageUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import UserProfileCard from '../components/UserProfileCard';
 import Reveal from '../components/Reveal';
@@ -226,9 +226,20 @@ export default function HeroDetail() {
       >
         <div className="p-7 md:p-12">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="mb-2 font-display text-5xl font-bold text-brand-ink md:text-6xl">{hero.name}</h1>
-              <p className="text-lg text-brand-mut">Master this incredible hero</p>
+            <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
+              {hero.has_image && (
+                <div className="h-56 w-44 shrink-0 overflow-hidden rounded-2xl border border-brand-line shadow-soft">
+                  <img
+                    src={getHeroImageUrl(hero.id)}
+                    alt={hero.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              <div>
+                <h1 className="mb-2 font-display text-5xl font-bold text-brand-ink md:text-6xl">{hero.name}</h1>
+                <p className="text-lg text-brand-mut">Master this incredible hero</p>
+              </div>
             </div>
             <div className="inline-flex flex-col rounded-2xl border border-brand-blue/30 bg-brand-snow/70 px-7 py-4 text-center shadow-soft w-fit">
               <p className="mb-1 text-[0.6rem] font-bold uppercase tracking-widest text-brand-faint">Class</p>

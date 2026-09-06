@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../services/api';
+import { getHeroImageUrl } from '../services/api';
 
 const CARD_H = 220;
 const STEP = 150;
@@ -150,11 +150,9 @@ export default function HelixSpiral({ items }) {
             className="hero-card"
             style={{ '--hy': i * STEP, '--a': i * SETP + START_TWIST }}
           >
-            {hero.icon_url ? (
+            {hero.has_image ? (
               <img
-                src={`${getImageUrl(hero.icon_url)}${
-                  getImageUrl(hero.icon_url).includes('?') ? '&' : '?'
-                }t=${Date.now()}`}
+                src={getHeroImageUrl(hero.id)}
                 alt={hero.name}
                 loading="lazy"
                 className="hero-img"

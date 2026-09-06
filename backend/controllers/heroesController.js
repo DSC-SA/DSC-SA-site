@@ -1,8 +1,11 @@
 const pool = require('../config/database');
 
+const HERO_COLUMNS = `id, name, role, description, difficulty, attack, defense, hp,
+  icon_url, (image_data IS NOT NULL) AS has_image, created_at`;
+
 const getAllHeroes = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM heroes ORDER BY name ASC');
+    const result = await pool.query(`SELECT ${HERO_COLUMNS} FROM heroes ORDER BY name ASC`);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -13,7 +16,7 @@ const getHeroById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const heroResult = await pool.query('SELECT * FROM heroes WHERE id = $1', [id]);
+    const heroResult = await pool.query(`SELECT ${HERO_COLUMNS} FROM heroes WHERE id = $1`, [id]);
     if (heroResult.rows.length === 0) {
       return res.status(404).json({ error: 'Hero not found' });
     }
@@ -41,4 +44,30 @@ const getHeroById = async (req, res) => {
   }
 };
 
-module.exports = { getAllHeroes, getHeroById };
+const getHeroImage = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT image_data, image_mimetype FROM heroes WHERE id = $1',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Hero not found' });
+    }
+
+    const imageData = result.rows[0].image_data;
+    if (!imageData) {
+      return res.status(404).json({ error: 'No image found for this hero' });
+    }
+
+    res.type(result.rows[0].image_mimetype || 'image/webp');
+    res.send(imageData);
+  } catch (err) {
+    console.error('Error retrieving hero image:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { getAllHeroes, getHeroById, getHeroImage };

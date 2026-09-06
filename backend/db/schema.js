@@ -33,6 +33,8 @@ const createTables = async () => {
       defense INT,
       hp INT,
       icon_url VARCHAR(255),
+      image_data BYTEA,
+      image_mimetype VARCHAR(50),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
 
