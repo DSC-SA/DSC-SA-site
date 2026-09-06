@@ -46,6 +46,12 @@ export default function Admin() {
   const [itemLoading, setItemLoading] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
 
+  // Age verification state
+  const [verifications, setVerifications] = useState([]);
+  const [verifLoading, setVerifLoading] = useState(false);
+  const [verifFilter, setVerifFilter] = useState('all');
+  const [reviewLoadingId, setReviewLoadingId] = useState(null);
+
   useEffect(() => {
     // Check if user is logged in via session storage
     const adminSession = sessionStorage.getItem('adminLoggedIn');
@@ -57,6 +63,7 @@ export default function Admin() {
       loadEvents();
       loadMatches();
       loadItems();
+      loadVerifications();
     }
   }, [navigate]);
 
@@ -119,6 +126,56 @@ export default function Admin() {
       setItems([]);
     } finally {
       setItemsLoading(false);
+    }
+  };
+
+  const loadVerifications = async () => {
+    try {
+      setVerifLoading(true);
+      const adminToken = localStorage.getItem('adminToken');
+      if (!adminToken) return;
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+      const res = await fetch(`${API_BASE_URL}/api/admin/verifications`, {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const data = await res.json();
+      setVerifications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error loading verifications:', err);
+    } finally {
+      setVerifLoading(false);
+    }
+  };
+
+  const reviewVerification = async (id, status) => {
+    try {
+      setReviewLoadingId(id);
+      const adminToken = localStorage.getItem('adminToken');
+      if (!adminToken) {
+        showMessage('Admin token missing. Please log in again.', 'error');
+        return;
+      }
+      const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin);
+      const res = await fetch(`${API_BASE_URL}/api/admin/verifications/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ status })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMessage(`Verification ${status}.`, 'success');
+      } else {
+        showMessage('Error: ' + (data.message || data.error || 'Failed to update verification'), 'error');
+      }
+      loadVerifications();
+    } catch (err) {
+      showMessage('Error updating verification: ' + err.message, 'error');
+    } finally {
+      setReviewLoadingId(null);
     }
   };
 
@@ -886,6 +943,94 @@ export default function Admin() {
             </div>
           ) : (
             <p className="mt-6 text-brand-mut">No items available.</p>
+          )}
+        </div>
+
+        {/* Age Verification Requests */}
+        <div className="mt-12 rounded-2xl border border-brand-line bg-brand-snow p-8 shadow-lift">
+          <h2 className="mb-2 bg-gradient-to-r from-brand-bluedd to-brand-blue bg-clip-text font-display text-3xl font-black text-transparent">Age Verification Requests</h2>
+          <p className="mb-6 text-sm text-brand-mut">
+            Review requests submitted from the NSFW section. Approve or deny each user, then their visitors will see the updated status.
+          </p>
+
+          {(() => {
+            const counts = {
+              all: verifications.length,
+              pending: verifications.filter((v) => v.status === 'pending').length,
+              approved: verifications.filter((v) => v.status === 'approved').length,
+              denied: verifications.filter((v) => v.status === 'denied').length
+            };
+            return (
+              <div className="mb-6 flex flex-wrap items-center gap-2">
+                {['all', 'pending', 'approved', 'denied'].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setVerifFilter(f)}
+                    className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize transition ${
+                      verifFilter === f
+                        ? 'bg-brand-blue text-white shadow-[0_8px_20px_-8px_rgba(91,181,232,0.7)]'
+                        : 'border border-brand-line bg-brand-mist text-brand-mut hover:border-brand-blue hover:text-brand-bluedd'
+                    }`}
+                  >
+                    {f} ({counts[f]})
+                  </button>
+                ))}
+              </div>
+            );
+          })()}
+
+          {verifLoading ? (
+            <p className="text-brand-mut">Loading verification requests...</p>
+          ) : verifications.filter((v) => verifFilter === 'all' || v.status === verifFilter).length > 0 ? (
+            <div className="space-y-3">
+              {verifications
+                .filter((v) => verifFilter === 'all' || v.status === verifFilter)
+                .map((v) => (
+                  <div key={v.id} className="flex flex-col gap-3 rounded-xl border border-brand-line bg-brand-mist p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-semibold text-brand-ink">{v.username}</p>
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${
+                            v.status === 'approved'
+                              ? 'bg-green-100 text-green-700'
+                              : v.status === 'denied'
+                                ? 'bg-red-100 text-red-700'
+                                : 'bg-amber-100 text-amber-700'
+                          }`}
+                        >
+                          {v.status}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 font-mono text-sm text-brand-bluedd">{v.phone}</p>
+                      <p className="mt-0.5 text-xs text-brand-faint">
+                        Submitted {new Date(v.created_at).toLocaleString()}
+                        {v.reviewed_at ? ` - Reviewed ${new Date(v.reviewed_at).toLocaleString()}` : ''}
+                      </p>
+                    </div>
+                    {v.status === 'pending' && (
+                      <div className="flex shrink-0 gap-2">
+                        <button
+                          onClick={() => reviewVerification(v.id, 'approved')}
+                          disabled={reviewLoadingId === v.id}
+                          className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => reviewVerification(v.id, 'denied')}
+                          disabled={reviewLoadingId === v.id}
+                          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+                        >
+                          Deny
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-brand-mut">No verification requests yet.</p>
           )}
         </div>
 

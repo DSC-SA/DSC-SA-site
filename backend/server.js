@@ -99,6 +99,7 @@ app.use('/api/matches', require('./routes/matches'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/verifications', require('./routes/verifications'));
 
 // Health check
 app.get('/api/health', (req, res) => {

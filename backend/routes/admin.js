@@ -147,4 +147,49 @@ router.get('/heroes', async (req, res) => {
   }
 });
 
+// List age verification requests (admin only)
+router.get('/verifications', verifyAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, user_id, COALESCE(username, 'Guest') AS username, phone, status,
+              created_at, reviewed_at, reviewed_by
+       FROM nsfw_verifications
+       ORDER BY created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error listing verifications:', error);
+    res.status(500).json({ message: 'Error listing verifications' });
+  }
+});
+
+// Approve or deny an age verification request (admin only)
+router.put('/verifications/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['approved', 'denied'].includes(status)) {
+      return res.status(400).json({ message: 'Status must be approved or denied' });
+    }
+
+    const result = await pool.query(
+      `UPDATE nsfw_verifications
+       SET status = $1, reviewed_at = CURRENT_TIMESTAMP, reviewed_by = $2
+       WHERE id = $3
+       RETURNING id, status, username, phone, reviewed_at`,
+      [status, 'admin', id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Verification request not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating verification:', error);
+    res.status(500).json({ message: 'Failed to update verification' });
+  }
+});
+
 module.exports = router;

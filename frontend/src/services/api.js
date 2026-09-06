@@ -135,4 +135,10 @@ export const usersAPI = {
   getLeaderboard: () => API.get('/users/leaderboard')
 };
 
+// Age verification API
+export const verificationAPI = {
+  submit: (data) => API.post('/verifications', data),
+  getStatus: () => API.get('/verifications/status')
+};
+
 export const api = API;

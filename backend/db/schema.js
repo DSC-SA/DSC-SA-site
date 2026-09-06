@@ -154,6 +154,20 @@ const createTables = async () => {
       status VARCHAR(20) DEFAULT 'upcoming',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    )`,
+
+    // NSFW age verification requests (moderator-reviewed)
+    `CREATE TABLE IF NOT EXISTS nsfw_verifications (
+      id SERIAL PRIMARY KEY,
+      user_id INT,
+      username VARCHAR(50),
+      phone VARCHAR(32) NOT NULL,
+      age_confirmed BOOLEAN DEFAULT TRUE,
+      status VARCHAR(20) DEFAULT 'pending',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      reviewed_at TIMESTAMP,
+      reviewed_by VARCHAR(50),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
     )`
   ];
 
