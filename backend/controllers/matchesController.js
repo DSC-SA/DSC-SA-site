@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { sanitizeText, sanitizeUrl, sanitizeFields } = require('../utils/sanitize');
 
 // Get all matches
 const getAllMatches = async (req, res) => {
@@ -6,7 +7,8 @@ const getAllMatches = async (req, res) => {
     const result = await pool.query(
       'SELECT * FROM matches ORDER BY match_date DESC'
     );
-    res.json(result.rows);
+    // Read-side hardening: strip any markup already stored in text fields.
+    res.json(result.rows.map((row) => sanitizeFields(row, ['title', 'description'])));
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error fetching matches' });
@@ -24,7 +26,13 @@ const createMatch = async (req, res) => {
   try {
     const result = await pool.query(
       'INSERT INTO matches (title, description, match_date, status, image) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [title, description || '', matchDate, status || 'upcoming', image || null]
+      [
+        sanitizeText(title, 120),
+        sanitizeText(description || '', 2000),
+        matchDate,
+        status || 'upcoming',
+        sanitizeUrl(image, 1000)
+      ]
     );
 
     res.status(201).json({ 

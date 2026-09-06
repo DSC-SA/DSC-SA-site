@@ -1,4 +1,7 @@
 const pool = require('../config/database');
+const { sanitizeText, sanitizeFields } = require('../utils/sanitize');
+
+const COMMENT_TEXT_FIELDS = ['content', 'username'];
 
 const getComments = async (req, res) => {
   const { heroId } = req.params;
@@ -13,20 +16,26 @@ const getComments = async (req, res) => {
       [heroId]
     );
 
-    res.json(result.rows);
+    // Read-side hardening: sanitize anything already stored (incl. legacy rows)
+    // before it is served to the browser.
+    res.json(result.rows.map((row) => sanitizeFields(row, COMMENT_TEXT_FIELDS)));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+const sanitizeCommentContent = (content) => sanitizeText(content, 1000);
 
 const addComment = async (req, res) => {
   const { heroId, content, parentId } = req.body;
   const userId = req.user.id;
 
   try {
+    const cleanContent = sanitizeCommentContent(content);
+
     const result = await pool.query(
       'INSERT INTO build_comments (hero_id, user_id, content, parent_id) VALUES ($1, $2, $3, $4) RETURNING id, content, created_at, likes',
-      [heroId, userId, content, parentId || null]
+      [heroId, userId, cleanContent, parentId || null]
     );
 
     // Award 10 points for commenting
@@ -84,9 +93,11 @@ const addReply = async (req, res) => {
       return res.status(404).json({ error: 'Parent comment not found' });
     }
 
+    const cleanContent = sanitizeCommentContent(content);
+
     const result = await pool.query(
       'INSERT INTO build_comments (hero_id, user_id, content, parent_id) VALUES ($1, $2, $3, $4) RETURNING id, content, created_at, likes',
-      [parentCheck.rows[0].hero_id, userId, content, commentId]
+      [parentCheck.rows[0].hero_id, userId, cleanContent, commentId]
     );
 
     // Award 10 points for replying

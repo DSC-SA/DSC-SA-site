@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 
 const router = express.Router();
+const { sanitizeText } = require('../utils/sanitize');
 
 // Strict limit: verification submissions are low-volume and human-reviewed.
 //   Prevents bots from flooding the moderator queue.
@@ -53,7 +54,7 @@ router.post('/', submitLimiter, async (req, res) => {
 
     const user = readOptionalUser(req);
     const userId = user ? user.id : null;
-    const username = user ? (user.username || null) : null;
+    const username = user ? sanitizeText(user.username || '', 30) : null;
 
     const existing = await pool.query(
       `SELECT id, status FROM nsfw_verifications

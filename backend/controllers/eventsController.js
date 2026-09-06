@@ -1,9 +1,11 @@
 const pool = require('../config/database');
+const { sanitizeText, sanitizeUrl, sanitizeFields } = require('../utils/sanitize');
 
 const getAllEvents = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM events ORDER BY event_date DESC');
-    res.json(result.rows);
+    // Read-side hardening: strip any markup already stored in text fields.
+    res.json(result.rows.map((row) => sanitizeFields(row, ['title', 'description'])));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -15,7 +17,13 @@ const createEvent = async (req, res) => {
   try {
     const result = await pool.query(
       'INSERT INTO events (title, description, event_date, status, image) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [title, description, eventDate, status || 'upcoming', image || null]
+      [
+        sanitizeText(title, 120),
+        sanitizeText(description, 2000),
+        eventDate,
+        status || 'upcoming',
+        sanitizeUrl(image, 1000)
+      ]
     );
 
     res.status(201).json({ message: 'Event created', eventId: result.rows[0].id });
@@ -32,7 +40,7 @@ const joinEvent = async (req, res) => {
   try {
     await pool.query(
       'INSERT INTO event_participants (event_id, user_id, team_name) VALUES ($1, $2, $3)',
-      [eventId, userId, teamName]
+      [eventId, userId, sanitizeText(teamName, 60)]
     );
 
     res.status(201).json({ message: 'Joined event' });
