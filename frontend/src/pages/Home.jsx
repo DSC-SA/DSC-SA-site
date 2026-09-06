@@ -4,9 +4,11 @@ import Layout from '../components/Layout';
 import AdminLogin from '../components/AdminLogin';
 import Reveal from '../components/Reveal';
 import TiltCard from '../components/TiltCard';
-import { heroesAPI, eventsAPI } from '../services/api';
+import { heroesAPI, eventsAPI, metaAPI, getHeroImageUrl } from '../services/api';
 
-const SSR_HEROES = ['Khufra', 'Lancelot', 'Beatrix', 'Kagura', 'Estes', 'Arlott', 'Chou', 'Fanny', 'Gusion', 'Grock'];
+const META_DISPLAY_COUNT = 10;
+
+const normalizeName = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
 /* A quiet, evenly-spaced stat line — no animation, just strong typography */
 function SignalLine({ value, label }) {
@@ -20,17 +22,20 @@ function SignalLine({ value, label }) {
 
 export default function Home() {
   const [heroes, setHeroes] = useState([]);
+  const [meta, setMeta] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [heroesRes, eventsRes] = await Promise.all([
+        const [heroesRes, metaRes, eventsRes] = await Promise.all([
           heroesAPI.getAll(),
+          metaAPI.getAll(),
           eventsAPI.getAll()
         ]);
         setHeroes(heroesRes.data);
+        setMeta(metaRes.data?.data || []);
         setEvents(eventsRes.data.slice(0, 3));
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -41,7 +46,15 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const metaHeroes = SSR_HEROES.map((name) => heroes.find((h) => h.name === name)).filter(Boolean);
+  // Hybrid: live meta ranking, but only include heroes present in the DB roster
+  // (so uploaded art always renders). Falls back to a bundled snapshot server-side.
+  const metaHeroes = meta
+    .map((m, i) => {
+      const hero = heroes.find((h) => normalizeName(h.name) === normalizeName(m.name));
+      return hero ? { ...hero, metaEntry: m, metaIndex: i } : null;
+    })
+    .filter(Boolean)
+    .slice(0, META_DISPLAY_COUNT);
 
   return (
     <Layout>
@@ -103,7 +116,7 @@ export default function Home() {
               <h2 className="font-display text-3xl font-bold text-brand-ink sm:text-4xl">SSR Heroes</h2>
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-brand-mut sm:text-right">
-              Dominate ranked with the strongest picks. Updated to current meta trends.
+              Live stats from high-rank matches. Only heroes in the roster show here.
             </p>
           </div>
         </Reveal>
@@ -121,12 +134,25 @@ export default function Home() {
                   to={`/heroes/${hero.id}`}
                   className="group flex h-full flex-col rounded-2xl border border-brand-line bg-brand-snow p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand-blue/60 hover:shadow-lift"
                 >
-                  <span className="mb-3 font-display text-xs font-semibold text-brand-faint">{String(i + 1).padStart(2, '0')}</span>
+                  <div className="relative mx-auto mb-4 h-24 w-24 overflow-hidden rounded-xl border border-brand-line bg-brand-cloud">
+                    {hero.has_image ? (
+                      <img
+                        src={getHeroImageUrl(hero.id)}
+                        alt={hero.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-bluelt/40 to-brand-cloud">
+                        <span className="text-[0.6rem] font-medium text-brand-faint">No Image</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="mb-3 font-display text-xs font-semibold text-brand-faint">{String(hero.metaIndex + 1).padStart(2, '0')}</span>
                   <h3 className="mb-1 font-display text-base font-semibold text-brand-ink">{hero.name}</h3>
                   <p className="mb-4 text-xs font-medium text-brand-mut">{hero.role}</p>
-                  <span className="mt-auto inline-flex items-center justify-center gap-1 rounded-full border border-brand-line px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-blue transition-colors group-hover:border-brand-blue group-hover:bg-brand-blue group-hover:text-white">
-                    SSR Tier
-                  </span>
+<span className="mt-auto inline-flex items-center justify-center gap-1 rounded-full border border-brand-line px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-blue transition-colors group-hover:border-brand-blue group-hover:bg-brand-blue group-hover:text-white">
+  {hero.metaEntry.win_rate != null ? `${hero.metaEntry.win_rate}% WR` : 'Meta Tier'}
+</span>
                 </Link>
               </Reveal>
             ))}

@@ -101,6 +101,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/verifications', require('./routes/verifications'));
+app.use('/api/meta', require('./routes/meta'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -154,6 +155,11 @@ const startServer = async () => {
     const { seedVerifiedData } = require('./db/seed-verified-export');
     await seedVerifiedData();
     console.log('✓ Database seeded with verified MLBB heroes and items');
+
+    // Refresh the current-meta snapshot (live source with bundled fallback)
+    const { refreshMeta, REFRESH_INTERVAL_MS } = require('./services/metaService');
+    await refreshMeta();
+    setInterval(refreshMeta, REFRESH_INTERVAL_MS);
 
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {

@@ -133,6 +133,11 @@ export const matchesAPI = {
   delete: (matchId) => API.delete(`/matches/${matchId}`)
 };
 
+// Current-meta API (cached snapshot refreshed from a live source)
+export const metaAPI = {
+  getAll: () => API.get('/meta')
+};
+
 // Users API
 export const usersAPI = {
   getProfile: (userId) => API.get(`/users/${userId}`),

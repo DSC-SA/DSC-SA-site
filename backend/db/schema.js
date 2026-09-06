@@ -170,6 +170,18 @@ const createTables = async () => {
       reviewed_at TIMESTAMP,
       reviewed_by VARCHAR(50),
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    )`,
+
+    // Cached current-meta hero snapshot (refreshed from live sources)
+    `CREATE TABLE IF NOT EXISTS meta_heroes (
+      name VARCHAR(100) PRIMARY KEY,
+      win_rate NUMERIC(6,3),
+      ban_rate NUMERIC(6,3),
+      pick_rate NUMERIC(6,3),
+      head_url VARCHAR(500),
+      sort_order INT,
+      source VARCHAR(50),
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`
   ];
 
