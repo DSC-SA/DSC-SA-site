@@ -130,7 +130,6 @@ export default function HelixSpiral({ items }) {
   }, [n, STEP, reduced, trackHeight]);
 
   if (n === 0) return null;
-  const focus = list[active >= 0 ? active : Math.floor(n / 2)];
 
   return (
     <section
@@ -172,17 +171,6 @@ export default function HelixSpiral({ items }) {
           </Link>
         ))}
       </div>
-
-      {focus && (
-        <div className="pointer-events-none sticky bottom-6 z-[999] flex justify-center">
-          <Link
-            to={`/heroes/${focus.id}`}
-            className="btn-primary pointer-events-auto whitespace-nowrap px-6 py-2.5 text-sm shadow-lift"
-          >
-            View {focus.name} →
-          </Link>
-        </div>
-      )}
     </section>
   );
 }
