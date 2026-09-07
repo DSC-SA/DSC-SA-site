@@ -930,15 +930,9 @@ export default function Admin() {
                         alt={item.name}
                         className="mb-2 h-20 w-full rounded object-cover"
                         onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.style.display = 'none';
-                          const placeholder = document.createElement('div');
-                          placeholder.className = 'w-full h-20 bg-brand-cloud rounded mb-2 flex items-center justify-center';
-                          const label = document.createElement('span');
-                          label.className = 'text-xs text-brand-faint';
-                          label.textContent = 'No Image';
-                          placeholder.appendChild(label);
-                          e.currentTarget.parentElement.replaceChild(placeholder, e.currentTarget);
+                          e.target.src = '';
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = '<div class="w-full h-20 bg-brand-cloud rounded mb-2 flex items-center justify-center"><span class="text-xs text-brand-faint">No Image</span></div>';
                         }}
                       />
                       <p className="truncate text-xs font-semibold text-brand-bluedd">{item.name}</p>

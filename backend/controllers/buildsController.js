@@ -1,5 +1,4 @@
 const pool = require('../config/database');
-const { sanitizeText, sanitizeFields } = require('../utils/sanitize');
 
 const getBuildsForHero = async (req, res) => {
   const { heroId } = req.params;
@@ -32,17 +31,9 @@ const getBuildsForHero = async (req, res) => {
       [heroId]
     );
 
-    // Read-side hardening on text fields (recommended + user submitted).
-    const recommended = recommendedResult.rows.map((row) =>
-      sanitizeFields(row, ['build_name', 'description', 'synergy_notes'])
-    );
-    const userBuilds = userBuildsResult.rows.map((row) =>
-      sanitizeFields(row, ['build_name', 'description', 'username'])
-    );
-
     res.json({
-      recommendedBuilds: recommended,
-      userBuilds
+      recommendedBuilds: recommendedResult.rows,
+      userBuilds: userBuildsResult.rows
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -54,14 +45,10 @@ const createUserBuild = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Sanitize build name/description before storing (both shown to other users).
-    const cleanName = sanitizeText(buildName, 80);
-    const cleanDescription = sanitizeText(description, 2000);
-
     // Insert user build
     const buildResult = await pool.query(
       'INSERT INTO user_builds (hero_id, user_id, build_name, description) VALUES ($1, $2, $3, $4) RETURNING id',
-      [heroId, userId, cleanName, cleanDescription]
+      [heroId, userId, buildName, description]
     );
 
     const buildId = buildResult.rows[0].id;
@@ -99,7 +86,7 @@ const getBuildComments = async (req, res) => {
       [heroId]
     );
 
-    res.json(result.rows.map((row) => sanitizeFields(row, ['content', 'username'])));
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -110,11 +97,9 @@ const addComment = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const cleanContent = sanitizeText(content, 1000);
-
     const result = await pool.query(
       'INSERT INTO build_comments (hero_id, user_id, content, parent_id) VALUES ($1, $2, $3, $4) RETURNING id',
-      [heroId, userId, cleanContent, parentId || null]
+      [heroId, userId, content, parentId || null]
     );
 
     res.status(201).json({ message: 'Comment added', commentId: result.rows[0].id });

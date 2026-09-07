@@ -64,21 +64,15 @@ API.interceptors.response.use(
   }
 );
 
-// Helper to construct full image URLs — hardened against javascript:/data: schemes
-// so user-supplied URL fields can never execute script when put in src/attributes.
+// Helper to construct full image URLs
 export const getImageUrl = (relativePath) => {
   if (!relativePath) return null;
-  const p = String(relativePath).trim();
-  if (!p) return null;
-
-  // Only http/https absolute URLs or same-site relative paths are allowed.
-  let isValid = /^https?:\/\//i.test(p);
-  if (!isValid && p.startsWith('/')) isValid = !p.startsWith('//');
-  if (!isValid) return null;
-
+  if (relativePath.startsWith('http')) return relativePath;
+  
   // Add cache-busting query param to ensure fresh image loads
   const cacheBuster = `?t=${Date.now()}`;
-  const fullUrl = `${p.startsWith('/') ? STATIC_BASE_URL : ''}${p}${p.includes('?') ? '&' : cacheBuster}`;
+  const fullUrl = `${STATIC_BASE_URL}${relativePath}${cacheBuster}`;
+  console.log('getImageUrl: relativePath:', relativePath, '-> fullUrl:', fullUrl);
   return fullUrl;
 };
 

@@ -14,31 +14,10 @@ const app = express();
 app.disable('x-powered-by');
 
 // ---- Security headers (sanitized XSS / clickjacking / MIME sniffing) ----
-// CSP: script-src is 'self' only — the Vite bundle ships as external hashed files
-// with no inline scripts, so any injected <script> (even if it slipped past the
-// sanitizers) is blocked by the browser. Styles allow inline attributes (Tailwind
-// + React style props); images/media may come from user-supplied https URLs.
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
-    contentSecurityPolicy: {
-      useDefaults: false,
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
-        mediaSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
-        fontSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        frameSrc: ["'none'"],
-        baseUri: ["'self'"],
-        formAction: ["'self'"],
-        frameAncestors: ["'none'"],
-        upgradeInsecureRequests: []
-      }
-    }
+    contentSecurityPolicy: false, // SPA + inline React; CSP handled at CDN if needed
   })
 );
 

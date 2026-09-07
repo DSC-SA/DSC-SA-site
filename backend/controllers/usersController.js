@@ -1,5 +1,4 @@
 const pool = require('../config/database');
-const { sanitizeText, sanitizeFields } = require('../utils/sanitize');
 
 const getProfile = async (req, res) => {
   const { userId } = req.params;
@@ -10,8 +9,7 @@ const getProfile = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Read-side hardening on profile text fields.
-    res.json(sanitizeFields(result.rows[0], ['username', 'rank', 'bio']));
+    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -53,22 +51,17 @@ const updateProfile = async (req, res) => {
     return res.status(403).json({ error: 'Not authorized' });
   }
 
-  // Sanitize all profile text fields before any validation/storage.
-  const cleanUsername = username != null ? sanitizeText(username, 30) : undefined;
-  const cleanRank = rank != null ? sanitizeText(rank, 30) : null;
-  const cleanBio = bio != null ? sanitizeText(bio, 500) : null;
-
   try {
     // Validate username if provided
-    if (cleanUsername !== undefined) {
-      if (cleanUsername.length < 3 || cleanUsername.length > 30) {
+    if (username) {
+      if (username.length < 3 || username.length > 30) {
         return res.status(400).json({ error: 'Username must be 3-30 characters' });
       }
 
       // Check if username already exists (except current user)
       const existingUser = await pool.query(
         'SELECT id FROM users WHERE username = $1 AND id != $2',
-        [cleanUsername, userId]
+        [username, userId]
       );
       if (existingUser.rows.length > 0) {
         return res.status(400).json({ error: 'Username already taken' });
@@ -76,11 +69,11 @@ const updateProfile = async (req, res) => {
     }
 
     let query = 'UPDATE users SET rank = $1, bio = $2, updated_at = CURRENT_TIMESTAMP';
-    const values = [cleanRank, cleanBio];
+    const values = [rank, bio];
     
     // Add username if provided
-    if (cleanUsername !== undefined) {
-      values.push(cleanUsername);
+    if (username) {
+      values.push(username);
       query += `, username = $${values.length}`;
     }
     
@@ -130,7 +123,7 @@ const getLeaderboard = async (req, res) => {
     const leaderboard = result.rows.map((user, index) => ({
       ...user,
       rank: index + 1
-    })).map((user) => sanitizeFields(user, ['username']));
+    }));
 
     res.json(leaderboard);
   } catch (err) {
