@@ -76,15 +76,14 @@ export const getImageUrl = (relativePath) => {
   if (!isValid && p.startsWith('/')) isValid = !p.startsWith('//');
   if (!isValid) return null;
 
-  // Add cache-busting query param to ensure fresh image loads
-  const cacheBuster = `?t=${Date.now()}`;
-  const fullUrl = `${p.startsWith('/') ? STATIC_BASE_URL : ''}${p}${p.includes('?') ? '&' : cacheBuster}`;
+  const fullUrl = `${p.startsWith('/') ? STATIC_BASE_URL : ''}${p}`;
   return fullUrl;
 };
 
-// Helper to construct hero image URLs served from the database
+// Helper to construct hero image URLs served from the database.
+// Stable URL (no per-render cache-buster) so browsers can cache hero images.
 export const getHeroImageUrl = (heroId) => {
-  return `${STATIC_BASE_URL}/api/heroes/${heroId}/image?t=${Date.now()}`;
+  return `${STATIC_BASE_URL}/api/heroes/${heroId}/image`;
 };
 
 // Auth API

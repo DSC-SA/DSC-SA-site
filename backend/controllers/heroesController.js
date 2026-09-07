@@ -63,6 +63,8 @@ const getHeroImage = async (req, res) => {
     }
 
     res.type(result.rows[0].image_mimetype || 'image/webp');
+    // Images rarely change; allow browser/edge caching for 1 hour to cut API load.
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.send(imageData);
   } catch (err) {
     console.error('Error retrieving hero image:', err.message);

@@ -43,6 +43,7 @@ export default function Admin() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [itemImageFile, setItemImageFile] = useState(null);
   const [itemImagePreview, setItemImagePreview] = useState(null);
+  const [itemImageVersion, setItemImageVersion] = useState(0);
   const [itemLoading, setItemLoading] = useState(false);
   const [itemsLoading, setItemsLoading] = useState(false);
 
@@ -239,6 +240,7 @@ export default function Admin() {
         setItemImagePreview(null);
         setSelectedItemId('');
         setSelectedItem(null);
+        setItemImageVersion((v) => v + 1);
         loadItems();
       } else {
         showMessage('Error uploading item image: ' + (responseData.error || responseData.message || 'Unknown error'), 'error');
@@ -869,7 +871,7 @@ export default function Admin() {
                     <div className="mt-3">
                       <p className="mb-2 text-sm font-semibold text-brand-bluedd">Current Image:</p>
                       <img
-                        src={`${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin)}/api/items/${selectedItem.id}/image?t=${Date.now()}`}
+                        src={`${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : window.location.origin)}/api/items/${selectedItem.id}/image?v=${itemImageVersion}`}
                         alt={selectedItem.name}
                         className="h-20 w-20 rounded-lg border border-brand-line"
                         onError={(e) => {
@@ -926,7 +928,7 @@ export default function Admin() {
                   return (
                     <div key={item.id} className="rounded-xl border border-brand-line bg-brand-mist p-3 text-center">
                       <img
-                        src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                        src={`${API_BASE_URL}/api/items/${item.id}/image`}
                         alt={item.name}
                         className="mb-2 h-20 w-full rounded object-cover"
                         onError={(e) => {

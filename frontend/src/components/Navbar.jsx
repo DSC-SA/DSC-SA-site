@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const getAvatarUrl = () => {
     if (!user.hasAvatar && user.avatar && /^https?:\/\//.test(user.avatar)) return user.avatar;
-    return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
+    return `${window.location.origin}/api/users/${user.id}/avatar`;
   };
 
   const handleImageError = () => setImageError(true);

@@ -167,7 +167,7 @@ export default function HeroDetail() {
         style={{ width: size, height: size }}
       >
         <img
-          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+          src={`${API_BASE_URL}/api/items/${item.id}/image`}
           alt={item.name}
           onError={(e) => {
             e.target.style.display = 'none';
@@ -196,7 +196,7 @@ export default function HeroDetail() {
         title={item.name}
       >
         <img
-          src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+          src={`${API_BASE_URL}/api/items/${item.id}/image`}
           alt={item.name}
           onError={(e) => {
             e.target.style.display = 'none';
@@ -360,7 +360,7 @@ export default function HeroDetail() {
                       className="group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-2 border-brand-blue bg-brand-snow shadow-soft transition hover:border-red-400"
                     >
                       <img
-                        src={`${API_BASE_URL}/api/items/${item.id}/image?t=${Date.now()}`}
+                        src={`${API_BASE_URL}/api/items/${item.id}/image`}
                         alt={item.name}
                         onError={(e) => { e.target.style.display = 'none'; e.currentTarget.nextElementSibling.style.display = 'flex'; }}
                         className="h-full w-full object-cover"

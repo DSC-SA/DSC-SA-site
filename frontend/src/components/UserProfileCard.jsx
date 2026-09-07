@@ -9,7 +9,7 @@ export default function UserProfileCard({ user, onClose }) {
     if (!user.has_avatar && user.avatar && /^https?:\/\//.test(user.avatar)) {
       return user.avatar;
     }
-    return `${window.location.origin}/api/users/${user.id}/avatar?t=${Date.now()}`;
+    return `${window.location.origin}/api/users/${user.id}/avatar`;
   };
 
   return (

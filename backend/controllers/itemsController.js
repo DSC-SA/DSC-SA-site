@@ -86,6 +86,8 @@ const getItemImage = async (req, res) => {
 
     // Set appropriate headers based on stored MIME type
     res.type(imageMimetype);
+    // Images rarely change; allow browser/edge caching for 1 hour to cut API load.
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.send(imageData);
   } catch (err) {
     console.error('❌ Error retrieving item image:', err);

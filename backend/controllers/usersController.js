@@ -37,6 +37,8 @@ const getProfileAvatar = async (req, res) => {
 
     // Set appropriate headers and send binary data
     res.type('image/png');
+    // Avatars are stable per user; allow caching for 1 hour to cut API load.
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.send(avatarData);
   } catch (err) {
     console.error('❌ Error retrieving user avatar:', err);
