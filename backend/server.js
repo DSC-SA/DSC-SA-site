@@ -13,6 +13,21 @@ const app = express();
 
 app.disable('x-powered-by');
 
+// Trust the Railway proxy so req.protocol/req.secure reflect the real scheme
+// (also lets helmet emit HSTS correctly behind the proxy).
+app.set('trust proxy', true);
+
+// ---- Force HTTPS: redirect any plain-http request to the https:// URL so the
+//      address bar never shows an insecure connection. ----
+app.use((req, res, next) => {
+  const proto = req.headers['x-forwarded-proto'] || req.protocol;
+  if (proto !== 'https') {
+    const host = req.headers.host || req.get('host');
+    return res.redirect(301, `https://${host}${req.originalUrl}`);
+  }
+  next();
+});
+
 // ---- Security headers (sanitized XSS / clickjacking / MIME sniffing) ----
 // CSP: script-src is 'self' only — the Vite bundle ships as external hashed files
 // with no inline scripts, so any injected <script> (even if it slipped past the
