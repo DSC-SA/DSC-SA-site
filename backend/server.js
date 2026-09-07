@@ -41,10 +41,10 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
         mediaSrc: ["'self'", 'data:', 'blob:', 'https:', 'http:'],
-        fontSrc: ["'self'", 'data:'],
+        fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
         connectSrc: ["'self'"],
         objectSrc: ["'none'"],
         frameSrc: ["'none'"],
