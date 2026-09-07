@@ -108,10 +108,20 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'Server is running' });
 });
 
-// SPA fallback: serve index.html for all non-API routes (React Router).
-// Memoized to avoid re-reading from disk on each request.
+// SPA fallback: serve index.html for browser routes (React Router).
+// Missing hashed assets (/assets/*) and unmatched API endpoints must return
+// a real 404 instead of index.html: serving HTML where a JS/CSS file is
+// expected lets caching layers poison a visitor's cache for the lifetime of
+// that URL (the hashed assets are served immutable for one year).
 const indexFile = path.join(__dirname, 'public', 'index.html');
 app.get('*', (req, res) => {
+  const { path: reqPath } = req;
+  if (reqPath.startsWith('/assets/')) {
+    return res.status(404).type('text/plain').send('Not found');
+  }
+  if (reqPath.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.sendFile(indexFile);
 });
