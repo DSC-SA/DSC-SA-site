@@ -21,29 +21,41 @@ app.use(
   })
 );
 
-// ---- Tight CORS: only allow the known frontend origins. Requests from bots
-//      or unknown origins are rejected (no blanket allow-all). ----
-const allowedOrigins = (process.env.FRONTEND_URL || 'https://dsc-sa-site-production.up.railway.app')
+// ---- CORS: the SPA is served by this backend, so same-origin browser
+//      requests must be accepted on ANY domain it is live at (custom domains,
+//      *.up.railway.app, localhost). Also allow explicitly configured
+//      FRONTEND_URL origins and local development. Truly foreign cross-origin
+//      requests are rejected (no blanket allow-all). ----
+const localDevOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+const explicitOrigins = (process.env.FRONTEND_URL || '')
   .split(',')
   .map((o) => o.trim())
-  .concat(['http://localhost:3000', 'http://localhost:3001']);
+  .filter(Boolean)
+  .concat(localDevOrigins);
 
 const corsOptions = {
-  origin(origin, callback) {
-    // Allow non-browser requests (curl, health checks, server-to-server) and
-    // known frontend origins. Reject everything else.
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  cors({
+    ...corsOptions,
+    origin(origin, callback) {
+      // Non-browser requests (curl, health checks, server-to-server) pass.
+      if (!origin || origin === 'null') return callback(null, true);
+      if (explicitOrigins.includes(origin)) return callback(null, true);
+      if (process.env.NODE_ENV === 'development') return callback(null, true);
+      // Same-origin check: the SPA is hosted behind the request Host, so any
+      // origin that matches the request host is our own frontend.
+      const originHost = origin.replace(/^https?:\/\//i, '');
+      if (originHost === (req.headers.host || '')) return callback(null, true);
+      return callback(new Error('Not allowed by CORS'));
+    }
+  })(req, res, next);
+});
 
 // ---- Body size caps: reject oversized payloads (DoS protection) ----
 app.use(express.json({ limit: '1mb' }));

@@ -3,6 +3,16 @@ const jwt = require('jsonwebtoken');
 const pool = require('../config/database');
 const { sendVerificationEmail, sendWelcomeEmail } = require('../services/emailService');
 
+// Resolve the canonical frontend origin. Railway auto-provides the current
+// public domain (RAILWAY_STATIC_URL), so redirects/links always point at the
+// live domain even when it changes — never a stale hardcoded host.
+const getFrontendBaseUrl = () => {
+  const publicUrl = process.env.RAILWAY_STATIC_URL || process.env.RAILWAY_PUBLIC_DOMAIN;
+  if (publicUrl) return /^https?:\/\//i.test(publicUrl) ? publicUrl : `https://${publicUrl}`;
+  if (process.env.FRONTEND_URL) return process.env.FRONTEND_URL;
+  return 'http://localhost:3000';
+};
+
 const generateVerificationCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
@@ -262,7 +272,7 @@ const googleAuthCallback = async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=no_code`);
+    return res.redirect(`${getFrontendBaseUrl()}/login?error=no_code`);
   }
 
   try {
@@ -291,7 +301,7 @@ const googleAuthCallback = async (req, res) => {
     const tokenData = await tokenResponse.json();
     if (tokenData.error) {
       console.error('Google token error:', tokenData.error);
-      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=${tokenData.error}`);
+      return res.redirect(`${getFrontendBaseUrl()}/login?error=${tokenData.error}`);
     }
 
     // Get user info
@@ -347,13 +357,13 @@ const googleAuthCallback = async (req, res) => {
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     // Redirect with token and user data
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = getFrontendBaseUrl();
     const newUserParam = isNewUser ? '&newUser=true' : '';
     const userData = `&id=${user.id}&username=${encodeURIComponent(user.username)}&email=${encodeURIComponent(user.email)}&avatar=${encodeURIComponent(avatarToShow)}&hasAvatar=${hasAvatar}&rank=${encodeURIComponent(user.rank || '')}&bio=${encodeURIComponent(user.bio || '')}&points=${user.points || 0}`;
     res.redirect(`${frontendUrl}/auth/success?token=${token}${userData}${newUserParam}`);
   } catch (err) {
     console.error('Google OAuth error:', err);
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = getFrontendBaseUrl();
     res.redirect(`${frontendUrl}/login?error=auth_failed`);
   }
 };
