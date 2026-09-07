@@ -7,25 +7,50 @@ import { useAuth } from '../context/AuthContext';
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+    setInfo('');
+    setNeedsVerification(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setInfo('');
+    setNeedsVerification(false);
 
     try {
       const res = await authAPI.login(formData);
       login(res.data.user, res.data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      const data = err.response?.data;
+      setError(data?.error || 'Login failed');
+      if (data?.needsVerification) {
+        setNeedsVerification(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setError('');
+    setInfo('');
+    setLoading(true);
+    try {
+      await authAPI.resendCode({ email: formData.email });
+      setInfo('A new verification code was sent to your email.');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Could not resend the code. Try again.');
     } finally {
       setLoading(false);
     }
@@ -49,6 +74,21 @@ export default function Login() {
             {error && (
               <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-600">
                 {error}
+                {needsVerification && (
+                  <button
+                    onClick={handleResendCode}
+                    disabled={loading}
+                    className="mt-3 block w-full rounded-lg border border-brand-bluedd bg-brand-snow px-3 py-2 font-semibold text-brand-bluedd transition hover:bg-brand-mist disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {loading ? 'Sending...' : 'Resend verification code'}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {info && !error && (
+              <div className="mb-6 rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-700">
+                {info}
               </div>
             )}
 

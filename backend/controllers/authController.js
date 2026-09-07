@@ -44,29 +44,32 @@ const register = async (req, res) => {
     const verificationCode = generateVerificationCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Create user (auto-verified for email registration)
+    // Create user as UNVERIFIED — the account only becomes active once the
+    // emailed code is confirmed via /api/auth/verify-email.
     const result = await pool.query(
       `INSERT INTO users (username, email, password_hash, verification_code, verification_code_expires, auth_method, verified, email_verified)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING id, username, email, avatar, rank, bio, points`,
-      [username, email, passwordHash, verificationCode, expiresAt, 'email', true, true]
+       RETURNING id, username, email`,
+      [username, email, passwordHash, verificationCode, expiresAt, 'email', false, false]
     );
 
-    // Generate JWT immediately
-    const token = jwt.sign({ id: result.rows[0].id, username: result.rows[0].username }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    // Send the 6-digit code so the account can be activated
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[dev] Verification code for ${email}: ${verificationCode}`);
+    }
+    const mailResult = await sendVerificationEmail(email, verificationCode, username);
+    if (!mailResult.success) {
+      // Roll back the row so the user isn't left trapped in an unverifiable state
+      await pool.query('DELETE FROM users WHERE id = $1', [result.rows[0].id]);
+      console.error('Failed to send verification email:', mailResult.error || mailResult.message);
+      return res.status(500).json({ error: 'Failed to send the verification email. Please try again in a moment.' });
+    }
 
     res.status(201).json({
-      message: 'Registration successful! You are now logged in.',
-      token,
-      user: {
-        id: result.rows[0].id,
-        username: result.rows[0].username,
-        email: result.rows[0].email,
-        avatar: result.rows[0].avatar,
-        rank: result.rows[0].rank,
-        bio: result.rows[0].bio,
-        points: result.rows[0].points
-      }
+      message: 'A 6-digit verification code was sent to your email. Enter it below to activate your account.',
+      needsVerification: true,
+      email,
+      username
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -114,12 +117,12 @@ const verifyEmailCode = async (req, res) => {
       console.error('Failed to send welcome email:', err.message);
     });
 
-    // Generate JWT
+    // Generate JWT — the verified user is logged in immediately
     const newToken = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.json({
       message: 'Email verified successfully',
-      token,
+      token: newToken,
       user: {
         id: user.id,
         username: user.username,
@@ -130,6 +133,47 @@ const verifyEmailCode = async (req, res) => {
         points: user.points
       }
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Resend the email verification code for a still-unverified account
+const resendVerificationCode = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const userResult = await pool.query(
+      'SELECT * FROM users WHERE email = $1 AND verified = FALSE',
+      [email]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({ error: 'No pending account found for that email' });
+    }
+
+    const user = userResult.rows[0];
+    const code = generateVerificationCode();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    await pool.query(
+      'UPDATE users SET verification_code = $1, verification_code_expires = $2 WHERE id = $3',
+      [code, expiresAt, user.id]
+    );
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[dev] Resent verification code for ${email}: ${code}`);
+    }
+    const mailResult = await sendVerificationEmail(email, code, user.username);
+    if (!mailResult.success) {
+      return res.status(500).json({ error: 'Failed to send the code. Please try again in a moment.' });
+    }
+
+    res.json({ message: 'A new verification code was sent to your email. It expires in 10 minutes.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -214,7 +258,7 @@ const login = async (req, res) => {
 
     // Check if verified
     if (!user.verified) {
-      return res.status(400).json({ error: 'Please verify your email first' });
+      return res.status(400).json({ error: 'Please verify your email first', needsVerification: true, email });
     }
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
@@ -418,6 +462,7 @@ const updateUsername = async (req, res) => {
 module.exports = {
   register,
   verifyEmailCode,
+  resendVerificationCode,
   login,
   logout,
   googleCallback,

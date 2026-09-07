@@ -16,6 +16,7 @@ export default function Register() {
     verificationCode: ''
   });
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
@@ -71,6 +72,15 @@ export default function Register() {
         password: formData.password
       });
 
+      if (response.data.needsVerification) {
+        // Account created but not yet active — step 2 asks for the emailed code
+        setAuthMethod('email');
+        setStep(2);
+        setError('');
+        setLoading(false);
+        return;
+      }
+
       if (response.data.token) {
         // Store token and user data
         localStorage.setItem('authToken', response.data.token);
@@ -110,20 +120,37 @@ export default function Register() {
       });
 
       if (response.data.token) {
-        // Store token and user data
         localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('token', response.data.token);
         if (response.data.user) {
           localStorage.setItem('user', JSON.stringify(response.data.user));
         }
         
-        // Update auth context
-        login(response.data.user);
+        // Update auth context (token included so the API is authenticated)
+        login(response.data.user, response.data.token);
         
         // Redirect to home
         navigate('/');
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Verification failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async (e) => {
+    e.preventDefault();
+    setError('');
+    setInfo('');
+    setLoading(true);
+
+    try {
+      await authAPI.resendCode({ email: formData.email });
+      setInfo('A new verification code was sent to your email.');
+      setFormData(prev => ({ ...prev, verificationCode: '' }));
+    } catch (err) {
+      setError(err.response?.data?.error || 'Could not resend the code. Try again.');
     } finally {
       setLoading(false);
     }
@@ -266,6 +293,12 @@ export default function Register() {
                 </div>
               )}
 
+              {info && (
+                <div className="mb-6 rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-700">
+                  {info}
+                </div>
+              )}
+
               <form onSubmit={handleVerifyCode} className="space-y-4">
                 <div>
                   <label className="mb-2 block text-sm font-medium text-brand-ink">Verification Code</label>
@@ -293,10 +326,11 @@ export default function Register() {
               <p className="mt-6 text-center text-sm text-brand-mut">
                 Didn&apos;t receive the code?{' '}
                 <button
-                  onClick={() => setFormData(prev => ({ ...prev, verificationCode: '' }))}
+                  onClick={handleResendCode}
+                  disabled={loading}
                   className="font-semibold text-brand-bluedd hover:underline"
                 >
-                  Request new code
+                  {loading ? 'Sending...' : 'Request new code'}
                 </button>
               </p>
             </div>

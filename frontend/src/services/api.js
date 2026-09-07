@@ -91,6 +91,7 @@ export const getHeroImageUrl = (heroId) => {
 export const authAPI = {
   register: (data) => API.post('/auth/register', data),
   verifyEmail: (data) => API.post('/auth/verify-email', data),
+  resendCode: (data) => API.post('/auth/resend-code', data),
   login: (data) => API.post('/auth/login', data),
   logout: () => API.post('/auth/logout')
 };

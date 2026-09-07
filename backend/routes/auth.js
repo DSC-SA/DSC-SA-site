@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { register, verifyEmailCode, login, logout, googleCallback, googleAuth, googleAuthCallback, updateUsername } = require('../controllers/authController');
+const { register, verifyEmailCode, resendVerificationCode, login, logout, googleCallback, googleAuth, googleAuthCallback, updateUsername } = require('../controllers/authController');
 const { validateRegister, validateLogin } = require('../middleware/validation');
 const { verifyToken } = require('../middleware/auth');
 
 // Email registration with verification code
 router.post('/register', validateRegister, register);
 router.post('/verify-email', verifyEmailCode);
+router.post('/resend-code', resendVerificationCode);
 
 // Google OAuth
 router.get('/google', googleAuth);

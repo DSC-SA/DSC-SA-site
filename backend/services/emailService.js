@@ -1,11 +1,14 @@
 const nodemailer = require('nodemailer');
 
 // Create email transporter
+const emailUser = process.env.EMAIL_USER || 'dawnspherecommunity@gmail.com';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'dawnspherecommunity@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || ''
+    user: emailUser,
+    // Gmail app passwords are issued with spaces (e.g. "abcd efgh ijkl mnop");
+    // SMTP AUTH rejects spaces, so strip them before use.
+    pass: (process.env.EMAIL_PASSWORD || '').replace(/\s+/g, '')
   }
 });
 
