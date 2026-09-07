@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api
+Disallow: /admin
+Disallow: /nsfw
+Disallow: /profile
+
+Sitemap: https://dawnspherecommunitydsd.online/sitemap.xml

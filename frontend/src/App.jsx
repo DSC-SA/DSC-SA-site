@@ -16,12 +16,19 @@ import Admin from './pages/Admin';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
+import usePageMeta from './hooks/usePageMeta';
 import './styles/index.css';
+
+function RouteMeta() {
+  usePageMeta();
+  return null;
+}
 
 export default function App() {
   return (
     <Router>
       <AuthProvider>
+        <RouteMeta />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

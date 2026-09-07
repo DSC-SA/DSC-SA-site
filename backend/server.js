@@ -129,8 +129,9 @@ app.use(
     maxAge: '365d',
     immutable: true,
     setHeaders: (res, filePath) => {
-      if (filePath.endsWith('index.html')) {
-        // Index must be revalidated every visit to avoid stale-hash blank pages.
+      if (filePath.endsWith('index.html') || filePath.endsWith('robots.txt') || filePath.endsWith('sitemap.xml')) {
+        // Index, robots.txt and sitemap.xml must be revalidated every visit so
+        // content/optimization changes propagate promptly (no immutable cache).
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       }
     }
