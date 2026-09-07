@@ -98,18 +98,22 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
 // ---- Rate limiting: protect the whole API from abuse/bots ----
+// Generous per-IP limit: the gallery/pages issue many read requests, and mobile
+// CGNAT networks share public IPs across many users (300 was too tight and
+// produced false 429s that broke heroes/events/matches for legit users).
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 300, // max 300 requests per window per IP
+  limit: 1500, // max 1500 requests per window per IP
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Too many requests. Please slow down and try again later.' }
 });
 
-// Stricter limiter for auth endpoints (brute-force / credential stuffing)
+// Auth is Google OAuth only (Google itself handles brute-force protection), so
+// the per-IP limit mainly deters scripts hammering the callback endpoint.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 20, // 20 auth attempts per 15 min per IP
+  limit: 60, // 60 auth attempts per 15 min per IP
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { error: 'Too many attempts. Please try again in a few minutes.' }
