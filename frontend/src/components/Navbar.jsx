@@ -122,11 +122,8 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/login" className="btn-secondary px-4 py-2 text-xs">
-                  Login
-                </Link>
-                <Link to="/register" className="btn-primary px-4 py-2 text-xs">
-                  Register
+                <Link to="/login" className="btn-primary px-4 py-2 text-xs">
+                  Sign in with Google
                 </Link>
               </div>
             )}
@@ -184,11 +181,8 @@ export default function Navbar() {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-2">
-                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn-secondary block w-full py-2.5 text-center text-sm">
-                      Login
-                    </Link>
-                    <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn-primary block w-full py-2.5 text-center text-sm">
-                      Register
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn-primary block w-full py-2.5 text-center text-sm">
+                      Sign in with Google
                     </Link>
                   </div>
                 )}

@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
 import AuthSuccess from './pages/AuthSuccess';
 import HeroesList from './pages/HeroesList';
 import HeroDetail from './pages/HeroDetail';
@@ -27,7 +26,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/success" element={<AuthSuccess />} />
           <Route path="/heroes" element={<HeroesList />} />
           <Route path="/heroes/:id" element={<HeroDetail />} />

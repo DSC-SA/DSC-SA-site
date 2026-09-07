@@ -460,13 +460,6 @@ const updateUsername = async (req, res) => {
 };
 
 module.exports = {
-  register,
-  verifyEmailCode,
-  resendVerificationCode,
-  login,
-  logout,
-  googleCallback,
   googleAuth,
-  googleAuthCallback,
-  updateUsername
+  googleAuthCallback
 };
