@@ -3,7 +3,13 @@ const nodemailer = require('nodemailer');
 // Create email transporter
 const emailUser = process.env.EMAIL_USER || 'dawnspherecommunity@gmail.com';
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  // Implicit TLS on 465: Railway's egress is unreliable for 587 STARTTLS and
+  // ENETUNREACHes on IPv6, so pin IPv4 + SMTP SSL.
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  family: 4,
+  connectionTimeout: 30000,
   auth: {
     user: emailUser,
     // Gmail app passwords are issued with spaces (e.g. "abcd efgh ijkl mnop");

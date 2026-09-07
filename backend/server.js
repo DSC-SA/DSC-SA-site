@@ -13,9 +13,9 @@ const app = express();
 
 app.disable('x-powered-by');
 
-// Trust the Railway proxy so req.protocol/req.secure reflect the real scheme
-// (also lets helmet emit HSTS correctly behind the proxy).
-app.set('trust proxy', true);
+// Trust exactly one proxy hop (Railway's edge) so req.protocol/req.secure and
+// rate-limit IPs reflect reality without being spoofable permissively.
+app.set('trust proxy', 1);
 
 // ---- Force HTTPS: redirect any plain-http request to the https:// URL so the
 //      address bar never shows an insecure connection. ----
